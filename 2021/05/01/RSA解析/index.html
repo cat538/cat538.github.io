@@ -1,0 +1,393 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RSA解析 | Cat538</title><meta name="author" content="DM"><meta name="copyright" content="DM"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="关于RSA算法的相关证明、应用场景，及公钥题目中一些常见套路...">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RSA解析">
+<meta property="og:url" content="https://cat538.github.io/2021/05/01/RSA%E8%A7%A3%E6%9E%90/index.html">
+<meta property="og:site_name" content="Cat538">
+<meta property="og:description" content="关于RSA算法的相关证明、应用场景，及公钥题目中一些常见套路...">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/cipher-16421552297502.png">
+<meta property="article:published_time" content="2021-05-01T07:33:03.000Z">
+<meta property="article:modified_time" content="2022-01-14T10:14:39.067Z">
+<meta property="article:author" content="DM">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/cipher-16421552297502.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://cat538.github.io/2021/05/01/RSA%E8%A7%A3%E6%9E%90/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'RSA解析',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-01-14 18:14:39'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if (GLOBAL_CONFIG_SITE.isHome && /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.0.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">19</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">7</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">8</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://gitee.com/cat-of-landlord/my-typora/raw/master/img/cipher-16421552297502.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Cat538</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">RSA解析</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2021-05-01T07:33:03.000Z" title="Created 2021-05-01 15:33:03">2021-05-01</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2022-01-14T10:14:39.067Z" title="Updated 2022-01-14 18:14:39">2022-01-14</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%AF%86%E7%A0%81%E5%AD%A6/">密码学</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="RSA解析"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="RSA加密"><a href="#RSA加密" class="headerlink" title="RSA加密"></a>RSA加密</h2><ol>
+<li><p>随机选择大素数$p、q$</p>
+</li>
+<li><p>计算$n = p\cdot q\quad 、\quad \varphi(n) = (p-1)(q-1)$  其中$\varphi()$为欧拉函数，$\varphi(n) = \varphi(p)\varphi(q)$</p>
+</li>
+<li><p>选择$e:gcd(e,(\varphi(n))) = 1$</p>
+</li>
+<li><p>确定$d:ed\equiv 1 \pmod {\varphi(n)}$  其中 $\varphi(n) = (p-1)(q-1)$</p>
+</li>
+<li><p>加密：$c = m^e\pmod{n}$</p>
+<p>解密：$m = c^d\pmod{n}$</p>
+</li>
+</ol>
+<ul>
+<li><p>其中$(n,e)$作为公钥公开，$(n,d)$作为私钥保密</p>
+</li>
+<li><p>敌手如果想要直接解密，则需要知道d，计算d则需要计算$\varphi(n)$，而由$n\rightarrow\varphi(n)$目前没有直接解法<strong>【1】</strong>，只能分解$n$求出$pq$，因此RSA的安全性依赖于因子分解的困难性</p>
+</li>
+</ul>
+<p><strong>【1】</strong>：$\varphi(n) = (p-1)(q-1) = pq-(p+q)+1\Longrightarrow p+q = n-\varphi(n)+1$，如果知道$\varphi(n)$，则可以很轻易地分解n，换句话说，计算$\varphi(n)$并不比分解$n$容易</p>
+<h3 id="RSA解密过程的正确性证明"><a href="#RSA解密过程的正确性证明" class="headerlink" title="RSA解密过程的正确性证明"></a>RSA解密过程的正确性证明</h3><p>$c = m^e\pmod{n}\quad m = c^d\pmod{n}\quad\Longrightarrow m^{ed}\equiv m\pmod{n}$</p>
+<p><strong>证明：</strong>因为$ed\equiv 1 \pmod {\varphi(n)}\Longrightarrow 即证m^{k\varphi(n)+1}\equiv m\pmod{n}$</p>
+<p>这里不能直接写欧拉定理，因为欧拉定理$m^{\varphi(n)}\equiv1\pmod{n}$要求$m\in n^*$</p>
+<p>分情况：</p>
+<ul>
+<li><p>$(m,n) = 1\Longrightarrow$ 直接欧拉​定理</p>
+</li>
+<li><p>$(m,n)\neq1\Longrightarrow 至少有 p|m <del>或</del> q|m$</p>
+<p>以$p|m$为例：$m\equiv0\pmod{p}\Longrightarrow m^{k\varphi(n)+1}\equiv m\pmod{p}$</p>
+<p>无论$q|m<del>or</del>q\nmid m $，均有$m^{k\varphi(n)+1}\equiv m\pmod{p}$前者用欧拉，后者同上一行</p>
+<p>而$pq$互素，因此有$m^{k\varphi(n)+1}\equiv1\pmod{n}$</p>
+</li>
+</ul>
+<h3 id="RSA中几个时间复杂度"><a href="#RSA中几个时间复杂度" class="headerlink" title="RSA中几个时间复杂度"></a>RSA中几个时间复杂度</h3><p>模$n$运算，其2进制长度为$k$：</p>
+<table>
+<thead>
+<tr>
+<th>运算</th>
+<th>时间复杂度</th>
+<th>算法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>加法</td>
+<td>$O(k)$</td>
+<td></td>
+</tr>
+<tr>
+<td>减法</td>
+<td>$O(k)$</td>
+<td></td>
+</tr>
+<tr>
+<td>乘法</td>
+<td>$O(k^2)$</td>
+<td></td>
+</tr>
+<tr>
+<td>求逆</td>
+<td>$O(k^3)$</td>
+<td></td>
+</tr>
+<tr>
+<td>模幂(指数为c)</td>
+<td>$O(\log c \times k^2)$</td>
+<td>平方乘算法</td>
+</tr>
+</tbody></table>
+<h4 id="解密算法的加速："><a href="#解密算法的加速：" class="headerlink" title="解密算法的加速："></a>解密算法的加速：</h4><p>因为解密方知道p的分解m、n所以可以把$m = {c}^d\pmod n$换成两个方程：<br>$$<br>m_1 = c_1^{d_1}\pmod p\<br>m_2 = c_2^{d_2}\pmod q\<br>其中c_1 = c \pmod p,c_2 = c\pmod q\<br>d_1 = d\pmod {p-1},d_2 = d\pmod {q-1}<br>$$<br>然后用CRT逆回去即可，能够提高4-8倍</p>
+<h3 id="RSA安全性分析"><a href="#RSA安全性分析" class="headerlink" title="RSA安全性分析"></a>RSA安全性分析</h3><h4 id="假设存在计算d的算法-rightarrow-构造分解n的算法"><a href="#假设存在计算d的算法-rightarrow-构造分解n的算法" class="headerlink" title="假设存在计算d的算法$\rightarrow$构造分解n的算法"></a>假设存在计算d的算法$\rightarrow$构造分解n的算法</h4><p><strong>Las Vegas算法</strong></p>
+<ul>
+<li><p>基本思想：利用1模n的非平凡平方根</p>
+<p>$x^2 \equiv1\pmod{n}$即$n|(x-1)(x+1)\Longrightarrow pq|(x-1)(x+1)$且有$n\nmid x-1 \quad,\quad n\nmid x+1$    </p>
+<blockquote>
+<p>因为如果$n\mid x-1\rightarrow x\equiv1\pmod{n}$，x是平凡平方根。$n\mid x+1$同理</p>
+</blockquote>
+<p>若要满足上述条件，则只有情况</p>
+<ol>
+<li>$p|x-1,q|x+1$</li>
+<li>$p|x+1,q|x-1$</li>
+</ol>
+<p>即有$\gcd(x+1,n) = p(或q)或者\gcd(x-1,n) = q(或p)$</p>
+<p>就成功分解了n，下面考虑如何求解非平凡平方根</p>
+</li>
+<li><p>求解非平凡平方根（需要$e，d$）：</p>
+<p>因为$ed\equiv1\pmod{\varphi(n)}$，所以$ed-1 = k\varphi(n)$</p>
+<p>表示成$ed-1 = 2^s\cdot r$，随机选择$w\in{1,2,3\cdots n}$如果$\gcd(w,n) \neq 1$，则分解成功···（概率很低）</p>
+<p>否则的话，$w\in n^*$，计算$w^{2^ir}$，如果$w^{2^ir} = 1\pmod{n}$，且$w^{2^{i-1}r}\neq{-1}\pmod{n}$，则 $w^{2^{i-1}r}$即为一个非平凡解</p>
+<p>其中$i\in{0,1,2\cdots s}$，如果遍历0-s均未找到，则另选一个w计算，这个过程成功的概率大于$\frac{1}{2}$</p>
+</li>
+</ul>
+<p>上述攻击告诉我们：<strong>一旦解密指数泄露，必须要更换模n，不能仅更换d，否则敌手可以分解n</strong></p>
+<h4 id="同模攻击"><a href="#同模攻击" class="headerlink" title="同模攻击"></a>同模攻击</h4><p>攻击场景：一组用户（A、B）共享模n，使用不同的加密指数e和解密指数d，C向A、B发送消息，敌手可以不知道解密指数获取明文</p>
+<p>设$m$是消息，共同的模数是$n$，两个密文分别为</p>
+<ul>
+<li>$C_1 = m^{e_1}\pmod{n}$</li>
+<li>$C_2 = m^{e_2}\pmod{n}$</li>
+</ul>
+<p>如果$e_1,e_2$互素，可以根据扩展欧几里得计算出$r,s满足re_1+se_2 = 1$，则$C_1^rC_2^s = m^{e_1r}m^{e_2s} = m$</p>
+<p>即敌手不用获得解密指数，也可以恢复明文</p>
+<p>上述攻击告诉我们：<strong>不能在一组用户之间共享模n</strong></p>
+<h4 id="选择密文攻击"><a href="#选择密文攻击" class="headerlink" title="选择密文攻击"></a>选择密文攻击</h4><p>利用了RSA加密同态的性质，即$Enc(m_1)Enc(m_2) = Enc(m_1m_2)$</p>
+<p>设公钥为$(n,e)$对于敌手想要破译的消息$C^*$，其计算$C’ =C^*\cdot x^e\pmod{n}$</p>
+<p>询问获得$C’$对应的明文$m’$，可以看出来，$m’ = m^*\cdot x\pmod{n}$</p>
+<p>$m’/x$即为$m^*$</p>
+<h4 id="克服同态攻击的RSA-OAEP模式"><a href="#克服同态攻击的RSA-OAEP模式" class="headerlink" title="克服同态攻击的RSA OAEP模式"></a>克服同态攻击的RSA OAEP模式</h4><h4 id="其它问题"><a href="#其它问题" class="headerlink" title="其它问题"></a>其它问题</h4><ul>
+<li>安全隐患：不同的模共享素因子</li>
+<li>参数设置：p、q安全素数，不能太接近（太接近可以直接开方穷搜，有太小的因子又会容易被分解），一般相差几位</li>
+<li>加密解密指数不能设置太小</li>
+</ul>
+<h2 id="素性检测与因子分解"><a href="#素性检测与因子分解" class="headerlink" title="素性检测与因子分解"></a>素性检测与因子分解</h2><h3 id="素性检测"><a href="#素性检测" class="headerlink" title="素性检测"></a>素性检测</h3><h4 id="Solovay-Strassen算法"><a href="#Solovay-Strassen算法" class="headerlink" title="Solovay-Strassen算法"></a>Solovay-Strassen算法</h4><ul>
+<li>错误概率至多为$1/2$</li>
+</ul>
+<h4 id="Miller-Rabin算法"><a href="#Miller-Rabin算法" class="headerlink" title="Miller-Rabin算法"></a>Miller-Rabin算法</h4><ul>
+<li>错误概率至多为$1/4$</li>
+<li>通过的素数可能是强伪素数</li>
+</ul>
+<p><strong>因子分解算法时间复杂度：</strong></p>
+<table>
+<thead>
+<tr>
+<th>算法</th>
+<th>时间复杂度</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Pollard p-1算法</td>
+<td>$O(B~\log B(\log n)^2+(\log n)^3)$ ( B次模幂 + 1次GCD)</td>
+<td>告诉我们要选安全素数，p-1应该有足够大的素因子</td>
+</tr>
+<tr>
+<td>Pollard $\rho$算法</td>
+<td>$1.17\sqrt{p}$</td>
+<td></td>
+</tr>
+<tr>
+<td>Dixon随机平方算法</td>
+<td>$O(e^{1+o(1)\sqrt{\ln n \ln \ln n}})$</td>
+<td></td>
+</tr>
+</tbody></table>
+<h3 id="Pollard-p-1算法"><a href="#Pollard-p-1算法" class="headerlink" title="Pollard p-1算法"></a>Pollard p-1算法</h3><p>假定$p$是$n$的一个素因子，且$p-1$的每一个素数幂次$q$有$q\leqslant B$，则有$(p-1)|B!$</p>
+<p>令$a\equiv2^{B!}\pmod{n}$，因$(p-1)|B!$，故有$a\equiv 2^{p-1}\pmod{p}\Longrightarrow a\equiv1\pmod{p}$</p>
+<p>故有$p|a-1$，求$\gcd(a-1,n)$即可得到素因子$p$</p>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20210506172158768.png" alt="image-20210506172158768" style="zoom:67%;" />
+
+<h4 id="Pollard-rho-算法"><a href="#Pollard-rho-算法" class="headerlink" title="Pollard $\rho$算法"></a>Pollard $\rho$算法</h4><p>寻找两个元素$x_1,x_2$满足$x_1\neq x_2\pmod{n},x_1=x_2\pmod{p}\Longrightarrow p|x_1-x_2$</p>
+<p>求$\gcd(x_1-x_2,p)$即可分解</p>
+<h3 id="Dixon随机平方算法"><a href="#Dixon随机平方算法" class="headerlink" title="Dixon随机平方算法"></a>Dixon随机平方算法</h3><p>$x\neq \pm y\pmod{n}$</p>
+<p>$x^2\equiv y^2\pmod{n}$</p>
+<p>$x^2-y^2\equiv0\pmod{n}\Longrightarrow n|(x+y)(x-y)$</p>
+<p>假设 $n$分解成$pq$，则因为$n\nmid x\pm y$，故只有$p|(x+y),q|(x-y)$或$p|(x-y),q|(x+y)$两种情况</p>
+<p>求$\gcd(x+y,n)$即可得到一个因子</p>
+<h2 id="EIGamal加密"><a href="#EIGamal加密" class="headerlink" title="EIGamal加密"></a>EIGamal加密</h2><p>在循环群$Z_p^*$上，循环群的阶为$p-1$</p>
+<p>加密：</p>
+<ul>
+<li>选择随机元素k</li>
+<li>计算$c_1 = g^k\pmod p,c_2 = y^k\cdot m\pmod p$</li>
+<li>输出$(c_1,c_2)$</li>
+</ul>
+<p>$y^k$被视为一个均匀随机元素，使用了均匀随机元素隐藏明文m</p>
+<p>解密：</p>
+<ul>
+<li>因为$y^k = (g^x)^k = (c_1)^x$</li>
+<li>所以$m = c_2/(c_1)^x \pmod p$</li>
+</ul>
+<h3 id="离散对数问题"><a href="#离散对数问题" class="headerlink" title="离散对数问题"></a>离散对数问题</h3><p>对于$a^\alpha = \beta\pmod n$</p>
+<p>已知$\alpha,\beta$求解$a$</p>
+<p><strong>求解离散对数问题方法：</strong></p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>时间复杂度</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Shanks（BSGS）</td>
+<td>$O(\sqrt{n})$</td>
+<td>告诉我们循环群的阶应该足够大保证不容易被分解</td>
+</tr>
+<tr>
+<td>Pohlig-Hellman</td>
+<td></td>
+<td>告诉我们群的阶应该有足够大的素因子</td>
+</tr>
+<tr>
+<td>Pollard-$\rho$</td>
+<td>$O(\sqrt{n})$</td>
+<td>告诉我们循环群的阶应该足够大保证不容易被分解</td>
+</tr>
+<tr>
+<td>指数计算算法</td>
+<td>$O(e^{(1/2+o(1))\sqrt{\ln{p\ln \ln p}}})$（在线阶段）</td>
+<td>只针对$z_p^*$上的离散对数问题</td>
+</tr>
+</tbody></table>
+</article><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/cipher-16421552297502.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button button--animated"><i class="fas fa-qrcode"></i> Donate</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/wechatpay-16421448200551.png" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/wechatpay-16421448200551.png"/></a><div class="post-qr-code-desc"></div></li><li class="reward-item"><a href="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/alipay.png" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/alipay.png"/></a><div class="post-qr-code-desc"></div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/06/03/RustOption/"><img class="prev-cover" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/rustlogo.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">RustOption</div></div></a></div><div class="next-post pull-right"><a href="/2021/04/29/%E7%AE%97%E6%B3%95Cycle%E6%B5%8B%E9%87%8F/"><img class="next-cover" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/141-1414999_tool-kit-toolbox-tools-icon-toolkit-icon-green.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">算法Cycle测量</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">DM</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">19</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">7</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">8</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#RSA%E5%8A%A0%E5%AF%86"><span class="toc-number">1.</span> <span class="toc-text">RSA加密</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#RSA%E8%A7%A3%E5%AF%86%E8%BF%87%E7%A8%8B%E7%9A%84%E6%AD%A3%E7%A1%AE%E6%80%A7%E8%AF%81%E6%98%8E"><span class="toc-number">1.1.</span> <span class="toc-text">RSA解密过程的正确性证明</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RSA%E4%B8%AD%E5%87%A0%E4%B8%AA%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6"><span class="toc-number">1.2.</span> <span class="toc-text">RSA中几个时间复杂度</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E5%AF%86%E7%AE%97%E6%B3%95%E7%9A%84%E5%8A%A0%E9%80%9F%EF%BC%9A"><span class="toc-number">1.2.1.</span> <span class="toc-text">解密算法的加速：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RSA%E5%AE%89%E5%85%A8%E6%80%A7%E5%88%86%E6%9E%90"><span class="toc-number">1.3.</span> <span class="toc-text">RSA安全性分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%81%87%E8%AE%BE%E5%AD%98%E5%9C%A8%E8%AE%A1%E7%AE%97d%E7%9A%84%E7%AE%97%E6%B3%95-rightarrow-%E6%9E%84%E9%80%A0%E5%88%86%E8%A7%A3n%E7%9A%84%E7%AE%97%E6%B3%95"><span class="toc-number">1.3.1.</span> <span class="toc-text">假设存在计算d的算法$\rightarrow$构造分解n的算法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%8C%E6%A8%A1%E6%94%BB%E5%87%BB"><span class="toc-number">1.3.2.</span> <span class="toc-text">同模攻击</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%80%89%E6%8B%A9%E5%AF%86%E6%96%87%E6%94%BB%E5%87%BB"><span class="toc-number">1.3.3.</span> <span class="toc-text">选择密文攻击</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%8B%E6%9C%8D%E5%90%8C%E6%80%81%E6%94%BB%E5%87%BB%E7%9A%84RSA-OAEP%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.3.4.</span> <span class="toc-text">克服同态攻击的RSA OAEP模式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B6%E5%AE%83%E9%97%AE%E9%A2%98"><span class="toc-number">1.3.5.</span> <span class="toc-text">其它问题</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B4%A0%E6%80%A7%E6%A3%80%E6%B5%8B%E4%B8%8E%E5%9B%A0%E5%AD%90%E5%88%86%E8%A7%A3"><span class="toc-number">2.</span> <span class="toc-text">素性检测与因子分解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B4%A0%E6%80%A7%E6%A3%80%E6%B5%8B"><span class="toc-number">2.1.</span> <span class="toc-text">素性检测</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Solovay-Strassen%E7%AE%97%E6%B3%95"><span class="toc-number">2.1.1.</span> <span class="toc-text">Solovay-Strassen算法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Miller-Rabin%E7%AE%97%E6%B3%95"><span class="toc-number">2.1.2.</span> <span class="toc-text">Miller-Rabin算法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Pollard-p-1%E7%AE%97%E6%B3%95"><span class="toc-number">2.2.</span> <span class="toc-text">Pollard p-1算法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Pollard-rho-%E7%AE%97%E6%B3%95"><span class="toc-number">2.2.1.</span> <span class="toc-text">Pollard $\rho$算法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Dixon%E9%9A%8F%E6%9C%BA%E5%B9%B3%E6%96%B9%E7%AE%97%E6%B3%95"><span class="toc-number">2.3.</span> <span class="toc-text">Dixon随机平方算法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#EIGamal%E5%8A%A0%E5%AF%86"><span class="toc-number">3.</span> <span class="toc-text">EIGamal加密</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A6%BB%E6%95%A3%E5%AF%B9%E6%95%B0%E9%97%AE%E9%A2%98"><span class="toc-number">3.1.</span> <span class="toc-text">离散对数问题</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2022/01/13/IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/" title="IO多路复用"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/fire.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="IO多路复用"/></a><div class="content"><a class="title" href="/2022/01/13/IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/" title="IO多路复用">IO多路复用</a><time datetime="2022-01-13T14:20:33.000Z" title="Created 2022-01-13 22:20:33">2022-01-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/01/12/Cppmove/" title="Cppmove"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/c-programming-icon-14.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Cppmove"/></a><div class="content"><a class="title" href="/2022/01/12/Cppmove/" title="Cppmove">Cppmove</a><time datetime="2022-01-12T05:00:37.000Z" title="Created 2022-01-12 13:00:37">2022-01-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/12/30/epoll/" title="epoll"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/fire.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="epoll"/></a><div class="content"><a class="title" href="/2021/12/30/epoll/" title="epoll">epoll</a><time datetime="2021-12-30T06:51:05.000Z" title="Created 2021-12-30 14:51:05">2021-12-30</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By DM</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.2
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        insertScript: [200, () => {
+          document.querySelectorAll('mjx-container:not\([display]\)').forEach(node => {
+            const target = node.parentNode
+            if (target.nodeName.toLowerCase() === 'li') {
+              target.parentNode.classList.add('has-jax')
+            } else {
+              target.classList.add('has-jax')
+            }
+          });
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

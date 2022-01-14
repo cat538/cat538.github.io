@@ -1,0 +1,207 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Rust包管理系统 | Cat538</title><meta name="keywords" content="Rust"><meta name="author" content="DM"><meta name="copyright" content="DM"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="关于Rust中的包管理系统,Packages,Crates,Modules,Path...">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Rust包管理系统">
+<meta property="og:url" content="https://cat538.github.io/2021/12/06/Rust%E5%8C%85%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/index.html">
+<meta property="og:site_name" content="Cat538">
+<meta property="og:description" content="关于Rust中的包管理系统,Packages,Crates,Modules,Path...">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/rustlogo.jpg">
+<meta property="article:published_time" content="2021-12-06T04:55:48.000Z">
+<meta property="article:modified_time" content="2022-01-14T09:02:29.482Z">
+<meta property="article:author" content="DM">
+<meta property="article:tag" content="Rust">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/rustlogo.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://cat538.github.io/2021/12/06/Rust%E5%8C%85%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Rust包管理系统',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-01-14 17:02:29'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if (GLOBAL_CONFIG_SITE.isHome && /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.0.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">19</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">7</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">8</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://gitee.com/cat-of-landlord/my-typora/raw/master/img/rustlogo.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Cat538</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Rust包管理系统</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2021-12-06T04:55:48.000Z" title="Created 2021-12-06 12:55:48">2021-12-06</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2022-01-14T09:02:29.482Z" title="Updated 2022-01-14 17:02:29">2022-01-14</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Rust/">Rust</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Rust包管理系统"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211024205703750.png" alt="image-20211024205703750" style="zoom: 67%;" />
+
+<p>官方文档给出的关键字解释如下：</p>
+<blockquote>
+<ul>
+<li><strong>包</strong>（<em>Packages</em>）： Cargo 的一个功能，它允许你构建、测试和分享 crate。</li>
+<li><strong>Crates</strong> ：一个模块的树形结构，它形成了库或二进制项目。</li>
+<li><strong>模块</strong>（<em>Modules</em>）和 <strong>use</strong>： 允许你控制作用域和路径的私有性。</li>
+<li><strong>路径</strong>（<em>path</em>）：一个命名例如结构体、函数或模块等项的方式</li>
+</ul>
+</blockquote>
+<h2 id="Package-和-Crate"><a href="#Package-和-Crate" class="headerlink" title="Package 和 Crate"></a>Package 和 Crate</h2><p><em>包</em>（<em>package</em>）是提供一系列功能的一个或者多个 crate</p>
+<p>一个<em>包</em>（<em>package</em>） 会包含有一个 <code>Cargo.toml</code> 文件，阐述如何去构建这些 crate</p>
+<p><strong>关于<code>package</code>和<code>crate</code>有以下几条规则：</strong></p>
+<ul>
+<li>一个<code>package</code>包含0个或1个<code>lib crate</code>(库)</li>
+<li>一个<code>package</code>包含任意多个<code>bin crate</code>(可执行)</li>
+<li>一个<code>package</code>至少包含1个<code>lib crate</code>(库)或1个 <code>bin crate</code>(二进制)</li>
+</ul>
+<p>另有两条默认规定：</p>
+<ul>
+<li>默认<code>src/main.rs</code>是<code>bin crate</code>的根，且其名字就是package的名字</li>
+<li>默认<code>src/lib.rs</code>是<code>lib crate</code>的根，且其名字就是package的名字</li>
+</ul>
+<p><strong>注解：bin crate就是包含main函数的<code>.rs</code>文件</strong></p>
+<p>另有关于 <code>bin crate</code>规则如下：</p>
+<ul>
+<li>如果一个<code>package</code>有多个<code>bin crate</code>，可以放在<code>src/bin</code>下</li>
+</ul>
+<p><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211024195317131.png" alt="image-20211024195317131"></p>
+<p>如上图所示的<code>package</code>内有3个<code>bin crate</code>，可以看到直接<code>cargo r</code>会报错无法determine哪一个bin（不过实际上他们三个都被编译了），提示中看到有三个<code>bin crate</code>他们的名字分别是<code>hello, hi, myf</code>，这是因为我的package的名字是<code>myf</code>，而<code>src/bin</code>下两个文件分别叫做<code>hello hi</code></p>
+<h2 id="Crate-和-mod"><a href="#Crate-和-mod" class="headerlink" title="Crate 和 mod"></a>Crate 和 mod</h2><p>使用<code>mod</code>关键字定义一个<code>module</code>，模块可以嵌套构成<code>mod</code>树</p>
+<ul>
+<li><p>子<code>mod</code>可以使用父<code>mod</code>中的内容</p>
+</li>
+<li><p>子<code>mod</code>和父<code>mod</code>可以不在一个文件中，如图所示：</p>
+<p><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211024204721639.png" alt="image-20211024204721639"></p>
+<p>在<code>main.rs</code>中使用了<code>mod parent</code>声明了一个名为<code>parent</code>的mod（该mod在<code>src/parent</code>目录下被定义），从而拼接了一个mod树</p>
+<p><code>parent mod</code>有两个子<code>mod</code>分别是<code>son</code>和<code>daughter</code></p>
+<ul>
+<li><code>mod</code>和文件映射关系:<ul>
+<li><code>&lt;module_name&gt;.rs</code></li>
+<li><code>&lt;module_name&gt;/mod.rs</code></li>
+</ul>
+</li>
+</ul>
+<p><strong>可以使用上述两种方式去跨文件定义一个<code>mod</code></strong></p>
+</li>
+<li><p>综上所述<code>mod</code>树和文件树其实并没有太大关系，是通过<code>mod</code>关键字手动组成的一个<code>mod</code>树，在这个过程中需要记住：</p>
+<ul>
+<li>使用<code>pub</code>才能暴露给外部</li>
+<li>可以使用<code>crate</code>关键字从绝对路径（<code>mod tree</code> 根节点）寻找</li>
+<li>使用<code>super</code>关键字从父<code>mod</code>（<code>mod tree</code> 父节点）寻找</li>
+<li><code>lib.rs</code>和<code>main.rs</code>分别是两个root节点</li>
+</ul>
+</li>
+</ul>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Rust/">Rust</a></div><div class="post_share"><div class="social-share" data-image="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/rustlogo.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button button--animated"><i class="fas fa-qrcode"></i> Donate</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/wechatpay-16421448200551.png" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/wechatpay-16421448200551.png"/></a><div class="post-qr-code-desc"></div></li><li class="reward-item"><a href="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/alipay.png" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/alipay.png"/></a><div class="post-qr-code-desc"></div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/12/10/Rust%E6%8D%A2%E6%BA%90/"><img class="prev-cover" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/rustlogo.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">Rust工具链+Cargo换源</div></div></a></div><div class="next-post pull-right"><a href="/2021/12/06/%E5%AF%86%E7%A0%81%E5%88%86%E6%9E%90%E5%AD%A6%E5%A4%8D%E4%B9%A0/"><img class="next-cover" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/cipher-16421552297502.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">密码分析学复习</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2021/06/03/RustOption/" title="RustOption"><img class="cover" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/rustlogo.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-06-03</div><div class="title">RustOption</div></div></a></div><div><a href="/2021/12/10/Rust%E6%8D%A2%E6%BA%90/" title="Rust工具链+Cargo换源"><img class="cover" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/rustlogo.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-12-10</div><div class="title">Rust工具链+Cargo换源</div></div></a></div><div><a href="/2021/07/05/Rust%E5%AD%A6%E4%B9%A0/" title="Rust学习"><img class="cover" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/rustlogo.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-07-05</div><div class="title">Rust学习</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">DM</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">19</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">7</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">8</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Package-%E5%92%8C-Crate"><span class="toc-number">1.</span> <span class="toc-text">Package 和 Crate</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Crate-%E5%92%8C-mod"><span class="toc-number">2.</span> <span class="toc-text">Crate 和 mod</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2022/01/13/IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/" title="IO多路复用"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/fire.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="IO多路复用"/></a><div class="content"><a class="title" href="/2022/01/13/IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/" title="IO多路复用">IO多路复用</a><time datetime="2022-01-13T14:20:33.000Z" title="Created 2022-01-13 22:20:33">2022-01-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/01/12/Cppmove/" title="Cppmove"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/c-programming-icon-14.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Cppmove"/></a><div class="content"><a class="title" href="/2022/01/12/Cppmove/" title="Cppmove">Cppmove</a><time datetime="2022-01-12T05:00:37.000Z" title="Created 2022-01-12 13:00:37">2022-01-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/12/30/epoll/" title="epoll"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/fire.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="epoll"/></a><div class="content"><a class="title" href="/2021/12/30/epoll/" title="epoll">epoll</a><time datetime="2021-12-30T06:51:05.000Z" title="Created 2021-12-30 14:51:05">2021-12-30</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By DM</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

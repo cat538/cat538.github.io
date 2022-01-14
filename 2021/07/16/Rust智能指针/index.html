@@ -1,0 +1,239 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Rust智能指针 | Cat538</title><meta name="keywords" content="Rust"><meta name="author" content="DM"><meta name="copyright" content="DM"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Rust 指针 Box、Rc、RefCell、Arc、Cell、Cow的介绍和对比…">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Rust智能指针">
+<meta property="og:url" content="https://cat538.github.io/2021/07/16/Rust%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/index.html">
+<meta property="og:site_name" content="Cat538">
+<meta property="og:description" content="Rust 指针 Box、Rc、RefCell、Arc、Cell、Cow的介绍和对比…">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/rustlogo.jpg">
+<meta property="article:published_time" content="2021-07-16T11:29:43.000Z">
+<meta property="article:modified_time" content="2022-01-14T09:02:26.302Z">
+<meta property="article:author" content="DM">
+<meta property="article:tag" content="Rust">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/rustlogo.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://cat538.github.io/2021/07/16/Rust%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Rust智能指针',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-01-14 17:02:26'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if (GLOBAL_CONFIG_SITE.isHome && /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.0.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">19</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">7</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">8</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://gitee.com/cat-of-landlord/my-typora/raw/master/img/rustlogo.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Cat538</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Rust智能指针</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2021-07-16T11:29:43.000Z" title="Created 2021-07-16 19:29:43">2021-07-16</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2022-01-14T09:02:26.302Z" title="Updated 2022-01-14 17:02:26">2022-01-14</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Rust/">Rust</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Rust智能指针"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="阅读材料"><a href="#阅读材料" class="headerlink" title="阅读材料"></a>阅读材料</h2><p><a target="_blank" rel="noopener" href="https://stanford-cs242.github.io/f19/lectures/07-2-smart-pointers">CS 242: Smart pointers (stanford-cs242.github.io)</a></p>
+<hr>
+<p><strong>Rust内存管理的基本原则:</strong></p>
+<ul>
+<li>Having several immutable references (<code>&amp;T</code>) to the object (also known as <strong>aliasing</strong>).</li>
+<li>Having one mutable reference (<code>&amp;mut T</code>) to the object (also known as <strong>mutability</strong>).</li>
+</ul>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/Rust container cheat sheet.png" alt="Rust container cheat sheet"  />
+
+<h2 id="Raw-pointers"><a href="#Raw-pointers" class="headerlink" title="Raw pointers"></a>Raw pointers</h2><p>尽管不经常使用，Rust有原始指针的基本类型： <code>*const T</code> 和 <code>*mut T</code>；这些指针与C语言中的指针完全一样，它们实际上只是内存地址，没有检查内存安全。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> x: <span class="built_in">i32</span> = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">let</span> xptr: &amp;<span class="built_in">i32</span> = &amp;x;</span><br><span class="line"><span class="keyword">let</span> xraw: *<span class="keyword">const</span> <span class="built_in">i32</span> = xptr <span class="keyword">as</span> *<span class="keyword">const</span> <span class="built_in">i32</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="keyword">mut</span> y: <span class="built_in">i32</span> = <span class="number">2</span>;</span><br><span class="line"><span class="keyword">let</span> yptr: &amp;<span class="keyword">mut</span> <span class="built_in">i32</span> = &amp;<span class="keyword">mut</span> y;</span><br><span class="line"><span class="keyword">let</span> yraw: *<span class="keyword">mut</span> <span class="built_in">i32</span> = yptr <span class="keyword">as</span> *<span class="keyword">mut</span> <span class="built_in">i32</span>;</span><br><span class="line"><span class="keyword">let</span> yraw2: *<span class="keyword">mut</span> <span class="built_in">i32</span> = yptr <span class="keyword">as</span> *<span class="keyword">mut</span> <span class="built_in">i32</span>;</span><br></pre></td></tr></table></figure>
+
+<p>如上图所示，我们获得了<code>yraw</code>和<code>yraw2</code>两个可变指针指向同一块内存，这违背了Rust内存管理的基本原则。</p>
+<p>但事实上创建指针可以在safe rust中使用，但是解引用只能在<code>unsafe</code>中了：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, <span class="keyword">unsafe</span> &#123; *yraw &#125;);</span><br><span class="line"><span class="keyword">unsafe</span> &#123; *yraw = <span class="number">3</span>; &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Box"><a href="#Box" class="headerlink" title="Box"></a>Box</h2><p><strong>资源分配在堆上，依靠<code>Deref</code>和<code>Drop</code>来管理堆上的资源，零运行时开销，类似C++的unique_ptr，是最常用的套娃。</strong></p>
+<p>比如尝试定义递归类型（链表）时</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="class"><span class="keyword">enum</span> <span class="title">List</span></span> &#123;</span><br><span class="line">    Empty,</span><br><span class="line">    Elem(<span class="built_in">i32</span>, List),</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为编译期无法确定大小，因此无法编译通过；这时可以用<code>Box</code>包起来<code>Elem</code></p>
+<ul>
+<li><code>Box::new(v)</code> ： 创建，移动语义，独占所有权 - move，允许使用<code>*</code>转移本体所有权</li>
+<li>不可变借用：<code>Box::borrow()</code>、<code>Box::as_ref()</code>、<code>Box::deref()</code></li>
+<li>可变借用：<code>Box::borrow_mut()</code>、<code>Box::as_mut()</code>、<code>Box::deref_mut()</code></li>
+</ul>
+<h4 id="相关接口："><a href="#相关接口：" class="headerlink" title="相关接口："></a>相关接口：</h4><ul>
+<li><code>Box::into_raw()</code>转换为裸指针<code>*mut T</code>，从而可以通过<code>unsafe</code>来修改本来不会被修改的——Box中的值</li>
+<li><code>Box::from_raw()</code>为<code>into_raw()</code>的对应接口，(打印裸指针可以获得其地址)</li>
+<li><code>Box::leak()</code>将Box转换为可变引用<code>&amp;mut T</code></li>
+</ul>
+<h4 id="实现自己的Box"><a href="#实现自己的Box" class="headerlink" title="实现自己的Box"></a>实现自己的Box</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[derive(Debug)]</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">MyBox</span></span>&lt;T&gt; &#123;</span><br><span class="line">    ptr: *<span class="keyword">mut</span> T,</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">impl</span>&lt;T&gt; MyBox&lt;T&gt; &#123;</span><br><span class="line">    <span class="function"><span class="keyword">fn</span> <span class="title">new</span></span>(t: T) -&gt; MyBox&lt;T&gt; &#123;</span><br><span class="line">        <span class="keyword">let</span> ptr = <span class="keyword">unsafe</span> &#123;</span><br><span class="line">            <span class="keyword">let</span> layout = Layout::for_value(&amp;t);</span><br><span class="line">            <span class="keyword">let</span> <span class="keyword">mut</span> ptr = alloc(layout) <span class="keyword">as</span> *<span class="keyword">mut</span> T;</span><br><span class="line">            ptr::copy(&amp;t <span class="keyword">as</span> *<span class="keyword">const</span> T, ptr, layout.size());</span><br><span class="line">            ptr</span><br><span class="line">        &#125;;</span><br><span class="line">        mem::forget(t);</span><br><span class="line">        MyBox &#123; ptr &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>首先声明一个<code>MyBox</code>包装裸指针<code>*mut T</code></p>
+</li>
+<li><p>然后创建一个<code>Layout</code>实例——描述内存块大小和内存对齐规则</p>
+</li>
+<li><p>使用<code>alloc</code>在堆上分配内存——Rust对下层内存分配器(<code>jemalloc</code>)的轻度包装</p>
+</li>
+<li><p>然后使用 <a target="_blank" rel="noopener" href="https://doc.rust-lang.org/std/ptr/fn.copy.html"><code>ptr::copy</code></a> (等价于<code>memcpy</code>)把内存复制到刚分配的堆内存上</p>
+</li>
+<li><p>The <code>mem::forget</code> says “don’t try to call destructors on <code>t</code>, just forget about it.”：</p>
+<blockquote>
+<p>If our <code>Box&lt;T&gt;</code> contains a type that has pointers somewhere else, e.g. a <code>Box&lt;Box&lt;i32&gt;&gt;</code>, we don’t want to memcpy the box bits but then have Rust still destruct the original <code>Box&lt;i32&gt;</code>, meaning our memcpy’d version now points to invalid data. Here, <code>mem::forget</code> ensures that the destructors don’t run until we call them in <code>Box::drop</code>. </p>
+</blockquote>
+</li>
+<li><p>最后返回<code>MyBox</code></p>
+</li>
+</ul>
+<p>通过<code>Deref</code> trait实现解引用：</p>
+<blockquote>
+<p>直接解引用<code>*y</code>是不可以的，因为我们尚未在该类型实现这个功能。为了启用 <code>*</code> 运算符的解引用功能，需要实现 <code>Deref</code> trait。</p>
+<p><strong>没有 <code>Deref</code> trait 的话，编译器只会解引用 <code>&amp;</code> 引用类型。</strong><code>deref</code> 方法向编译器提供了获取任何实现了 <code>Deref</code> trait 的类型的值，并且调用这个类型的 <code>deref</code> 方法来获取一个它知道如何解引用的 <code>&amp;</code> 引用的能力。</p>
+<p>当我们输入 <code>*y</code> 时，Rust 事实上在底层运行了<code>*(y.deref())</code></p>
+</blockquote>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">impl</span>&lt;T&gt; Deref <span class="keyword">for</span> MyBox&lt;T&gt; &#123;</span><br><span class="line">    <span class="class"><span class="keyword">type</span> <span class="title">Target</span></span> = T;</span><br><span class="line">    <span class="function"><span class="keyword">fn</span> <span class="title">deref</span></span>(&amp;<span class="keyword">self</span>) -&gt; &amp;Self::Target &#123;</span><br><span class="line">        <span class="keyword">unsafe</span>&#123;&amp;*<span class="keyword">self</span>.ptr&#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>表达式<code>&amp;*self.ptr</code>看起来很怪。在C语义下，<code>&amp;*x == x</code>十分显然。但是在这里，这个表达式的意思是：解引用原始指针(必须在<code>unsafe</code>中)，然后使一个安全指针(即引用<code>&amp;</code>)指向该原始值。</p>
+</blockquote>
+<p>同理通过实现<code>DerefMut</code>trait实现返回可变引用的功能：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">impl</span>&lt;T&gt; DerefMut <span class="keyword">for</span> MyBox&lt;T&gt; &#123;</span><br><span class="line">    <span class="function"><span class="keyword">fn</span> <span class="title">deref_mut</span></span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>) -&gt; &amp;<span class="keyword">mut</span> Self::Target &#123;</span><br><span class="line">        <span class="keyword">unsafe</span>&#123;&amp;<span class="keyword">mut</span> *<span class="keyword">self</span>.ptr&#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>Deref 强制转换</strong>（<em>deref coercions</em>）是 Rust 在函数或方法传参上的一种便利。其将实现了 <code>Deref</code> 的类型的引用转换为原始类型通过 <code>Deref</code> 所能够转换的类型的引用。当这种特定类型的引用作为实参传递给和形参类型不同的函数或方法时，Deref 强制转换将自动发生。</p>
+<p>例如：接收<code>&amp;str</code>为参数的函数，可以将<code>&amp;String</code>直接传入，由于<code>String</code>类型实现了<code>Deref</code>，编译器会自动转换</p>
+</blockquote>
+<p>最后我们通过实现<code>Drop</code>trait来释放内存：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">impl</span>&lt;T&gt; <span class="built_in">Drop</span> <span class="keyword">for</span> MyBox&lt;T&gt; &#123;</span><br><span class="line">    <span class="function"><span class="keyword">fn</span> <span class="title">drop</span></span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>) &#123;</span><br><span class="line">        <span class="keyword">unsafe</span> &#123;</span><br><span class="line">            <span class="keyword">let</span> layout = Layout::for_value(&amp;*<span class="keyword">self</span>.ptr);</span><br><span class="line">            mem::<span class="built_in">drop</span>(ptr::read(<span class="keyword">self</span>.ptr));</span><br><span class="line">            dealloc(<span class="keyword">self</span>.ptr <span class="keyword">as</span> *<span class="keyword">mut</span> <span class="built_in">u8</span>, layout);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>类似C++的析构函数；在这个函数中调用<code>dealloc</code>(等价于C中的<code>free</code>)释放堆上的内存</p>
+<h2 id="Rc"><a href="#Rc" class="headerlink" title="Rc"></a>Rc</h2><blockquote>
+<p>有些情况单个值可能会有多个所有者。例如，在图数据结构中，多个边可能指向相同的节点，而这个节点从概念上讲为所有指向它的边所拥有。节点直到没有任何边指向它之前都不应该被清理。为了启用多所有权，Rust 有一个叫做 <code>Rc&lt;T&gt;</code> 的类型。其名称为 <strong>引用计数</strong>（<em>reference counting</em>）的缩写</p>
+</blockquote>
+<p><strong>资源分配在堆上，依靠<code>Deref</code>和<code>Drop</code>来管理堆上的资源，使用引用计数算法，类似C++中shared_ptr。</strong></p>
+<p><code>Rc::clone()</code>将引用计数+1，不会真的复制对象</p>
+<p> <code>Rc</code>没有实现<code>DerefMut</code>，因此其管理的是不可变引用</p>
+<p>循环引用可能会产生内存泄露：因为两个对象相互引用，最终都不会得到释放</p>
+<h2 id="RefCell"><a href="#RefCell" class="headerlink" title="RefCell"></a>RefCell</h2><p><code>Rc</code>管理的是不可变引用，这意味着如果我们选择用其管理堆上内存，则我们尽管可以<code>clone()</code>出多个引用，但这些引用都不被允许改变堆上内存。但很多时候我们需要对其修改(仍然考虑图)</p>
+<p><code>RefCell</code>是一个实现了引用计数的指针，同时可以修改管理的内存。这似乎听起来违背Rust内存管理的基本原则；但事实上只是把这个检查从编译期推迟到了运行时：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> x: RefCell&lt;<span class="built_in">i32</span>&gt; = RefCell::new(<span class="number">1</span>);</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">let</span> xptr1: Ref&lt;<span class="symbol">&#x27;_</span>, <span class="built_in">i32</span>&gt; = x.try_borrow().unwrap();</span><br><span class="line">  <span class="keyword">let</span> xptr2: Ref&lt;<span class="symbol">&#x27;_</span>, <span class="built_in">i32</span>&gt; = x.try_borrow().unwrap();</span><br><span class="line">  <span class="built_in">assert_eq!</span>(*xptr1, <span class="number">1</span>);</span><br><span class="line">  <span class="built_in">assert_eq!</span>(*xptr2, <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// If we have any immutable borrows active, we can&#x27;t have a mutable borrow</span></span><br><span class="line">  <span class="built_in">assert!</span>(<span class="keyword">match</span> x.try_borrow_mut() &#123; <span class="literal">Err</span>(_) =&gt; <span class="literal">true</span>, <span class="literal">Ok</span>(_) =&gt; <span class="literal">false</span> &#125;);</span><br><span class="line">&#125;</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">let</span> <span class="keyword">mut</span> xmut: RefMut&lt;<span class="symbol">&#x27;_</span>, <span class="built_in">i32</span>&gt; = x.try_borrow_mut().unwrap();</span><br><span class="line">  *xmut = <span class="number">3</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// If we have a single mutable borrow active, no further borrows are permitted</span></span><br><span class="line">  <span class="built_in">assert!</span>(<span class="keyword">match</span> x.try_borrow_mut() &#123; <span class="literal">Err</span>(_) =&gt; <span class="literal">true</span>, <span class="literal">Ok</span>(_) =&gt; <span class="literal">false</span> &#125;);</span><br><span class="line">  <span class="built_in">assert!</span>(<span class="keyword">match</span> x.try_borrow() &#123; <span class="literal">Err</span>(_) =&gt; <span class="literal">true</span>, <span class="literal">Ok</span>(_) =&gt; <span class="literal">false</span> &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Cell"><a href="#Cell" class="headerlink" title="Cell"></a>Cell</h2><p>Cell是一种提供内部可变性的容器，类似智能手机电池，看似不可换，打开盖子后是可以换的</p>
+<p><strong>适合实现了Copy的类型，或者体积小的struct，因为get方法是直接按位复制的。</strong><br><strong>无运行时开销，运行时安全</strong></p>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Rust/">Rust</a></div><div class="post_share"><div class="social-share" data-image="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/rustlogo.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button button--animated"><i class="fas fa-qrcode"></i> Donate</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/wechatpay-16421448200551.png" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/wechatpay-16421448200551.png"/></a><div class="post-qr-code-desc"></div></li><li class="reward-item"><a href="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/alipay.png" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/alipay.png"/></a><div class="post-qr-code-desc"></div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/07/29/FFT&amp;NTT/"><img class="prev-cover" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/unit-circle7_43215_lg.gif" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">FFT&amp;NTT</div></div></a></div><div class="next-post pull-right"><a href="/2021/07/05/Rust%E5%AD%A6%E4%B9%A0/"><img class="next-cover" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/rustlogo.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">Rust学习</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2021/12/06/Rust%E5%8C%85%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/" title="Rust包管理系统"><img class="cover" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/rustlogo.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-12-06</div><div class="title">Rust包管理系统</div></div></a></div><div><a href="/2021/06/03/RustOption/" title="RustOption"><img class="cover" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/rustlogo.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-06-03</div><div class="title">RustOption</div></div></a></div><div><a href="/2021/12/10/Rust%E6%8D%A2%E6%BA%90/" title="Rust工具链+Cargo换源"><img class="cover" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/rustlogo.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-12-10</div><div class="title">Rust工具链+Cargo换源</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">DM</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">19</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">7</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">8</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%85%E8%AF%BB%E6%9D%90%E6%96%99"><span class="toc-number">1.</span> <span class="toc-text">阅读材料</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Raw-pointers"><span class="toc-number">2.</span> <span class="toc-text">Raw pointers</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Box"><span class="toc-number">3.</span> <span class="toc-text">Box</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E6%8E%A5%E5%8F%A3%EF%BC%9A"><span class="toc-number">3.0.1.</span> <span class="toc-text">相关接口：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%B7%B1%E7%9A%84Box"><span class="toc-number">3.0.2.</span> <span class="toc-text">实现自己的Box</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Rc"><span class="toc-number">4.</span> <span class="toc-text">Rc</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RefCell"><span class="toc-number">5.</span> <span class="toc-text">RefCell</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Cell"><span class="toc-number">6.</span> <span class="toc-text">Cell</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2022/01/13/IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/" title="IO多路复用"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/fire.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="IO多路复用"/></a><div class="content"><a class="title" href="/2022/01/13/IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/" title="IO多路复用">IO多路复用</a><time datetime="2022-01-13T14:20:33.000Z" title="Created 2022-01-13 22:20:33">2022-01-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/01/12/Cppmove/" title="Cppmove"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/c-programming-icon-14.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Cppmove"/></a><div class="content"><a class="title" href="/2022/01/12/Cppmove/" title="Cppmove">Cppmove</a><time datetime="2022-01-12T05:00:37.000Z" title="Created 2022-01-12 13:00:37">2022-01-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/12/30/epoll/" title="epoll"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/fire.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="epoll"/></a><div class="content"><a class="title" href="/2021/12/30/epoll/" title="epoll">epoll</a><time datetime="2021-12-30T06:51:05.000Z" title="Created 2021-12-30 14:51:05">2021-12-30</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By DM</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

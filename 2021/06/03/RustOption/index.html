@@ -1,0 +1,200 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RustOption | Cat538</title><meta name="keywords" content="Rust"><meta name="author" content="DM"><meta name="copyright" content="DM"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="学习Rust中的枚举类型Option...">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RustOption">
+<meta property="og:url" content="https://cat538.github.io/2021/06/03/RustOption/index.html">
+<meta property="og:site_name" content="Cat538">
+<meta property="og:description" content="学习Rust中的枚举类型Option...">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/rustlogo.jpg">
+<meta property="article:published_time" content="2021-06-03T12:45:13.000Z">
+<meta property="article:modified_time" content="2022-01-14T09:02:24.559Z">
+<meta property="article:author" content="DM">
+<meta property="article:tag" content="Rust">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/rustlogo.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://cat538.github.io/2021/06/03/RustOption/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'RustOption',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-01-14 17:02:24'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if (GLOBAL_CONFIG_SITE.isHome && /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.0.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">19</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">7</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">8</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://gitee.com/cat-of-landlord/my-typora/raw/master/img/rustlogo.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Cat538</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">RustOption</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2021-06-03T12:45:13.000Z" title="Created 2021-06-03 20:45:13">2021-06-03</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2022-01-14T09:02:24.559Z" title="Updated 2022-01-14 17:02:24">2022-01-14</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Rust/">Rust</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="RustOption"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="所有权（ownership）、借用（borrow）和生命周期（lifetime）"><a href="#所有权（ownership）、借用（borrow）和生命周期（lifetime）" class="headerlink" title="所有权（ownership）、借用（borrow）和生命周期（lifetime）"></a>所有权（ownership）、借用（borrow）和生命周期（lifetime）</h2><h3 id="RAII"><a href="#RAII" class="headerlink" title="RAII"></a>RAII</h3><blockquote>
+<p>Rust 强制实行 <a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/Resource_Acquisition_Is_Initialization">RAII</a>（Resource Acquisition Is Initiallization，资源获取即初始化），所以任何对象在离开作用域时，它的析构函数（destructor）就被调用，然后它占有的资源就被释放。</p>
+<p>Rust 中的析构函数概念是通过 <code>Drop</code> trait 提供的。当资源离开作用域，就调用析构 函数。你无需为每种类型都实现 <code>Drop</code>trait，只要为那些需要自己的析构函数逻辑的 类型实现就可以了。</p>
+</blockquote>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="class"><span class="keyword">trait</span> <span class="title">Drop</span></span> &#123;</span><br><span class="line">    <span class="function"><span class="keyword">fn</span> <span class="title">drop</span></span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="所有权"><a href="#所有权" class="headerlink" title="所有权:"></a>所有权:</h3><p><strong>所有权机制针对堆上数据。堆上的数据</strong>在进行赋值（<code>let x = y</code>）或通过值来传递函数参数（<code>foo(x)</code>）的时候，资源的<strong>所有权</strong>（ownership）会发生转移。按照 Rust 的说法，这被称为资源的<strong>移动</strong>（move）。</p>
+<p><strong>注意：</strong>当所有权转移时，数据的可变性可能发生改变。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> immutable_box = <span class="built_in">Box</span>::new(<span class="number">5u32</span>);</span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;immutable_box contains &#123;&#125;&quot;</span>, immutable_box);</span><br><span class="line"><span class="comment">// 可变性错误</span></span><br><span class="line"><span class="comment">//*immutable_box = 4;</span></span><br><span class="line"><span class="comment">// *移动* box，改变所有权（和可变性）</span></span><br><span class="line"><span class="keyword">let</span> <span class="keyword">mut</span> mutable_box = immutable_box;</span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;mutable_box contains &#123;&#125;&quot;</span>, mutable_box);</span><br><span class="line"><span class="comment">// 修改 box 的内容</span></span><br><span class="line">*mutable_box = <span class="number">4</span>;</span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;mutable_box now contains &#123;&#125;&quot;</span>, mutable_box);</span><br></pre></td></tr></table></figure>
+
+
+
+<p>另一个例子：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">   <span class="keyword">let</span> <span class="keyword">mut</span> v = <span class="built_in">vec!</span>[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>];</span><br><span class="line">   <span class="keyword">let</span> h = v[<span class="number">0</span>];</span><br><span class="line"></span><br><span class="line">   <span class="keyword">let</span> <span class="keyword">mut</span> v = <span class="built_in">vec!</span>[point,point,point];</span><br><span class="line">   <span class="keyword">let</span> h = v[<span class="number">0</span>];</span><br><span class="line"><span class="comment">// 这样是不合法的，因为v[0]所有权是v</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 只能获得v[0]的不可变借用：</span></span><br><span class="line"><span class="keyword">let</span> h = &amp;v[<span class="number">0</span>];</span><br><span class="line"><span class="comment">// 或者获得v[0]的可变借用：</span></span><br><span class="line"><span class="keyword">let</span> h = &amp;<span class="keyword">mut</span> v[<span class="number">0</span>];</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="借用"><a href="#借用" class="headerlink" title="借用"></a>借用</h3><blockquote>
+<p>多数情况下，我们更希望能访问数据，同时不取得其所有权。为实现这点，Rust 使用 了<strong>借用</strong>（borrowing）机制。对象可以通过引用（<code>&amp;T</code>）来传递，从而取代通过 值（<code>T</code>）来传递。</p>
+</blockquote>
+<p><strong>另外需要注意的一点是：</strong></p>
+<p>一个数据可以有多个不可变借用，但是在使用数据的不可变借用的同时，不能使用数据的可变借用。</p>
+<p>或者说，同一时间内只允许<strong>一个</strong>可变借用。仅当最后一次使用可变借用<strong>之后</strong>，原始数据才可以再次借用。如下例子：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Point</span></span> &#123; x: <span class="built_in">i32</span>, y: <span class="built_in">i32</span>, z: <span class="built_in">i32</span> &#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fn</span> <span class="title">main</span></span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut</span> point = Point &#123; x: <span class="number">0</span>, y: <span class="number">0</span>, z: <span class="number">0</span> &#125;;</span><br><span class="line">    <span class="keyword">let</span> borrowed_point = &amp;point;</span><br><span class="line">    <span class="keyword">let</span> another_borrow = &amp;point;</span><br><span class="line">    <span class="comment">// 数据可以通过引用或原始类型来访问</span></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;Point has coordinates: (&#123;&#125;, &#123;&#125;, &#123;&#125;)&quot;</span>,</span><br><span class="line">                borrowed_point.x, another_borrow.y, point.z); </span><br><span class="line">    <span class="comment">// 报错！`point` 不能以可变方式借用，因为当前还有不可变借用。</span></span><br><span class="line">    <span class="comment">// let mutable_borrow = &amp;mut point;</span></span><br><span class="line">    <span class="comment">// TODO ^ 试一试去掉此行注释</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 被借用的值在这里被重新使用</span></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;Point has coordinates: (&#123;&#125;, &#123;&#125;, &#123;&#125;)&quot;</span>,</span><br><span class="line">                borrowed_point.x, another_borrow.y, point.z);</span><br><span class="line">    <span class="comment">// 不可变的引用不再用于其余的代码，因此可以使用可变的引用重新借用。</span></span><br><span class="line">    <span class="keyword">let</span> mutable_borrow = &amp;<span class="keyword">mut</span> point;</span><br><span class="line">    <span class="comment">// 通过可变引用来修改数据</span></span><br><span class="line">    mutable_borrow.x = <span class="number">5</span>;</span><br><span class="line">    mutable_borrow.y = <span class="number">2</span>;</span><br><span class="line">    mutable_borrow.z = <span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 报错！不能再以不可变方式来借用 `point`，因为它当前已经被可变借用。</span></span><br><span class="line">    <span class="comment">// let y = &amp;point.y;</span></span><br><span class="line">    <span class="comment">// TODO ^ 试一试去掉此行注释</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 报错！无法打印，因为 `println!` 用到了一个不可变引用。</span></span><br><span class="line">    <span class="comment">// println!(&quot;Point Z coordinate is &#123;&#125;&quot;, point.z);</span></span><br><span class="line">    <span class="comment">// TODO ^ 试一试去掉此行注释</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 正常运行！可变引用能够以不可变类型传入 `println!`</span></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;Point has coordinates: (&#123;&#125;, &#123;&#125;, &#123;&#125;)&quot;</span>,</span><br><span class="line">                mutable_borrow.x, mutable_borrow.y, mutable_borrow.z);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 可变引用不再用于其余的代码，因此可以重新借用</span></span><br><span class="line">    <span class="keyword">let</span> new_borrowed_point = &amp;point;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;Point now has coordinates: (&#123;&#125;, &#123;&#125;, &#123;&#125;)&quot;</span>,</span><br><span class="line">             new_borrowed_point.x, new_borrowed_point.y, new_borrowed_point.z);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Rust-的-Option枚举"><a href="#Rust-的-Option枚举" class="headerlink" title="Rust 的 Option枚举"></a>Rust 的 Option枚举</h2><p>Option是一个枚举类型，定义如下，</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">Option</span></span>&lt;T&gt; &#123;</span><br><span class="line">    <span class="literal">Some</span>(T),</span><br><span class="line">    <span class="literal">None</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="初始化Option："><a href="#初始化Option：" class="headerlink" title="初始化Option："></a>初始化Option：</h3><p>使用<code>let x = Some(T)</code>，编译器可以自动推断x对应的枚举类型，如<code>let some_string = Some(&quot;a string&quot;);</code></p>
+<p>但使用<code>None</code>则不可以如此：</p>
+<p>因为编译器只通过 <code>None</code> 值无法推断出 <code>Some</code> 成员保存的值的类型。</p>
+<p>需要事先声明<code>Option</code>的类型，如<code>let absent_number: Option&lt;i32&gt; = None;</code></p>
+<h3 id="解开Option："><a href="#解开Option：" class="headerlink" title="解开Option："></a>解开Option：</h3><ul>
+<li>可以使用 <code>match</code> 语句来解开 <code>Option</code></li>
+<li>可以使用<code>unwrap()</code>来获得<code>Option</code>中的<code>Some</code>，但如果使用这种方式，获得<code>None</code>的时候程序将会panic</li>
+</ul>
+<h3 id="使用Option-lt-T-gt-为什么比使用空值要好？"><a href="#使用Option-lt-T-gt-为什么比使用空值要好？" class="headerlink" title="使用Option&lt;T&gt; 为什么比使用空值要好？"></a>使用<code>Option&lt;T&gt;</code> 为什么比使用空值要好？</h3><p><strong>Option解决了空值引发的一系列问题？？？</strong></p>
+<p>空值的问题在于当你尝试像一个非空值那样使用一个空值，会出现某种形式的错误？？？</p>
+<p>而因为 <code>Option&lt;T&gt;</code> 和 <code>T</code>（这里 <code>T</code> 可以是任何类型）是不同的类型，编译器不允许像使用一个肯定有效的值那样使用 <code>Option&lt;T&gt;</code>。例如，这段代码不能编译，因为它尝试将 <code>Option&lt;i8&gt;</code> 与 <code>i8</code> 相加：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> x: <span class="built_in">i8</span> = <span class="number">5</span>;</span><br><span class="line"><span class="keyword">let</span> y: <span class="built_in">Option</span>&lt;<span class="built_in">i8</span>&gt; = <span class="literal">Some</span>(<span class="number">5</span>);</span><br><span class="line"><span class="keyword">let</span> sum = x + y;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>当在 Rust 中拥有一个像 <code>i8</code> 这样类型的值时，编译器确保它总是有一个有效的值。我们可以自信使用而无需做空值检查。只有当使用 <code>Option&lt;i8&gt;</code>（或者任何用到的类型）的时候需要担心可能没有值，而编译器会确保我们在使用值之前处理了为空的情况。</p>
+<p>在对 <code>Option&lt;T&gt;</code> 进行 <code>T</code> 的运算之前必须将其转换为 <code>T</code>。通常这能帮助我们捕获到空值最常见的问题之一：假设某值不为空但实际上为空的情况。</p>
+<p>为了拥有一个可能为空的值，你必须要显式的将其放入对应类型的 <code>Option&lt;T&gt;</code> 中。接着，当使用这个值时，必须明确的处理值为空的情况。只要一个值不是 <code>Option&lt;T&gt;</code> 类型，你就 <strong>可以</strong> 安全的认定它的值不为空。<strong>也就是从语法的层面上强制程序员事先对可能出现空值的地方进行处理。</strong></p>
+</blockquote>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Rust/">Rust</a></div><div class="post_share"><div class="social-share" data-image="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/rustlogo.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button button--animated"><i class="fas fa-qrcode"></i> Donate</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/wechatpay-16421448200551.png" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/wechatpay-16421448200551.png"/></a><div class="post-qr-code-desc"></div></li><li class="reward-item"><a href="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/alipay.png" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/alipay.png"/></a><div class="post-qr-code-desc"></div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/06/16/OS%E5%A4%8D%E4%B9%A0/"><img class="prev-cover" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/fire.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">OS复习</div></div></a></div><div class="next-post pull-right"><a href="/2021/05/01/RSA%E8%A7%A3%E6%9E%90/"><img class="next-cover" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/cipher-16421552297502.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">RSA解析</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2021/12/06/Rust%E5%8C%85%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/" title="Rust包管理系统"><img class="cover" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/rustlogo.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-12-06</div><div class="title">Rust包管理系统</div></div></a></div><div><a href="/2021/12/10/Rust%E6%8D%A2%E6%BA%90/" title="Rust工具链+Cargo换源"><img class="cover" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/rustlogo.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-12-10</div><div class="title">Rust工具链+Cargo换源</div></div></a></div><div><a href="/2021/07/05/Rust%E5%AD%A6%E4%B9%A0/" title="Rust学习"><img class="cover" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/rustlogo.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-07-05</div><div class="title">Rust学习</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">DM</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">19</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">7</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">8</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%80%E6%9C%89%E6%9D%83%EF%BC%88ownership%EF%BC%89%E3%80%81%E5%80%9F%E7%94%A8%EF%BC%88borrow%EF%BC%89%E5%92%8C%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%EF%BC%88lifetime%EF%BC%89"><span class="toc-number">1.</span> <span class="toc-text">所有权（ownership）、借用（borrow）和生命周期（lifetime）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#RAII"><span class="toc-number">1.1.</span> <span class="toc-text">RAII</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%80%E6%9C%89%E6%9D%83"><span class="toc-number">1.2.</span> <span class="toc-text">所有权:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%80%9F%E7%94%A8"><span class="toc-number">1.3.</span> <span class="toc-text">借用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Rust-%E7%9A%84-Option%E6%9E%9A%E4%B8%BE"><span class="toc-number">2.</span> <span class="toc-text">Rust 的 Option枚举</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96Option%EF%BC%9A"><span class="toc-number">2.1.</span> <span class="toc-text">初始化Option：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E5%BC%80Option%EF%BC%9A"><span class="toc-number">2.2.</span> <span class="toc-text">解开Option：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8Option-lt-T-gt-%E4%B8%BA%E4%BB%80%E4%B9%88%E6%AF%94%E4%BD%BF%E7%94%A8%E7%A9%BA%E5%80%BC%E8%A6%81%E5%A5%BD%EF%BC%9F"><span class="toc-number">2.3.</span> <span class="toc-text">使用Option&lt;T&gt; 为什么比使用空值要好？</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2022/01/13/IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/" title="IO多路复用"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/fire.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="IO多路复用"/></a><div class="content"><a class="title" href="/2022/01/13/IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/" title="IO多路复用">IO多路复用</a><time datetime="2022-01-13T14:20:33.000Z" title="Created 2022-01-13 22:20:33">2022-01-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/01/12/Cppmove/" title="Cppmove"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/c-programming-icon-14.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Cppmove"/></a><div class="content"><a class="title" href="/2022/01/12/Cppmove/" title="Cppmove">Cppmove</a><time datetime="2022-01-12T05:00:37.000Z" title="Created 2022-01-12 13:00:37">2022-01-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/12/30/epoll/" title="epoll"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/fire.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="epoll"/></a><div class="content"><a class="title" href="/2021/12/30/epoll/" title="epoll">epoll</a><time datetime="2021-12-30T06:51:05.000Z" title="Created 2021-12-30 14:51:05">2021-12-30</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By DM</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

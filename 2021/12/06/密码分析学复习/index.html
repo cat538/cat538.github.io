@@ -1,0 +1,987 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>密码分析学复习 | Cat538</title><meta name="keywords" content="密码学"><meta name="author" content="DM"><meta name="copyright" content="DM"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="密码分析学的复习，包括差分分析、线性分析、Square、广义生日攻击、比特追踪法等...">
+<meta property="og:type" content="article">
+<meta property="og:title" content="密码分析学复习">
+<meta property="og:url" content="https://cat538.github.io/2021/12/06/%E5%AF%86%E7%A0%81%E5%88%86%E6%9E%90%E5%AD%A6%E5%A4%8D%E4%B9%A0/index.html">
+<meta property="og:site_name" content="Cat538">
+<meta property="og:description" content="密码分析学的复习，包括差分分析、线性分析、Square、广义生日攻击、比特追踪法等...">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/cipher-16421552297502.png">
+<meta property="article:published_time" content="2021-12-06T04:42:23.000Z">
+<meta property="article:modified_time" content="2022-01-14T10:14:20.950Z">
+<meta property="article:author" content="DM">
+<meta property="article:tag" content="密码学">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/cipher-16421552297502.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://cat538.github.io/2021/12/06/%E5%AF%86%E7%A0%81%E5%88%86%E6%9E%90%E5%AD%A6%E5%A4%8D%E4%B9%A0/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '密码分析学复习',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-01-14 18:14:20'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if (GLOBAL_CONFIG_SITE.isHome && /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.0.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">19</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">7</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">8</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://gitee.com/cat-of-landlord/my-typora/raw/master/img/cipher-16421552297502.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Cat538</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">密码分析学复习</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2021-12-06T04:42:23.000Z" title="Created 2021-12-06 12:42:23">2021-12-06</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2022-01-14T10:14:20.950Z" title="Updated 2022-01-14 18:14:20">2022-01-14</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%AF%86%E7%A0%81%E5%AD%A6/">密码学</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="密码分析学复习"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="Enigma机"><a href="#Enigma机" class="headerlink" title="Enigma机"></a>Enigma机</h2><h3 id="复杂度分析"><a href="#复杂度分析" class="headerlink" title="复杂度分析"></a>复杂度分析</h3><p>设接线板共有$l$根线，那么共有$2l$个字母被配对，26选$2l$共$C_{26}^{2l}$，即$\frac{26!}{(26-2l)!\times 2l!}$，然后配对：10 对组合不考虑顺序、每个组合如 a - b, b - a 被计算了两次，因此除以 $2^l × l!$  最终为$|K_1|$</p>
+<p>设共有$m$扰频器，从中选$n$个，每个扰频器初始状态有26种可能：$A_m^n\times 26^n$<br>$$<br>|K_1| = \frac{26!}{(26-2l)!\times l!\times 2^l}<br>$$</p>
+<p>$$<br>|K_2| = A_m^n\times 26^n<br>$$</p>
+<ul>
+<li><p>穷搜：</p>
+<p>$|K_1 \times K_2|$</p>
+<blockquote>
+<p><code>e.g.</code></p>
+<p>假设总共拥有10条连接线，5个扰频器，则此时可能的密钥个数</p>
+<p>$\frac{26!}{(26-20)!\times 2^{10}\times 10!}\times P_5^3 \times 26^3\approx 2^{67.1}$</p>
+</blockquote>
+</li>
+<li><p>分治：</p>
+<p>也就是先不管接线板，根据Crib来筛除扰频器设置，然后再恢复接线板</p>
+<p>近似 $|K_1|+|K_2|$</p>
+</li>
+</ul>
+<h2 id="差分攻击"><a href="#差分攻击" class="headerlink" title="差分攻击"></a>差分攻击</h2><p>差分分布表:</p>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211029160632183.png" alt="image-20211029160632183" style="zoom:50%;" />
+
+<h3 id="构造区分器"><a href="#构造区分器" class="headerlink" title="构造区分器"></a>构造区分器</h3><p>找到跨越多轮的高概率差分</p>
+<h3 id="采样"><a href="#采样" class="headerlink" title="采样"></a>采样</h3><p>关键是正确对和错误对的概念：因为差分往往不是概率1的，因此选择满足区分器头部的输入差分，得到的输出差分有可能不满足区分器尾部(正确密钥解密一轮)，这样的对被称为错误对，会对恢复密钥产生影响(噪声)</p>
+<p>下表是<code>正确对</code>和<code>错误对</code>对正确密钥和错误密钥计数器的影响：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>正确密钥</th>
+<th>错误密钥</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>正确对</strong></td>
+<td>一定+1</td>
+<td>平均概率+1</td>
+</tr>
+<tr>
+<td><strong>错误对</strong></td>
+<td>平均概率+1</td>
+<td>平均概率+1</td>
+</tr>
+</tbody></table>
+<h3 id="去噪"><a href="#去噪" class="headerlink" title="去噪"></a>去噪</h3><p>其主要思想为：做密钥恢复攻击时要在区分器尾部之后加上一轮，由于区分器尾部确定，因此密文对的差分只有有限种可能，不满足这些可能的一定是错误对。</p>
+<ul>
+<li>区分器尾部为0：密文差分一定为0</li>
+<li>区分器尾部为$\alpha$：根据<code>DDT</code>查出$\alpha$对应的输出差分(即密文差分)</li>
+</ul>
+<p>在选择满足输入差分的明文对之后，再根据密文输出差分的限制筛除掉错误对，从而降低噪声</p>
+<blockquote>
+<p><code>e.g.</code></p>
+<p><strong>DES S-box 输入差分为4时输出差分有两种可能，则过滤概率为：</strong></p>
+<p>$\frac{2}{16}$</p>
+</blockquote>
+<p>注意过滤之后<strong>不全是正确对</strong>(虽然密文差分只有$1,2,9,a$四种可能，但是用正确密钥解密一轮后差分不一定为2)，<strong>但是比例大大提高</strong>。</p>
+<p><strong>不过事实上利用$a\rightarrow 1,2,9,a$这个条件过滤并没有太大意义，因为那些差分不为$1,2,9,a$的密文对S逆推上去不可能为2，也就不可能给任何密钥计数器+1</strong>，大概只是降低了时间复杂度</p>
+<h3 id="求解相关密钥的方程"><a href="#求解相关密钥的方程" class="headerlink" title="求解相关密钥的方程"></a>求解相关密钥的方程</h3><p>对于差分不为0的S盒，可建立与密钥有关的方程：$S^{-1}(c_1\oplus k)\oplus S^{-1}(c_2\oplus k) = \Delta_{out}$，求解该方程有两种思路，举例如下：</p>
+<p>设得到两组明密文对${(a\rightarrow9),(5\rightarrow6)} and {(9\rightarrow7),(8\rightarrow0)}$</p>
+<p>有S盒逆表如下：</p>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211105161935408.png" alt="image-20211105161935408" style="zoom:50%;" />
+
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211105161424022.png" alt="image-20211105161424022" style="zoom:67%;" />
+
+<p>可以建立方程$R(x\oplus k_1)\oplus R(x^*\oplus k_1) = \beta$两种求解有关S-box方程的方法：</p>
+<ol>
+<li><p>穷举密钥空间</p>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211105162347304.png" alt="image-20211105162347304" style="zoom:50%;" /></li>
+<li><p>利用<em>S</em>盒差分分布表（DDT）</p>
+<p>在构造差分分布表的时候，顺带把<code>DDT[in,out]</code>对应的输入<code>X</code>，记录下来，这样一来$key  = x\oplus X$</p>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/key-recover.png" alt="image-20211105192932547" style="zoom: 67%;" /></li>
+</ol>
+<p>其实就是预记录了异或密钥之前的值，选择明文，加密，得到异或密钥之后的值，两者异或，即得到候选密钥</p>
+<h3 id="信噪比"><a href="#信噪比" class="headerlink" title="信噪比"></a>信噪比</h3><p>对于一条概率$p$的差分路径，采样阶段采$N$个明文对，欲恢复$m$比特密钥，错误密钥满足方程的平均概率记为$P_w$</p>
+<p>定义：$S_N = $正确密钥的计数/错误密钥的平均计数</p>
+<ul>
+<li><p>正确密钥的计数：$Np$</p>
+</li>
+<li><p>错误密钥的计数：$\frac{N\cdot \beta \cdot \alpha}{2^m}$；其中$\beta $为去噪阶段过滤比例，$\alpha$为<strong>去噪之后</strong>，每个对对应的可能候选密钥个数(每个方程的解平均个数)m为恢复比特数</p>
+<ul>
+<li>关于$\alpha$的理解：去噪前差分不为$1,2,9,a$的密文对一定不会满足区分器尾部$2$，因此其对计数器影响一定为0；故去噪排除掉这些之后，剩余的对对应的候选密钥一定是大于1的，具体来说就是看<code>DDT</code>的那一行(如输入差分2的那一行值对应4种可能输出差分)，有几种可能就用总数(cipher4是$2^{4} = 16$)除以几</li>
+</ul>
+</li>
+<li><p>$S_N = \frac{S}{N} = \frac{Np}{N\alpha \beta /2^m} = \frac{p}{p_w}$，其中$p_w$为错误密钥满足方程的平均概率</p>
+</li>
+<li><p>S/N取不同值时，对所选取的对有多少的正确对作出限制，信噪比越高，需要选的对越少</p>
+</li>
+</ul>
+<blockquote>
+<p><code>e.g.</code></p>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211204182717447.png" alt="image-20211204182717447" style="zoom:50%;" />
+
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211204182659334.png" alt="image-20211204182659334" style="zoom:50%;" />
+</blockquote>
+<h2 id="截断差分"><a href="#截断差分" class="headerlink" title="截断差分"></a>截断差分</h2><p>差分<code>0010</code>过S盒出来有四种可能$1、2、9、a$，4种可能过 P置换后变成下图所示四种情况</p>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211029160525508.png" alt="image-20211029160525508" style="zoom: 33%;" />
+
+<p>在这里把不同的地方用<code>*</code>表示就得到了一个概率1成立的一轮截断差分：</p>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211029161543863.png" alt="image-20211029161543863" style="zoom:50%;" />
+
+<p>但如果在这里截断的话，要继续往下扩展就很难了（==因为只要S盒的输入有一个 * 输出差分就无法确定了，变成4个 *==），至多再扩展一轮：<code>0000 0000 0010 0000</code>$\Longrightarrow$<code>00*0 0000 00*0 00*0 00*0</code>$\Longrightarrow$<code>**0* **0* **0* **0*</code>。</p>
+<p><strong>因此过早截断（比方说在第一轮就截断）会损失过多的信息。</strong></p>
+<p>对于上述例子，如果我们不在第1轮就截断成<code>00*0 0000 00*0 00*0 00*0</code>，而是遍历第1轮的所有可能输出差分，再过第2轮置换，可以得到如下结果：</p>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211029162013097.png" alt="image-20211029162013097" style="zoom:50%;" />
+
+<p>这样得到的2轮截断差分输出就从之前的<code>**0* **0* **0* **0*</code> $\Longrightarrow$ <code>*0** 0000 *0** *0**</code>，多了3比特信息</p>
+<p>从2轮截断差分输出<code>*0** 0000 *0** *0**</code>再向下推一轮变成<code>**0* **0* **0* **0*</code>这样就得到了一个3轮截断差分：</p>
+<p><code>输入 0000 0000 0010 0000</code>$\Longrightarrow$<code>输出 **0* **0* **0* **0*</code></p>
+<h3 id="3-1Cipher4截断差分"><a href="#3-1Cipher4截断差分" class="headerlink" title="3+1Cipher4截断差分"></a>3+1Cipher4截断差分</h3><h4 id="构造区分器-1"><a href="#构造区分器-1" class="headerlink" title="构造区分器"></a>构造区分器</h4><p>如上，我们已经构造了一个概率为1的3轮截断差分区分器，在其后加上1轮可以攻击4轮（3+1）Cipher Four 算法</p>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211029163954962.png" alt="image-20211029163954962" style="zoom:67%;" />
+
+<h4 id="采样-1"><a href="#采样-1" class="headerlink" title="采样"></a>采样</h4><p>与普通的差分攻击相同，是选择明文攻击：选取满足输入差分的明文对即可</p>
+<p><strong>关于去噪：</strong></p>
+<p>去噪是根据区分器尾部过S盒之后的一些确定性信息筛除错误对，从而提高信噪比的操作。但是在这个3轮截断差分区分器中，可以看到输出差分为<code>*0** *0** *0** *0**</code>，每个S盒理论上有8种输入，应该没有什么可以利用的有效信息了。。因此没法去噪</p>
+<h4 id="建方程恢复密钥"><a href="#建方程恢复密钥" class="headerlink" title="建方程恢复密钥"></a>建方程恢复密钥</h4><p>遍历密钥空间，对于每个猜测密钥，遍历所有密文对，往上推一轮，推到区分器尾部，<strong>如果不满足区分器输出差分则直接排除</strong>（因为这是一个<strong>概率1</strong>成立 的事件）。</p>
+<p>还有必要设计数器么？还是需要设计数器的。虽然使用截断差分很容易筛除猜错的错误密钥：只要计数器值小于选择明文对的数量，就可以直接排除。但是如果选择明文对数量比较少还是有会出错，所以还是要设置一个计数器。</p>
+<h3 id="1-3-1Cipher4截断差分-重点"><a href="#1-3-1Cipher4截断差分-重点" class="headerlink" title="1+3+1Cipher4截断差分(重点)"></a>1+3+1Cipher4截断差分(重点)</h3><h4 id="构造区分器-2"><a href="#构造区分器-2" class="headerlink" title="构造区分器"></a>构造区分器</h4><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211029180118877.png" alt="image-20211029180118877" style="zoom:67%;" />
+
+<h4 id="采样-2"><a href="#采样-2" class="headerlink" title="采样"></a>采样</h4><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211029180034983.png" alt="image-20211029180034983" style="zoom:50%;" />
+
+<p>因为在头部加了一轮，因此需要选择合适的明文对——这些明文对在一轮加密之后满足输入差分。该如何选择这样的明文呢？</p>
+<p>把区分器头部往上推到第一轮S盒输出，可知若要得到这样的输出，则输入差分应当是<code>0000 0000 **** 0000</code></p>
+<p>因此可以先不关心其它12比特，或者说把12比特先定下来，与中间变化的4比特组成一个结构体（这样的一个结构体包含$2^4$个明文）这样的一个结构体中任意两个差分都是<code>0000 0000 **** 0000</code>。而如果我们是随机选的话，确定n个明文对需要2n的明文量。这样提高了明文的利用率。</p>
+<p>但是中间还有一层密钥，因此还要猜测$K_{0,2}$，在固定了第一轮S盒输出差分之后，对于$K_{0,2}$的每一个猜测，<strong>每一个结构体（16个明文）可以配对配成8个明文对。</strong></p>
+<p>然后对这些明文对加密得到相应的密文对。</p>
+<p><strong>与上一节相同，对于如<code>*0** *0** *0** *0**</code>这样的区分器尾部差分很难去噪</strong></p>
+<h4 id="建方程恢复密钥-1"><a href="#建方程恢复密钥-1" class="headerlink" title="建方程恢复密钥"></a>建方程恢复密钥</h4><p>以<code>0000 0000 0010 0000</code>$\Longrightarrow$<code>*0** *0** *0** *0**</code>的三轮区分器，在其头尾各加一轮为例：</p>
+<p><strong>(这个例子说明了正确率的判断依赖于$K_{0,2}$的猜测)</strong></p>
+<p>设选择明文对的数量为$x$，尝试恢复$K_{0,2}$和$K_{5,0}$（当然可以直接恢复$K_5$）</p>
+<ul>
+<li>如果$K_{0,2}$猜对——则得到的都是正确对<ul>
+<li>若$K_{5,0}$猜对，则密文对的最高位4比特一轮解密后，以概率1满足区分器尾部<code>*0**</code>。在这种情况下（**$K_{0,2}$猜对 且 $K_{5,0}$猜对<strong>）$K_{5,0}$的计数器数值</strong>一定等于**$x$；</li>
+<li>若$K_{5,0}$猜错，则密文对的最高位4比特一轮解密后，以随机概率（$\frac{1}{2}$）满足区分器尾部，则$K_{5,0}$的计数器数值大概率<strong>小于</strong>$x$（其期望值是$\frac{x}{2}$）</li>
+</ul>
+</li>
+<li>如果$K_{0,2}$猜错——则得到的都是错误对<ul>
+<li>在这种情况下，无论$K_{5,0}$是否猜对，往上解密一轮，平均意义下应该是以随机概率（$\frac{1}{2}$）满足区分器尾部差分。所以，对于一个$K_{0,2}$猜测，如果遍历$K_{5,0}$，所有计数器的值均小于$x$，<strong>则说明$K_{2}$一定猜错了</strong></li>
+</ul>
+</li>
+</ul>
+<p>综上所述，我们可以恢复$K_5$16比特和$K_0$的4比特$K_{0,2}$，共计20比特密钥</p>
+<h2 id="回飞棒攻击"><a href="#回飞棒攻击" class="headerlink" title="回飞棒攻击"></a>回飞棒攻击</h2><p>是一种<strong>选择明密文攻击</strong></p>
+<p>其过程如图所示：</p>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211030172827335.png" alt="image-20211030172827335" style="zoom: 33%;" />
+
+<ul>
+<li>选择明文$(m1,m2)$满足$m_1\oplus m_2 = \alpha$，往下推一轮$x_1 \oplus x_2 = \beta$以概率$p_1$成立</li>
+<li>A是一个线性变换，因此$y_1 \oplus y_2 = \beta$以概率$p_1$成立</li>
+<li>选择密文$(c_3,c_4)$满足$c_1\oplus c_3 = c_2\oplus c_4 = \gamma$，往上推一轮$y_1 \oplus y_3 = \Phi,~y_2 \oplus y_4 = \Phi$分别以概率$q$成立，这一步综合概率是$q^2$</li>
+<li>在y这一层有$\Longrightarrow y_1\oplus y_3 \oplus y_2 \oplus y_4 = \Phi \oplus \Phi = 0 \Longrightarrow y_1\oplus y_2  = y_3 \oplus y_4$</li>
+<li>往上推一层$x_1\oplus x_2  = x_3 \oplus x_4  = \beta \Longrightarrow m_3 \oplus m_4 = \alpha$箭头右边以概率$p_2$成立</li>
+</ul>
+<p>但上述过程中有两个地方可以改进：</p>
+<ul>
+<li>要使得$y_1\oplus y_3 \oplus y_2 \oplus y_4  = 0$，只需要$y_1\oplus y_3 = y_2 \oplus y_4$，不一定非要等于$\Phi$，或者说$\Phi$可以有多种取值。因此在确定输入差分为$\alpha$之后：选择满足输入差分的明文$m_1\oplus m_2 = \alpha$，得到相应的密文；然后选择密文$(c_3,c_4)$满足$c_1\oplus c_3 = c_2\oplus c_4 = \gamma$各自向上解密一轮，这里只要满足$y_1\oplus y_3 = y_2 \oplus y_4$，而无需是一个特定值，故这里的概率由原来$Pr = q^2:(\gamma\rightarrow\Phi)^2$变为$Pr = \sum q_i^2:\sum (\gamma\rightarrow\Phi_i)^2$（就是取<code>DDT</code>种$\gamma$那一行所有概率平方求和）</li>
+<li>类似的，$\beta$也不是一个固定的取值，这样一来，$p_1,p_2$的概率<strong>也变为所有的路线概率总和</strong>：$p_1p_2 = \sum Pr(\alpha\rightarrow \beta_i)Pr(\beta_i \rightarrow \alpha)$</li>
+</ul>
+<h3 id="区分器"><a href="#区分器" class="headerlink" title="区分器"></a>区分器</h3><p>（以未改进版为例：）选择明文$(m1,m2)$满足$m_1\oplus m_2 = \alpha$，并得到相应的密文$（c_1,c_2）$然后选择密文$(c_3,c_4)$满足$c_1\oplus c_3 = c_2\oplus c_4 = \gamma$向上上解密两轮得到$(m_3,m_4)$，则有：</p>
+<ul>
+<li>如果是随机置换：$m_3 \oplus m_4 = \alpha$以随机概率成立</li>
+<li>如果是加密算法，则以概率$p_1 q^2 p_2$成立</li>
+</ul>
+<h3 id="增强的回飞棒攻击"><a href="#增强的回飞棒攻击" class="headerlink" title="增强的回飞棒攻击"></a>增强的回飞棒攻击</h3><p>把选择明密文改成了选择明文</p>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211031155143025.png" alt="image-20211031155143025" style="zoom:50%;" />
+
+<ul>
+<li>选择明文$(m1,m2)$满足$m_1\oplus m_2 = \alpha$，$m_3\oplus m_4 = \alpha$    </li>
+<li>往下推一轮$x_1 \oplus x_2 = \beta~~, ~~x_3 \oplus x_4 = \beta$同时成立的概率：$p^2$成立，若条件满足，则有$x_1 \oplus x_2 \oplus x_3 \oplus x_4 = 0$</li>
+<li>过A之后必有$y_1 \oplus y_3 = y_2 \oplus y_4$，$y_1 \oplus y_3 = \Phi$的概率为随机概率$2^{-n}$</li>
+<li>再推到$c_1\oplus c_3 = c_2\oplus c_4 = \gamma$，概率$q^2$成立</li>
+</ul>
+<p>如果是随机概率：$2^{-2n}$，如果存在高概率差分路线上述概率为$p^2q^22^{-n}$</p>
+<p>因此需要$pq&gt;2^{-\frac{n}{2}}$，当然可以按照上一节中的方法提升概率，同理。</p>
+<h3 id="矩形攻击"><a href="#矩形攻击" class="headerlink" title="矩形攻击"></a>矩形攻击</h3><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211031160917397.png" alt="image-20211031160917397" style="zoom:50%;" />
+
+
+
+<h2 id="不可能差分"><a href="#不可能差分" class="headerlink" title="不可能差分"></a>不可能差分</h2><p>对<em>r</em>轮加密的密码算法进行不可能差分分析的流程：</p>
+<ul>
+<li>寻找<em>r</em>-1轮不可能差分$\Delta_{in}\nrightarrow \Delta_{out}$</li>
+<li>选择满足输入差分为$\Delta_{in}$的明文对($P,P\oplus\Delta_{in}$)，并进行<em>r</em>轮加密，所得密文对记为$C<del>and</del>C^*$</li>
+<li>根据 $\Delta_{out}$对密文对进行筛选（去噪）</li>
+<li>猜测第$r$轮轮密钥$K_r$，对$C<del>and</del>C^*$解密一轮到区分器尾部，所得的中间值记为$D<del>and</del>D^*$，<em><em>判断$D\oplus D^</em> =\Delta_{out} $</em>* 是否成立，若成立，则对应的猜测值一定是错误密钥，将其从密钥空间中排除；</li>
+<li>重复上述步骤，密钥空间中只有一个密钥为止，该密钥即是正确密钥</li>
+</ul>
+<h3 id="构造区分器（重点）"><a href="#构造区分器（重点）" class="headerlink" title="构造区分器（重点）"></a>构造区分器（重点）</h3><p>不可能差分大部分时间在讲搜索不可能差分路径的$\mu$算法。</p>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211030165432181.png" alt="image-20211030165432181" style="zoom: 50%;" />
+
+<p>下图展示了一个不可能差分路径：输入为$(\alpha,0)$输出为$(0,\alpha)$，从上往下推两轮得到$(\alpha,\beta)$其中$\beta$为非零但取值不确定差分。从下往上推三轮则可以得到$(\alpha\oplus \delta,\gamma)$其中$\delta$为非零但取值不确定差分，其与$\alpha$肯定不同，故推出矛盾，得到一条不可能差分路径。</p>
+<p>接下来是自动搜索$\mu$算法，只与算法结构有关，与算法所采用的具体S盒无关：</p>
+<p><strong>5种符号：</strong></p>
+<table>
+<thead>
+<tr>
+<th>输入</th>
+<th>对应差分形式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>0差分</td>
+</tr>
+<tr>
+<td>1</td>
+<td>非零且取值不确定的差分</td>
+</tr>
+<tr>
+<td>1*</td>
+<td>非零且取值固定的差分(推导中的输入状态)</td>
+</tr>
+<tr>
+<td>2*</td>
+<td>$1^* \oplus 1$，即取值非$1^*$的差分(可能为0)</td>
+</tr>
+<tr>
+<td>3，？</td>
+<td>不确定差分</td>
+</tr>
+</tbody></table>
+<p><strong>矛盾集合：</strong></p>
+<table>
+<thead>
+<tr>
+<th>集合</th>
+<th>矛盾集合</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>$1$，$1^*$</td>
+</tr>
+<tr>
+<td>1</td>
+<td>$0$，</td>
+</tr>
+<tr>
+<td>1*</td>
+<td>$0$，$1^*$，$2^*$</td>
+</tr>
+<tr>
+<td>2*</td>
+<td>$1*$</td>
+</tr>
+</tbody></table>
+<p><strong>传播规则：</strong></p>
+<table>
+<thead>
+<tr>
+<th>集合</th>
+<th>过S盒</th>
+<th>异或运算</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>0</td>
+<td>$0\oplus s = s$(其中$s$代表${0,1,1^*,2^*,3}$，下同)</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>$1\oplus 1 = 3,<del>1\oplus 1^* = 2^*,</del>1\oplus 2^* = 3$</td>
+</tr>
+<tr>
+<td>1*</td>
+<td>1</td>
+<td>$1^<em>\oplus 1^</em> = 3,~~1^<em>\oplus 2^</em> = 3$,(==注意这里的理解==)</td>
+</tr>
+<tr>
+<td>2*</td>
+<td>3</td>
+<td>$2^<em>\oplus 2^</em> = 3$</td>
+</tr>
+</tbody></table>
+<p><font color=red>推导下列结构不可能差分：</font></p>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211105133406544.png" alt="image-20211105133406544" style="zoom:50%;" />
+
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211031191209225.png" alt="image-20211031191209225" style="zoom: 50%;" />
+
+<p>其大致过程如下：</p>
+<p>输入差分遍历$[0,1,1*,2*]$，往下推到$(3,3)$之前</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">const</span> string&amp; l : DIFF) &#123;			<span class="comment">// 遍历0，1，1*，2*</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">const</span> string&amp; r : DIFF) &#123;		<span class="comment">// 遍历0，1，1*，2* </span></span><br><span class="line">        string _l = l, _r = r, tmp;</span><br><span class="line">        ret.<span class="built_in">clear</span>();</span><br><span class="line">        <span class="keyword">while</span>(<span class="literal">true</span>) &#123;</span><br><span class="line">            tmp = _r;</span><br><span class="line">            _r = _xor(_sfn(_r), _l);</span><br><span class="line">            _l = tmp;</span><br><span class="line">            <span class="keyword">if</span> (_l == <span class="string">&quot;3&quot;</span> &amp;&amp; _r == <span class="string">&quot;3&quot;</span>) <span class="keyword">break</span>;</span><br><span class="line">            ret.<span class="built_in">emplace_back</span>(_l, _r);</span><br><span class="line">        &#125;</span><br><span class="line">        res.<span class="built_in">emplace_back</span>(ret);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出差分遍历$[0,1,1*,2*]$，往上推到$(3,3)$之前</p>
+<p>把输入输出差分$(\alpha,\beta)$推出来的表错位对比，根据矛盾关系判断中间状态是否存在矛盾，如果存在矛盾，则得到一条$\alpha\rightarrow\beta$的不可能差分路径</p>
+<h3 id="采样-3"><a href="#采样-3" class="headerlink" title="采样"></a>采样</h3><p>选择满足输入差分的明文对，得到相应密文，采样的时候可以类似截断差分</p>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211031171503176.png" alt="image-20211031171503176" style="zoom:50%;" />
+
+<p>与截断略有不同之处在于这里$\alpha$可以取遍所有非0，故这里对于$2^{\frac{b}{2}}$个消息，共$2^{\frac{b}{2}}\times 2^{\frac{b}{2}-1} = 2^{b-1}$对</p>
+<h3 id="去噪-1"><a href="#去噪-1" class="headerlink" title="去噪"></a>去噪</h3><p>确定输出差分后（或输出差分某一部分），可以根据已知的部分进行去噪，与普通的差分分析相同，</p>
+<h3 id="恢复密钥"><a href="#恢复密钥" class="headerlink" title="恢复密钥"></a>恢复密钥</h3><ul>
+<li>对于正确的猜测，不可能推到区分器尾部；</li>
+<li>对于错误的猜测，以随机概率推到区分器尾部</li>
+</ul>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211031171315141.png" alt="image-20211031171315141" style="zoom:67%;" />
+
+
+
+<h2 id="线性攻击"><a href="#线性攻击" class="headerlink" title="线性攻击"></a>线性攻击</h2><h3 id="区分器-1"><a href="#区分器-1" class="headerlink" title="区分器"></a>区分器</h3><p>找到一个r轮的线性逼近式$(dm \oplus dy) \oplus (dk_0\oplus dk_1\oplus dk_2) = 0$，偏差为正表示输入内积=输出内积为高概率事件(大于1/2)； 为负反之</p>
+<h3 id="采样-4"><a href="#采样-4" class="headerlink" title="采样"></a>采样</h3><p>线性分析是已知明文攻击</p>
+<h3 id="恢复密钥-1"><a href="#恢复密钥-1" class="headerlink" title="恢复密钥"></a>恢复密钥</h3><h4 id="算法1"><a href="#算法1" class="headerlink" title="算法1"></a>算法1</h4><p>找到线性逼近式：$(dm \oplus dy) \oplus (dk_0\oplus dk_1\oplus dk_2) = 0$及其偏差</p>
+<ul>
+<li>根据已知明文$x$得到密文$y$，并统计$(dm \oplus dy) = 0$的计数</li>
+<li>通过该计数恢复密钥的1比特信息(根据偏差和统计情况分情况)：<ul>
+<li>偏差为正(说明$(dm \oplus dy)$与$(dk_0\oplus dk_1\oplus dk_2)$以大于$\frac{1}{2}$概率相等)：<ul>
+<li>计数大于$N/2$，则有$(dk_0\oplus dk_1\oplus dk_2) = 0$；</li>
+<li>计数小于$N/2$，则有$(dk_0\oplus dk_1\oplus dk_2) = 1$；</li>
+</ul>
+</li>
+<li>偏差为负(说明$(dm \oplus dy)$与$(dk_0\oplus dk_1\oplus dk_2)$以大于$\frac{1}{2}$概率不等)：<ul>
+<li>计数大于$N/2$，则有$(dk_0\oplus dk_1\oplus dk_2) = 1$；</li>
+<li>计数小于$N/2$，则有$(dk_0\oplus dk_1\oplus dk_2) = 0$；</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="算法2"><a href="#算法2" class="headerlink" title="算法2"></a>算法2</h4><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211202010650531.png" alt="image-20211202010650531" style="zoom:50%;" />
+
+<blockquote>
+<p>有位同学之前提了一个线性分析算法2的问题，就是为什么正确密钥的判断依据是看偏差大的而不是和推导分析出来的$ \epsilon$接近的，今天请教了一下其他老师，说线性和差分类似，都是找到偏差或概率较大的以后，在猜测密钥阶段就按照偏离程度大小来排序了，偏差大的对应正确密钥。主要因为我们推导出来的偏差并不是全部情况，而且只是一个期望的结果，偏差本身也是存在分布的，认为远离随机现象倾向于正确</p>
+</blockquote>
+<h3 id="堆积引理"><a href="#堆积引理" class="headerlink" title="堆积引理"></a>堆积引理</h3><p>记$X_i (1≤i≤n)$为独立随机变量，且$X_i=0$的概率为$p_i$，$X_i=1$的概率为$1-p_i$</p>
+<p>则$X_1\oplus X_2\oplus \cdots \oplus X_n = 0$成立的概率为：<br>$$<br>\frac {1}{2}+2^{n-1} \prod_{i =1}^{n}(p_i-\frac{1}{2})<br>$$<br>直接计算偏差：<br>$$<br>\epsilon  = 2^{n-1}\prod_{i = 1}^n\epsilon_i<br>$$</p>
+<h3 id="长轮数线性逼近式"><a href="#长轮数线性逼近式" class="headerlink" title="长轮数线性逼近式"></a>长轮数线性逼近式</h3><p>掩码传播规则：</p>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="D:\software\Typora\Image_repo\image-20211203145655379.png" alt="image-20211203145655379" style="zoom:50%;" />
+
+<h3 id="复杂度分析-1"><a href="#复杂度分析-1" class="headerlink" title="复杂度分析"></a>复杂度分析</h3><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211112220632236.png" alt="image-20211112220632236" style="zoom:50%;" />
+
+<ul>
+<li>数据复杂度：<strong>选取明文的数量与区分器偏差的-2次方成正比</strong></li>
+<li>时间复杂度：$2^4\times 2^{11}\times \frac{1}{4}\times \frac{1}{5}$是选择数据规模为$2^{11}$，穷举$K_{5,0}$，乘以$2^4$只对第一个S盒攻击，乘$\frac{1}{4}$，4+1轮，需要猜4比特密钥$K_{5,0}$回推1轮，故乘以$\frac{1}{5}$</li>
+<li>存储复杂度：每个密钥需要一个11比特(数据规模$2^{11}$)的计数器</li>
+</ul>
+<h2 id="差分-线性攻击"><a href="#差分-线性攻击" class="headerlink" title="差分-线性攻击"></a>差分-线性攻击</h2><ul>
+<li>在线性分析中，利用<strong>堆积引理</strong>把短轮数、高概率线性特征级联；在差分-线性中，我们考虑把差分特征和线性特征级联</li>
+</ul>
+<h3 id="1994年模型"><a href="#1994年模型" class="headerlink" title="1994年模型"></a>1994年模型</h3><p>事实上是选了一个截断差分，保证差分尾部的相关比特为0，即差分部分的概率为1，因此整个区分器的概率只考虑线性部分即可；仍然是堆积引理，算两路偏差的总偏差</p>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211128220439752.png" alt="image-20211128220439752" style="zoom:50%;" />
+
+<p>在线性壳之前加一个差分</p>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211128192735743.png" alt="image-20211128192735743" style="zoom:50%;" />
+
+<p>6轮区分器：</p>
+<ul>
+<li>选择满足输入差分$\Delta_{in}$的明文对，加密得到密文对</li>
+<li>计算密文对的差分与输出掩码的内积<ul>
+<li>如果为随机置换，则结果为0的概率为1/2</li>
+<li>如果为DES算法，则结果为0的概率为$1/2+2\epsilon^2$</li>
+</ul>
+</li>
+</ul>
+<h3 id="2002年模型"><a href="#2002年模型" class="headerlink" title="2002年模型"></a>2002年模型</h3><p>Shamir等人在2002年对94年模型的中间状态（差分与线性壳级联处）做了调整，头部概率不再是1</p>
+<p>在放宽了对差分的要求($p = 1\Longrightarrow p = p’$)之后，可以做更长轮数的攻击 </p>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211128205002585.png" alt="image-20211128205002585" style="zoom:50%;" />
+
+<p>其中：设差分路径概率为$p’$</p>
+<ul>
+<li>则若$\lambda_p\cdot \Delta_{out} = 0$，则$\frac{1}{2}+p = \frac{1}{2}+p’/2$</li>
+<li>若$\lambda_p\cdot \Delta_{out} = 1$，则$\frac{1}{2}+p = \frac{1}{2}-p’/2$</li>
+</ul>
+<h4 id="构造区分器-3"><a href="#构造区分器-3" class="headerlink" title="构造区分器"></a>构造区分器</h4><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211128210953363.png" alt="image-20211128210953363" style="zoom:33%;" />
+
+<p>区分器的概率为$\frac{1}{2} + 4\epsilon^2p$，其中$\epsilon$为线性逼近式的偏差，$p$是差分区分器尾部$\Delta_{out}\cdot \lambda_T = 0$的偏差，设差分区分器概率为$p’$，则$\frac{1}{2}+p = p’+\frac{1}{2}(1-p’)$</p>
+<h4 id="区分攻击"><a href="#区分攻击" class="headerlink" title="区分攻击"></a>区分攻击</h4><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211128210857473.png" alt="image-20211128210857473" style="zoom: 50%;" />
+
+<p>关于这里不是$|n/N-1/2|$的理解：对于差分-线性攻击，选定差分和掩码之后，线性壳的输入$\lambda p\cdot \Delta_{out}$为0是定下来的(<strong>本例中</strong>一定为0，<strong>这1比特信息对应的线性分析算法1中的密钥1比特信息</strong>)<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211128235809475.png" alt="image-20211128235809475" style="zoom:50%;" />，而又因为该线性壳(即$dm\oplus dy = 0$)的偏差是正的(==偏差为正：输入内积=输出内积的概率大于1/2；偏差为负反之==)，因此预期输出掩码与密文的内积值应当是0比较多</p>
+<p>举两个没用的例子帮助理解一下：</p>
+<ul>
+<li>如果改成更多轮差分区分器，线性壳不变，则有可能得到$\lambda p\cdot \Delta_{out}$一定为1，则线性壳输出期望1更多</li>
+<li>如果改成偏差为负的线性壳，差分区分器不变(即$\lambda p\cdot \Delta_{out} = 0$)，则线性壳输出期望1更多</li>
+</ul>
+<p>但无论哪种情况（$\lambda p\cdot \Delta_{out} = 0$或$\lambda p\cdot \Delta_{out} =1$），在线性掩码和差分确定后，注意统计结果及其期望计数即可</p>
+<p><strong>回忆线性分析的算法1：</strong></p>
+<blockquote>
+<p>在线性分析中，我们找到线性逼近式：$(dm \oplus dy) \oplus (dk_0\oplus dk_1\oplus dk_2) = 0$及其偏差</p>
+<ul>
+<li>然后统计$(dm \oplus dy) = 0$的计数</li>
+<li>通过该计数恢复密钥的1比特信息：<ul>
+<li>偏差为正(说明$(dm \oplus dy)$与$(dk_0\oplus dk_1\oplus dk_2)$以大于$\frac{1}{2}$概率相等)：<ul>
+<li>计数大于$N/2$，则有$(dk_0\oplus dk_1\oplus dk_2) = 0$；</li>
+<li>计数小于$N/2$，则有$(dk_0\oplus dk_1\oplus dk_2) = 1$；</li>
+</ul>
+</li>
+<li>偏差为负(说明$(dm \oplus dy)$与$(dk_0\oplus dk_1\oplus dk_2)$以大于$\frac{1}{2}$概率不等)：<ul>
+<li>计数大于$N/2$，则有$(dk_0\oplus dk_1\oplus dk_2) = 1$；</li>
+<li>计数小于$N/2$，则有$(dk_0\oplus dk_1\oplus dk_2) = 0$；</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<h4 id="8轮DES密钥恢复"><a href="#8轮DES密钥恢复" class="headerlink" title="8轮DES密钥恢复"></a>8轮DES密钥恢复</h4><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211206114259149.png" alt="image-20211206114259149" style="zoom:50%;" />
+
+<p>==需要注意的是：在密钥恢复攻击中，DES的 6X8 = 48 比特密钥影响的是上一轮的右半支（左半支直接拉线）==</p>
+<h4 id="复杂度分析-2"><a href="#复杂度分析-2" class="headerlink" title="复杂度分析"></a>复杂度分析</h4><p>针对上述8轮DES：</p>
+<ul>
+<li><strong>时间复杂度：</strong>$2^{14.81}\times 2^6 / 64 = 2^{14.81}~~8-round-enc$</li>
+<li><strong>数据复杂度：</strong>$2\times |\epsilon|^{-2} = 2^{14.81}$个明文</li>
+<li><strong>存储复杂度：</strong>$2^6\times 14$；密钥计数器</li>
+</ul>
+<h2 id="零相关线性攻击"><a href="#零相关线性攻击" class="headerlink" title="零相关线性攻击"></a>零相关线性攻击</h2><p>利用的是与密钥无关的，相关度一定为0的线性壳$\alpha \rightarrow \beta $，即$&lt;\alpha,m&gt;\oplus &lt;\beta, y&gt; = 0$</p>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211112221723940.png" alt="image-20211112221723940" style="zoom:50%;" />
+
+<p>注意这里与不可能差分不同：</p>
+<ul>
+<li><p>不可能差分的含义：对于确定输入差分，正确加密情况下，以概率0得到输出差分。因此只有错误密钥才会使得不可能差分成立。</p>
+</li>
+<li><p>在零相关线性中，正确密钥才满足零线性相关特性。</p>
+</li>
+</ul>
+<p>与不可能差分类似，分别从上往下，从下往上推得到两条概率为1的线性掩码；两条路线在中间矛盾</p>
+<p>以概率1成立的事件：</p>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="D:\software\Typora\Image_repo\image-20211203145655379.png" alt="image-20211203145655379" style="zoom:50%;" />
+
+<p>注意第三条线性映射，在AES分析中用到</p>
+<p><font color = red>分支运算和线性映射为什么？？？？</font></p>
+<h3 id="AES零相关线性壳"><a href="#AES零相关线性壳" class="headerlink" title="AES零相关线性壳"></a>AES零相关线性壳</h3><p>先回忆一下AES的结构：</p>
+<ul>
+<li>AK：在<code>Initial round</code>先进行一次AK（不计入总轮数）</li>
+<li>S</li>
+<li>SR：第1行左移0，第2行左移1，第3行左移2，第4行左移3</li>
+<li>MC：分别用MC矩阵与每一列相乘，<strong>最后一轮没有MC</strong></li>
+</ul>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211203152733757.png" alt="image-20211203152733757" style="zoom:50%;" />
+
+<p>利用这个区分器做区分攻击：</p>
+<ol>
+<li>已知$2^n$个明密文对$(x,y)$(==注意这里是全明文空间==)；零相关线性壳$(\Gamma,0,0,0)\rightarrow (\Gamma’,0,0,0)$如图示</li>
+<li>计算输入掩码与x，输出掩码与y的内积，统计相等的数量</li>
+<li>如果为$2^{n-1}$，则判断为4轮AES，否则为RP</li>
+</ol>
+<p><strong>考虑如何降低复杂度？如何用更少的明文计算相关度？</strong></p>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211205143109262.png" alt="image-20211205143109262" style="zoom: 33%;" />
+
+<p>如图所示可以得$T_{10} = T_{01}\Longrightarrow T_{00} = T_{11}$，故如果要计数$\alpha \cdot x\oplus \beta \cdot y = 0$，则在给定$\alpha \cdot x = 0$得条件下，只需要计数一半</p>
+<p>故在明文的由$2^n$明文$\Longrightarrow$选择$2^{n-1}$明文：满足$\alpha \cdot x = 0,\alpha\cdot x = 1,\beta\cdot y = 0,\beta \cdot y =1$，四个条件之一</p>
+<h3 id="1-4-1AES密钥恢复"><a href="#1-4-1AES密钥恢复" class="headerlink" title="1+4+1AES密钥恢复"></a>1+4+1AES密钥恢复</h3><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211205144907535.png" alt="image-20211205144907535" style="zoom: 50%;" />
+
+<h3 id="复杂度分析-3"><a href="#复杂度分析-3" class="headerlink" title="复杂度分析"></a>复杂度分析</h3><p>攻击<code>AES192</code>，(因为在头部和尾部各加了一轮，无法用上述改进方法降低复杂度)</p>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/BF765068-8E21-4AB9-A715-0C73976731FB.png" alt="BF765068-8E21-4AB9-A715-0C73976731FB" style="zoom: 33%;" />
+
+
+
+<h2 id="Square攻击"><a href="#Square攻击" class="headerlink" title="Square攻击"></a>Square攻击</h2><p>考虑的是集合特性：即对一系列状态取值求和；</p>
+<h3 id="AES3轮区分器"><a href="#AES3轮区分器" class="headerlink" title="AES3轮区分器"></a>AES3轮区分器</h3><p>通过选择满足某种特性的明文集合，追踪该集合特性在多轮加密过程中的传播情况，通过轮之后集合特性的不随机现象(例如集合求和为0)，将一个密码算法与随机置换区分开</p>
+<ul>
+<li>只要算法采用的变换是双射，与算法部件的具体取值关系不大</li>
+</ul>
+<p><strong>定义在$\mathbb F_{2^n}$上的三种集合特性：</strong></p>
+<table>
+<thead>
+<tr>
+<th>集合</th>
+<th>特性</th>
+<th>举例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>活跃集A(Active)</strong></td>
+<td>遍历$\mathbb F_{2^n}$所有元素</td>
+<td>$\mathbb F_{2^3}$上的集合${0,1,2,3,4,5,6,7}$</td>
+</tr>
+<tr>
+<td><strong>稳定集C(Constant)</strong></td>
+<td>集合中所有元素相同为常数c</td>
+<td>$\mathbb F_{2^3}$上的集合${1,1,1,1,1,1,1,1}$</td>
+</tr>
+<tr>
+<td><strong>平衡集B(Balanced)</strong></td>
+<td>满足求和=0</td>
+<td>$\mathbb F_{2^3}$上的集合${0,1,0,1,2,4,6,0}$</td>
+</tr>
+</tbody></table>
+<ul>
+<li>活跃集A和稳定集B都是平衡集</li>
+</ul>
+<p><strong>集合传播规则：</strong></p>
+<ul>
+<li><p>过线性变换(拉线、异或密钥等双射)：三种集合特性保持</p>
+</li>
+<li><p>过可逆S盒：活跃集A、稳定集C保持；平衡集B不确定</p>
+</li>
+<li><p>两个集合求和：</p>
+<ul>
+<li><p>活跃+活跃 = 平衡</p>
+</li>
+<li><p>活跃+稳定 = 活跃</p>
+</li>
+<li><p>平衡+平衡 = 平衡</p>
+<table>
+<thead>
+<tr>
+<th>集合</th>
+<th align="left">求和</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>A+A</td>
+<td align="left">B</td>
+</tr>
+<tr>
+<td>A+B</td>
+<td align="left">B</td>
+</tr>
+<tr>
+<td>A+C</td>
+<td align="left">A</td>
+</tr>
+<tr>
+<td>B+B</td>
+<td align="left">B</td>
+</tr>
+<tr>
+<td>B+C</td>
+<td align="left">B</td>
+</tr>
+<tr>
+<td>C+C</td>
+<td align="left">C</td>
+</tr>
+</tbody></table>
+</li>
+</ul>
+</li>
+</ul>
+<p>利用上述规则构造3轮AES区分器：输入为256个明文构成的集合(第一字节遍历，其它字节固定)</p>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211203162544274.png" alt="image-20211203162544274" style="zoom: 33%;" />
+
+<p>即在输入满足第1字节为遍历集的时候，3轮区分器尾部16字节应该都是平衡集</p>
+<h3 id="采样-5"><a href="#采样-5" class="headerlink" title="采样"></a>采样</h3><p>选择明文攻击，选择满足输入集合的明文，按PPT的说法这里把每256个明文看作一个结构体</p>
+<h3 id="恢复密钥-2"><a href="#恢复密钥-2" class="headerlink" title="恢复密钥"></a>恢复密钥</h3><p>很显然可以利用上述3轮区分器做区分攻击，如果得到密文的128比特异或起来等于0的话，则判断为3轮AES(注意这里最后一轮有MC)</p>
+<h4 id="3-1轮密钥恢复"><a href="#3-1轮密钥恢复" class="headerlink" title="3+1轮密钥恢复"></a>3+1轮密钥恢复</h4><p>可以进一步在区分器之后加上一轮，进行密钥恢复攻击：</p>
+<ol>
+<li><p>在区分器尾部加上1轮(SB，SR，AK，注意没有MC)，并把明文集合加密得到密文集合(<strong>256个密文</strong>)</p>
+</li>
+<li><p>猜测$K_{0}^4$，即第4轮、第1字节密文对应位置密钥；密文集合第1字节往上解密1轮到区分器尾部，并计算该字节求和(256个求和)</p>
+</li>
+<li><p>如果求和$s = 0$，则猜测的密钥作为一个候选，否则淘汰</p>
+<ul>
+<li><p>对正确的$K_0^4$，$Pr(s = 0) = 1$</p>
+</li>
+<li><p>对错误的$K_0^4$，$Pr(s = 0)$以随机概率$\frac{1}{2^8}$(1 字节为0，即8个比特全为0)</p>
+</li>
+</ul>
+</li>
+<li><p>重新选一个结构体，重复上述过程，直到$K_0^4$唯一确定</p>
+</li>
+<li><p><strong>成功率分析</strong>：经过上述一个结构体的过滤，正确密钥保留下来，错误密钥以$1/2^8$概率被保留下来，因此错误密钥期望为1；</p>
+</li>
+</ol>
+<p>经过N个结构体过滤：剩余错误$K_0^4$的个数为$(2^8-1)\times (\frac{1}{2^8})^N$，在这个例子中，只需要N=2即可确定正确密钥，类似地可以恢复16字节的$K^4$</p>
+<p>若要恢复第4轮128比特(16字节)密钥：</p>
+<ul>
+<li><p><strong>数据复杂度</strong>：$2^8\times 2$；根据分析需要选2个结构体</p>
+</li>
+<li><p><strong>时间复杂度</strong>：$16\times (2^8\times 2^8+2^8\times 2)~\approx ~ 2^{20} S-Box = 2^{20}/(16\times 4)\approx 2^{14} enc$</p>
+<p>恢复16字节密钥，因此外层16，对于每个字节密钥：第1个结构体需要遍历猜测密钥，每个密钥$2^8$明文，而第2个结构体只需要对筛剩下的2个密钥过滤1个即可；最后把S盒运算换成加密，每轮16次查S盒，一共4轮，故除以$(16\times 4)$</p>
+</li>
+<li><p><strong>存储复杂度：</strong>$2^8 \times 128 = 2^{15}$</p>
+</li>
+</ul>
+<h4 id="3-2轮密钥恢复"><a href="#3-2轮密钥恢复" class="headerlink" title="3+2轮密钥恢复"></a>3+2轮密钥恢复</h4><p>在3轮区分器之后加上两轮进行密钥恢复攻击：</p>
+<p>涉及到一个小技巧是==交换第四轮MC和AK的顺序==，从而减少了需要猜测的密钥长度: $8<del>byte\rightarrow 5</del>byte$</p>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211203172825833.png" alt="image-20211203172825833" style="zoom:50%;" />
+
+<p>其它和3+1一样；建立了和5字节密钥有关的方程，结果1个结构体过滤，错误密钥以$1/2^8$概率被保留下来，因此得到40比特密钥需要平均$40\times (\frac{1}{2^8})^N&lt;1\Longrightarrow N = 6$个结构体</p>
+<p>若要恢复第5轮128比特(16字节)密钥：</p>
+<ul>
+<li><p><strong>数据复杂度</strong>：$2^8\times 6$；根据分析需要选6个结构体</p>
+</li>
+<li><p><strong>时间复杂度</strong>：$4\times 5\times (2^8\times 2^{40} + 2^8\times 2^{32}+\cdots +2^8\times 2)~\approx ~ 5\times 2^{50} S-Box = 2^{50}/(16)\approx 2^{46} ~~5-round-enc$；5</p>
+<p>每次猜测40比特的密钥（$K^5$32比特+$K^4$8比特），需要4次能完全恢复恢复第5轮128比特(16字节)密钥，因此外层4X5，对于每个4字节密钥：第1个结构体需要遍历猜测密钥，每个密钥$2^8$明文，而第2个结构体需对筛剩下的$2^{32}$密钥继续过滤直到最后剩1个候选密钥即为结果；最后把S盒运算换成加密，每轮16次查S盒，一共5轮，故除以$(16\times 5)$</p>
+</li>
+<li><p><strong>存储复杂度</strong>：第1个结构体筛选后有$2^{32}$种备选的40比特密钥需要存储</p>
+</li>
+</ul>
+<h4 id="4-1轮密钥恢复"><a href="#4-1轮密钥恢复" class="headerlink" title="4+1轮密钥恢复"></a>4+1轮密钥恢复</h4><p>构造一个4轮区分器：考虑在3轮区分器头部添加一轮，这要求1轮加密后，第1字节是遍历集A。往上推$MC^{-1}$发现这1字节关联到输入的4个字节，如果我们遍历这对应4个字节，则是$2^{32}$明文量还要猜测密钥，但我们只要$2^8$，显然浪费很多。转换一下思路，把这4个字节划分为一个集合，遍历这个集合，其实得到了$2^{24}$个三轮区分器如下图所示：</p>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211203205753896.png" alt="image-20211203205753896" style="zoom: 33%;" />
+
+<p>这个思路明确之后4+1与3+1没什么不同，只是选择明文的时候要选择的集合从仅第1字节变化的$2^8$个明文组成的集合变成了有4个字节在变化的$2^{32}$个明文组成的集合；</p>
+<p><strong>成功率分析：</strong>与3+1完全相同，虽然此时每个明文结构体对应的到$2^{32}$个的密文，但是对于一个$K_0^5$猜测，错误密钥保留下来的概率仍然是$\frac{1}{2^8}$，故平均需要两个结构体可以确定1字节密钥，恢复剩余15字节同理</p>
+<p>若要恢复第5轮128比特(16字节)密钥：</p>
+<ul>
+<li><p><strong>数据复杂度</strong>：$2^{32}\times 2$；每次恢复1字节密钥，需2个结构体确定字节密钥；这里对比3+2中的$2^8\times 6$增大了很多</p>
+</li>
+<li><p><strong>时间复杂度</strong>：$16\times (2^{32}\times 2^{8} + 2^{32}\times 2)~\approx ~ 2^{44} S-Box = 2^{44}/(16\times 5)\approx 2^{37.68} ~~5-round-enc$</p>
+<p>每次猜测8比特的密钥，需要16次能完全恢复恢复第5轮128比特(16字节)密钥，因此外层16，对于每个1字节密钥：第1个结构体需要遍历猜测密钥，每个密钥$2^{32}$明文，而第2个结构体需对筛剩下的$2$个密钥继续过滤得最终结果；最后把S盒运算换成加密，每轮16次查S盒，一共5轮，故除以$(16\times 5)$</p>
+</li>
+<li><p><strong>存储复杂度</strong>：1个结构体对应得到$2^{32}\times 128$规模的密文需要存储</p>
+</li>
+</ul>
+<h2 id="广义生日攻击"><a href="#广义生日攻击" class="headerlink" title="广义生日攻击"></a>广义生日攻击</h2><p><code>AdHash</code>算法 $\Longrightarrow $多个数求和(背包问题)$\Longrightarrow $广义生日攻击，遇到可以抽象成K-SUM问题的，可以使用广义生日攻击</p>
+<h3 id="2-SUM"><a href="#2-SUM" class="headerlink" title="2-SUM"></a>2-SUM</h3><p>输入：2个列表$L_1,L_2⊆S$, 每个$L_i$ 中的元素均匀独立随机的从$S$中选取</p>
+<p>输出： $x_1,x_2$, 满足$x_1⊕x_2=0, x_i∈L_i $</p>
+<p>过程：存两个表，把第一个做成<code>hashtable</code>(或者排序)，两个表大小分别是$2^{\frac{n}{2}}$，遍历第2个表的每一项，看在表1中是否存在碰撞</p>
+<p>复杂度：时间：$O(2^{n/2})$；数据：$|L_1| = |L_2| = O(2^{n/2})$</p>
+<p>分析：两个大小为$O(2^{n/2})$的表可以产生$|L_1|\times |L_2| = 2^n$种配对，而$x_1 = x_2$，即每一bit都相等的概率为$2^{-n}$，因此$|L_1|\times |L_2| = 2^n$种配对中的解的个数恰好为1，即概率上存在一个解</p>
+<h3 id="4-tree"><a href="#4-tree" class="headerlink" title="4-tree"></a>4-tree</h3><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211128161724423.png" alt="image-20211128161724423" style="zoom: 33%;" />
+
+<p>整体思想就是分治:</p>
+<ul>
+<li>首先划成4个集合，每个集合大小设为$2^x$（后续计算出x的下界）；</li>
+<li>然后两个一组，利用生日攻击让低$l$比特相等，这一层复杂度是$T_1 = O(2^x)$；</li>
+<li>筛选之后得到2个集合（集合中的元素是一对$x$，满足低$l$比特相等），集合大小均为$O(2^{2x-l})$；</li>
+<li>再一次利用生日攻击，让高$l$比特相等，这一层复杂度是$T_2 = O(2^{2x-l})$；</li>
+</ul>
+<p>计算出最上层集合大小为$O(2^{4x-l-n})$，要满足至少有一个解，即$2^{4x-l-n}&gt;1$，且取时间复杂度相同$T_1 = T_2$，得到最终复杂度在$O(2^{n/3})$</p>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211128163933660.png" alt="image-20211128163933660" style="zoom:50%;" />
+
+<h3 id="k-tree"><a href="#k-tree" class="headerlink" title="k-tree"></a>k-tree</h3><p>$(4,S)$背包问题可以利用4-tree算法把复杂度从$O(2^{n})$降低到$O(2^{n/3})$；推广到$(k,S)$背包问题，可以利用k-tree算法求解：</p>
+<ul>
+<li><strong>时间复杂度</strong>和数据复杂度：$O(k2^{n/\lfloor\log{k}\rfloor})$</li>
+<li>当$k  =2^{2\sqrt{n}}$时，上式取最小值：$k2^{n/\lfloor\log{k}\rfloor} = 2^{2\sqrt{n}}$</li>
+<li>这要求，如果一个密码算法可以写成K-SUM问题，则要保证N-bit安全，则需要$2\sqrt{n}\geq N$，即参数规模不小于$n^2/4$</li>
+</ul>
+<p><strong>攻击</strong><code>8-AdHash</code></p>
+<p>设$M = M_1||M_2\cdots ||M_8$，$AdHash(M) = h(1,M_1)+h(2,M_2)\cdots+h(8,M_8) = y$</p>
+<p>该问题规约成8-SUM问题，共3层，故设$y = y_1||y_2||y_3$，即$L = l_1+l_2+l_3$，其中$l_1 = l_2 = l_3 = L/3$分别是$y_1,y_2,y_3$宽度</p>
+<ul>
+<li>根据$O(k2^{n/(1+\lfloor\log{k}\rfloor)})$，从明文空间均匀选取8个大小为$O(2^{n/4})$规模的集合</li>
+<li>8个集合划为4组，利用生日攻击令每一组的低$l_1$比特的和模$2^{l_1} = y_1$，得到4个集合$L_{12},L_{34},L_{56},L_{78}$</li>
+<li>再把4个集合划为2组，利用生日攻击令每一组的低$l_1+l_2$比特的和模$2^{l_1+l_2} = y_1||y_2$，得到2个集合</li>
+<li>同上</li>
+</ul>
+<p>如果没找到，重复；时间和存储复杂度均在$O(2^{n/4})$</p>
+<h2 id="中间相遇攻击"><a href="#中间相遇攻击" class="headerlink" title="中间相遇攻击"></a>中间相遇攻击</h2><p>和Square攻击一样是通过追踪集合特性的分析方式</p>
+<ul>
+<li>中间整体相遇：分别从加密和解密两侧推到中将状态，令b比特全部碰撞，复杂度计算如下：</li>
+</ul>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211203214638437.png" alt="image-20211203214638437" style="zoom:50%;" />
+
+<ul>
+<li>中间部分相遇：分别从加密和解密两侧推到中将状态，令b中m比特碰撞，复杂度计算如下：</li>
+</ul>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211204152335673.png" alt="image-20211204152335673" style="zoom:50%;" />
+
+<h3 id="AES3轮区分器-1"><a href="#AES3轮区分器-1" class="headerlink" title="AES3轮区分器"></a>AES3轮区分器</h3><p>根据活跃集的传播特性可以构造3轮区分器，与Square攻击类似：在Square攻击中，如果$a_{11}$是活跃集，那么三轮之后得到$C_{11}$是平衡集；而在这里，保证$a_{11}$是活跃集，则三轮之后可知$C_{11}^{(3)}$至多与中间状态的9个字节有关。故$a_{11}\rightarrow C_{11}^{(3)}$2字节之间存在$2^{8\times 9} = 2^{72}$种映射，而对于随机置换来说映射数为$(2^{8})^{256} = 2^{2048}$(不要求满射、单射等)，由此区分随机置换</p>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211204153022892.png" alt="image-20211204153022892" style="zoom: 50%;" />
+
+<p><strong>进行区分攻击：</strong>预计算$2^{72}$张表，每张表大小$8bit\times 2^8 entry$；然后选择明文输入(保证第一字节活跃集)，得到密文输出，从而得到$a_{11},C_{11}^{3}$的一张映射表，看这个表是否在预计算的$2^{72}$张表中，如果在，说明为AES算法，否则是随机置换</p>
+<h3 id="3-1密钥恢复"><a href="#3-1密钥恢复" class="headerlink" title="3+1密钥恢复"></a>3+1密钥恢复</h3><ul>
+<li>在3轮区分器后加一轮(如果考虑MC则利用交换AK和MC顺序的<code>trick</code>)；</li>
+<li>选择一个结构体(第一个字节为活跃集A，其它字节为C)</li>
+<li>猜测1字节的密钥$K^4_0$，把密文回推到区分器尾部得到映射表是$a_{11}\rightarrow C_{11}^{(3)}$</li>
+<li>看映射表是否在预计算表集合中即可</li>
+</ul>
+<h3 id="5轮区分器"><a href="#5轮区分器" class="headerlink" title="5轮区分器"></a>5轮区分器</h3><p>在4轮之后加1轮，与中间状态26字节有关</p>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211204171157770.png" alt="image-20211204171157770" style="zoom:50%;" />
+
+<h3 id="4-1密钥恢复"><a href="#4-1密钥恢复" class="headerlink" title="4+1密钥恢复"></a>4+1密钥恢复</h3><p>针对AES256</p>
+<p>同理得到4轮区分器，此时$a_{11}\rightarrow C_{11}^{(3)}$的映射与中间状态的25个字节有关，因此存在$2^{25\times 8} = 2^{200}$种映射(这意味着我们要穷举$2^{200}$，把表都预计算出来)，虽然随机置换有$2^{2048}$种可能的映射，但是$2^{200}$还是过于大了，对于<code>AES128</code>甚至<code>AES192</code>来说，都不如穷举密钥空间的复杂度，因此这样一来只能分析<code>AES256</code>，其它与3+1相同</p>
+<h3 id="1-4-2密钥恢复"><a href="#1-4-2密钥恢复" class="headerlink" title="1+4+2密钥恢复"></a>1+4+2密钥恢复</h3><p>针对AES256</p>
+<p>在4轮区分器头部加1轮，尾部加2轮(最后一轮没有MC)，与Square的3+2类似；</p>
+<p><strong>预计算：</strong>利用的是4轮区分器，因此仍然是 预计算$a_{11}\rightarrow C_{11}^{(3)}$映射表共$2^{200}$个表</p>
+<p><strong>在线计算：</strong></p>
+<ul>
+<li><p>猜测$K_{init}$的4个字节和$K_{11}^{(1)}$，共5字节密钥；为保证一轮加密后第1字节是活跃集，这里使用小技巧是，先确定$a_{11}$遍历，然后根据猜测的密钥解密上去，得到需要选择的明文</p>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211204163849869.png" alt="image-20211204163849869" style="zoom: 33%;" /></li>
+<li><p>猜测第6轮的1字节等价密钥(使用交换MC和AK的技巧)和第7轮的4字节密钥，共5字节；并解密两轮到区分器尾部，得到映射表$C_{11}^{(1)}\rightarrow C_{11}^{(5)}$</p>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211204164008773.png" alt="image-20211204164008773" style="zoom:33%;" /></li>
+<li><p>若映射表在预计算集合中，则判断猜测的10字节密钥正确；</p>
+</li>
+<li><p>用类似的方法，映射表改为$C_{11}^{(1)}\rightarrow C_{21}^{(5)}$、$C_{11}^{(1)}\rightarrow C_{31}^{(5)}$、$C_{11}^{(1)}\rightarrow C_{41}^{(5)}$，选取明文集合不变，再依次恢复6、7轮的15字节密钥</p>
+</li>
+</ul>
+<h4 id="复杂度分析-4"><a href="#复杂度分析-4" class="headerlink" title="复杂度分析"></a>复杂度分析</h4><ul>
+<li><strong>时间复杂度：</strong>预计算，4个表$2^{208}\times 4<del>byte$；</del>在线部分：$4\times 2^{80}\times 256 = 2^{90}$次部分加解密~~</li>
+<li><strong>存储复杂度：</strong>预计算表大小为$2^{200}\times 2^8\times 4= 2^{210}~~byte$</li>
+<li><strong>数据复杂度：</strong>$2^{32}$个选择明文(尽管一个结构体$2^8$，但是对于每个密钥选的明文不一样···明文4个字节至多$2^{32}$)</li>
+</ul>
+<p><strong>一点改进：</strong></p>
+<p>映射表后面的项(255)与第一项异或，可以消掉一个中间变量，从$2^{200}$张表降低到$2^{192}$张</p>
+<h2 id="Hash函数"><a href="#Hash函数" class="headerlink" title="Hash函数"></a>Hash函数</h2><table>
+<thead>
+<tr>
+<th>安全属性</th>
+<th>攻击复杂度</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>抗原象(单向性)</td>
+<td>$2^n$</td>
+</tr>
+<tr>
+<td>抗第二原像(抗弱碰撞)</td>
+<td>$2^n$</td>
+</tr>
+<tr>
+<td>抗碰撞(抗强碰撞)</td>
+<td>$2^{n/2}$</td>
+</tr>
+<tr>
+<td>抗长度扩展</td>
+<td>$2^n$</td>
+</tr>
+</tbody></table>
+<h3 id="MD结构第二原象攻击"><a href="#MD结构第二原象攻击" class="headerlink" title="MD结构第二原象攻击"></a>MD结构第二原象攻击</h3><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211202202154569.png" alt="image-20211202202154569" style="zoom: 50%;" />
+
+<p>即找一个值和任意一个中间连接变量碰撞即可</p>
+<p>在强化MD结构中，因为最后填充了消息长度信息$|M|$，而这种攻击构造出来的消息大概率长度不一样(除非找到$x_1$的碰撞？)，因此这种攻击无法成功</p>
+<h3 id="强MD结构多碰撞"><a href="#强MD结构多碰撞" class="headerlink" title="强MD结构多碰撞"></a>强MD结构多碰撞</h3><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211202202005041.png" alt="image-20211202202005041" style="zoom:67%;" />
+
+<h3 id="强MD结构密钥前缀MAC安全"><a href="#强MD结构密钥前缀MAC安全" class="headerlink" title="强MD结构密钥前缀MAC安全"></a>强MD结构密钥前缀MAC安全</h3><ol>
+<li><strong>长度扩展</strong>：已知$H(M) = h$，求$H(M||Z) = h’$，只需要令$Z = 00\cdots 0<del>||</del>|M|~||x$，即先填充到和原来消息一致就可以在之后随意填充了···</li>
+<li><strong>易于二次碰撞</strong>：只要找到一对碰撞，就可以在其后无限级联消息构造多次碰撞</li>
+</ol>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211202205109053.png" alt="image-20211202205109053" style="zoom: 67%;" />
+
+<h3 id="比特追踪法—MD4为例"><a href="#比特追踪法—MD4为例" class="headerlink" title="比特追踪法—MD4为例"></a>比特追踪法—MD4为例</h3><p>步骤如下：</p>
+<ul>
+<li><p>寻找合适的消息差分（消息扩展向量）</p>
+<p>选择一对明文消息的差分$∆M=M^′-M $，要使得保证碰撞路线成立的充分条件、尤其是后几步的充分条件尽可能的少</p>
+</li>
+<li><p>构造碰撞路线</p>
+<p>对于碰撞攻击，合适的明文差分要使得保证差分特征成立的充分条件，尤其是后几轮的充分条件尽可能少。对于第二原像攻击，合适的明文差分要使得所有的充分条件尽可能少，这样，才能保证不经过明文修改过程，差分特征也以高概率成立。</p>
+</li>
+<li><p>确定碰撞路线成立的充分条件</p>
+<p>推导碰撞路线成立的充分条件</p>
+</li>
+<li><p>使用消息修改技术提高差分路线成立的概率</p>
+<p>通过消息修改技术，满足充分条件。基本明文修改技术可以通过修改明文，从而保证第一轮的充分条件都满足；高级明文修改技术可以通过修改明文，使得第二轮的前几步的条件都满足。</p>
+</li>
+<li><p>运行碰撞攻击算法，产生碰撞</p>
+<p>穷举搜索：随机选择一个明文<em>M</em>，利用明文修改技术进行修改，测试$M$和$M^′=M+∆M$是否是一对碰撞。重复以上过程，直到找到一对碰撞。重复次数和充分条件的个数直接相关。</p>
+</li>
+</ul>
+<p><code>MD4</code>结构：</p>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211202213308192.png" alt="image-20211202213308192" style="zoom:50%;" />
+
+<ul>
+<li>一个压缩函数共48步，每16步称为一轮（一共三轮，每轮使用的F函数不一样）<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211202213421518.png" alt="image-20211202213421518" style="zoom:33%;" />，第1，2，3轮使用的F函数依次为<code>F、G、H</code>，需要注意的是加法是模$2^{32}$加法</li>
+<li>其中<code>a,b,c,d</code>是128比特连接变量分成的4个32比特字</li>
+<li>每一步处理一个明文块，每一轮(16步)恰好处理512比特消息(16个32比特字)；</li>
+<li>每一步处理一个链接变量中的32比特字(第一步处理a，第二步d，第三步c，第四步b)</li>
+</ul>
+<p><strong>差分的定义</strong>：</p>
+<ul>
+<li><p>传统差分中：1表示该比特不同，0表示该比特相同</p>
+</li>
+<li><p>带符号的差分：由于是模加运算，因此引入带符号的差分；每一步的差分刻画包括差分对应的不同比特的位置和符号</p>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211202220036023.png" alt="image-20211202220036023" style="zoom:50%;" />
+
+<p>其中正号表示0变1；负号表示1变0</p>
+</li>
+</ul>
+<p>差分过布尔函数传播特性：</p>
+<ul>
+<li><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211205191501138.png" alt="image-20211205191501138" style="zoom:50%;" />
+
+<blockquote>
+<p><code>e.g.</code></p>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211205191613021.png" alt="image-20211205191613021" style="zoom:50%;" />
+
+<p>$b_0[31] = c_0[31]$；因为根据F函数第1条性质，要使得d1无差分，则F输出无差分，则有$y = z$即$b_0[31] = c_0[31]$</p>
+</blockquote>
+</li>
+</ul>
+<p>差分过模加运算传播特性：</p>
+<blockquote>
+<p><code>e.g.</code></p>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211205192828730.png" alt="image-20211205192828730" style="zoom:33%;" />
+
+<p>$b_0[31] = c_0[31]\oplus 1$；$m_1\Longrightarrow m_1’ = 0\Longrightarrow 1$，因此要使得$d_1$无差分，F函数输出需得有差分(注意这里m1是最高位，不考虑进位，因此不需要控制$F\Longrightarrow F’ = 1\Longrightarrow 0$保证不进位)，因此条件只需要令$b_0[31] 和 c_0[31]$相反即可</p>
+<p>同理，如果让$d_1 = d_1’$，则应该F输出无差分，即和上一题类似</p>
+</blockquote>
+<p>一个MD4的例子：</p>
+<ol>
+<li><p>寻找合适的消息差分（消息扩展向量）：<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211205210358199.png" alt="image-20211205210358199" style="zoom:33%;" />；</p>
+</li>
+<li><p>确定差分路径(差分特征)：<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211205210442568.png" alt="image-20211205210442568" style="zoom: 50%;" /></p>
+</li>
+<li><p>确定碰撞路线成立的充分条件：</p>
+<img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/image-20211205200451452.png" alt="image-20211205200451452" style="zoom:50%;" />
+
+<p>类似上述过程，最终推导出122个比特方程，已经远大于生日攻击的$2^{64}$复杂度，如何降？</p>
+</li>
+<li><p>使用消息修改技术提高差分路线成立的概率</p>
+<p>简单明文修改技术：</p>
+<ul>
+<li>对round 1的充分条件，可通过直接将链接变量上的条件转换为消息字上的条件来实现</li>
+<li>第一轮条件全部修改后，只剩25个充分条件</li>
+</ul>
+<p>高级明文修改技术：</p>
+<ul>
+<li>同时修改多个消息，满足第二轮需要的充分条件</li>
+<li>注意，此时的修改要保证第一轮已修改好的条件仍能满足，可借助于局部碰撞来实现</li>
+<li>通过消息修改技术，基本可满足第一轮、第二轮的充分条件</li>
+</ul>
+</li>
+<li><p>运行碰撞攻击算法，产生碰撞</p>
+</li>
+</ol>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%AF%86%E7%A0%81%E5%AD%A6/">密码学</a></div><div class="post_share"><div class="social-share" data-image="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/cipher-16421552297502.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button button--animated"><i class="fas fa-qrcode"></i> Donate</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/wechatpay-16421448200551.png" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/wechatpay-16421448200551.png"/></a><div class="post-qr-code-desc"></div></li><li class="reward-item"><a href="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/alipay.png" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/alipay.png"/></a><div class="post-qr-code-desc"></div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/12/06/Rust%E5%8C%85%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/"><img class="prev-cover" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/rustlogo.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">Rust包管理系统</div></div></a></div><div class="next-post pull-right"><a href="/2021/07/29/FFT&amp;NTT/"><img class="next-cover" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/unit-circle7_43215_lg.gif" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">FFT&amp;NTT</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2021/04/17/%E5%AF%86%E7%A0%81%E5%AD%A6%E5%BC%95%E8%AE%BA%E5%A4%8D%E4%B9%A0/" title="密码学引论复习"><img class="cover" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/cipher-16421552297502.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-04-17</div><div class="title">密码学引论复习</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">DM</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">19</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">7</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">Categories</div><div class="length-num">8</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Enigma%E6%9C%BA"><span class="toc-number">1.</span> <span class="toc-text">Enigma机</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%88%86%E6%9E%90"><span class="toc-number">1.1.</span> <span class="toc-text">复杂度分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B7%AE%E5%88%86%E6%94%BB%E5%87%BB"><span class="toc-number">2.</span> <span class="toc-text">差分攻击</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%84%E9%80%A0%E5%8C%BA%E5%88%86%E5%99%A8"><span class="toc-number">2.1.</span> <span class="toc-text">构造区分器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%87%87%E6%A0%B7"><span class="toc-number">2.2.</span> <span class="toc-text">采样</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8E%BB%E5%99%AA"><span class="toc-number">2.3.</span> <span class="toc-text">去噪</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B1%82%E8%A7%A3%E7%9B%B8%E5%85%B3%E5%AF%86%E9%92%A5%E7%9A%84%E6%96%B9%E7%A8%8B"><span class="toc-number">2.4.</span> <span class="toc-text">求解相关密钥的方程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%A1%E5%99%AA%E6%AF%94"><span class="toc-number">2.5.</span> <span class="toc-text">信噪比</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%88%AA%E6%96%AD%E5%B7%AE%E5%88%86"><span class="toc-number">3.</span> <span class="toc-text">截断差分</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1Cipher4%E6%88%AA%E6%96%AD%E5%B7%AE%E5%88%86"><span class="toc-number">3.1.</span> <span class="toc-text">3+1Cipher4截断差分</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9E%84%E9%80%A0%E5%8C%BA%E5%88%86%E5%99%A8-1"><span class="toc-number">3.1.1.</span> <span class="toc-text">构造区分器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%87%87%E6%A0%B7-1"><span class="toc-number">3.1.2.</span> <span class="toc-text">采样</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BB%BA%E6%96%B9%E7%A8%8B%E6%81%A2%E5%A4%8D%E5%AF%86%E9%92%A5"><span class="toc-number">3.1.3.</span> <span class="toc-text">建方程恢复密钥</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-1Cipher4%E6%88%AA%E6%96%AD%E5%B7%AE%E5%88%86-%E9%87%8D%E7%82%B9"><span class="toc-number">3.2.</span> <span class="toc-text">1+3+1Cipher4截断差分(重点)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9E%84%E9%80%A0%E5%8C%BA%E5%88%86%E5%99%A8-2"><span class="toc-number">3.2.1.</span> <span class="toc-text">构造区分器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%87%87%E6%A0%B7-2"><span class="toc-number">3.2.2.</span> <span class="toc-text">采样</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BB%BA%E6%96%B9%E7%A8%8B%E6%81%A2%E5%A4%8D%E5%AF%86%E9%92%A5-1"><span class="toc-number">3.2.3.</span> <span class="toc-text">建方程恢复密钥</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9E%E9%A3%9E%E6%A3%92%E6%94%BB%E5%87%BB"><span class="toc-number">4.</span> <span class="toc-text">回飞棒攻击</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8C%BA%E5%88%86%E5%99%A8"><span class="toc-number">4.1.</span> <span class="toc-text">区分器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A2%9E%E5%BC%BA%E7%9A%84%E5%9B%9E%E9%A3%9E%E6%A3%92%E6%94%BB%E5%87%BB"><span class="toc-number">4.2.</span> <span class="toc-text">增强的回飞棒攻击</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9F%A9%E5%BD%A2%E6%94%BB%E5%87%BB"><span class="toc-number">4.3.</span> <span class="toc-text">矩形攻击</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8D%E5%8F%AF%E8%83%BD%E5%B7%AE%E5%88%86"><span class="toc-number">5.</span> <span class="toc-text">不可能差分</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%84%E9%80%A0%E5%8C%BA%E5%88%86%E5%99%A8%EF%BC%88%E9%87%8D%E7%82%B9%EF%BC%89"><span class="toc-number">5.1.</span> <span class="toc-text">构造区分器（重点）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%87%87%E6%A0%B7-3"><span class="toc-number">5.2.</span> <span class="toc-text">采样</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8E%BB%E5%99%AA-1"><span class="toc-number">5.3.</span> <span class="toc-text">去噪</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%81%A2%E5%A4%8D%E5%AF%86%E9%92%A5"><span class="toc-number">5.4.</span> <span class="toc-text">恢复密钥</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%BF%E6%80%A7%E6%94%BB%E5%87%BB"><span class="toc-number">6.</span> <span class="toc-text">线性攻击</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8C%BA%E5%88%86%E5%99%A8-1"><span class="toc-number">6.1.</span> <span class="toc-text">区分器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%87%87%E6%A0%B7-4"><span class="toc-number">6.2.</span> <span class="toc-text">采样</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%81%A2%E5%A4%8D%E5%AF%86%E9%92%A5-1"><span class="toc-number">6.3.</span> <span class="toc-text">恢复密钥</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AE%97%E6%B3%951"><span class="toc-number">6.3.1.</span> <span class="toc-text">算法1</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AE%97%E6%B3%952"><span class="toc-number">6.3.2.</span> <span class="toc-text">算法2</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A0%86%E7%A7%AF%E5%BC%95%E7%90%86"><span class="toc-number">6.4.</span> <span class="toc-text">堆积引理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%95%BF%E8%BD%AE%E6%95%B0%E7%BA%BF%E6%80%A7%E9%80%BC%E8%BF%91%E5%BC%8F"><span class="toc-number">6.5.</span> <span class="toc-text">长轮数线性逼近式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%88%86%E6%9E%90-1"><span class="toc-number">6.6.</span> <span class="toc-text">复杂度分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B7%AE%E5%88%86-%E7%BA%BF%E6%80%A7%E6%94%BB%E5%87%BB"><span class="toc-number">7.</span> <span class="toc-text">差分-线性攻击</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1994%E5%B9%B4%E6%A8%A1%E5%9E%8B"><span class="toc-number">7.1.</span> <span class="toc-text">1994年模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2002%E5%B9%B4%E6%A8%A1%E5%9E%8B"><span class="toc-number">7.2.</span> <span class="toc-text">2002年模型</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9E%84%E9%80%A0%E5%8C%BA%E5%88%86%E5%99%A8-3"><span class="toc-number">7.2.1.</span> <span class="toc-text">构造区分器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8C%BA%E5%88%86%E6%94%BB%E5%87%BB"><span class="toc-number">7.2.2.</span> <span class="toc-text">区分攻击</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8%E8%BD%AEDES%E5%AF%86%E9%92%A5%E6%81%A2%E5%A4%8D"><span class="toc-number">7.2.3.</span> <span class="toc-text">8轮DES密钥恢复</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%88%86%E6%9E%90-2"><span class="toc-number">7.2.4.</span> <span class="toc-text">复杂度分析</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9B%B6%E7%9B%B8%E5%85%B3%E7%BA%BF%E6%80%A7%E6%94%BB%E5%87%BB"><span class="toc-number">8.</span> <span class="toc-text">零相关线性攻击</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#AES%E9%9B%B6%E7%9B%B8%E5%85%B3%E7%BA%BF%E6%80%A7%E5%A3%B3"><span class="toc-number">8.1.</span> <span class="toc-text">AES零相关线性壳</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-1AES%E5%AF%86%E9%92%A5%E6%81%A2%E5%A4%8D"><span class="toc-number">8.2.</span> <span class="toc-text">1+4+1AES密钥恢复</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%88%86%E6%9E%90-3"><span class="toc-number">8.3.</span> <span class="toc-text">复杂度分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Square%E6%94%BB%E5%87%BB"><span class="toc-number">9.</span> <span class="toc-text">Square攻击</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#AES3%E8%BD%AE%E5%8C%BA%E5%88%86%E5%99%A8"><span class="toc-number">9.1.</span> <span class="toc-text">AES3轮区分器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%87%87%E6%A0%B7-5"><span class="toc-number">9.2.</span> <span class="toc-text">采样</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%81%A2%E5%A4%8D%E5%AF%86%E9%92%A5-2"><span class="toc-number">9.3.</span> <span class="toc-text">恢复密钥</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-1%E8%BD%AE%E5%AF%86%E9%92%A5%E6%81%A2%E5%A4%8D"><span class="toc-number">9.3.1.</span> <span class="toc-text">3+1轮密钥恢复</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2%E8%BD%AE%E5%AF%86%E9%92%A5%E6%81%A2%E5%A4%8D"><span class="toc-number">9.3.2.</span> <span class="toc-text">3+2轮密钥恢复</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1%E8%BD%AE%E5%AF%86%E9%92%A5%E6%81%A2%E5%A4%8D"><span class="toc-number">9.3.3.</span> <span class="toc-text">4+1轮密钥恢复</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B9%BF%E4%B9%89%E7%94%9F%E6%97%A5%E6%94%BB%E5%87%BB"><span class="toc-number">10.</span> <span class="toc-text">广义生日攻击</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-SUM"><span class="toc-number">10.1.</span> <span class="toc-text">2-SUM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-tree"><span class="toc-number">10.2.</span> <span class="toc-text">4-tree</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#k-tree"><span class="toc-number">10.3.</span> <span class="toc-text">k-tree</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%AD%E9%97%B4%E7%9B%B8%E9%81%87%E6%94%BB%E5%87%BB"><span class="toc-number">11.</span> <span class="toc-text">中间相遇攻击</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#AES3%E8%BD%AE%E5%8C%BA%E5%88%86%E5%99%A8-1"><span class="toc-number">11.1.</span> <span class="toc-text">AES3轮区分器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1%E5%AF%86%E9%92%A5%E6%81%A2%E5%A4%8D"><span class="toc-number">11.2.</span> <span class="toc-text">3+1密钥恢复</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5%E8%BD%AE%E5%8C%BA%E5%88%86%E5%99%A8"><span class="toc-number">11.3.</span> <span class="toc-text">5轮区分器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1%E5%AF%86%E9%92%A5%E6%81%A2%E5%A4%8D"><span class="toc-number">11.4.</span> <span class="toc-text">4+1密钥恢复</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-2%E5%AF%86%E9%92%A5%E6%81%A2%E5%A4%8D"><span class="toc-number">11.5.</span> <span class="toc-text">1+4+2密钥恢复</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%88%86%E6%9E%90-4"><span class="toc-number">11.5.1.</span> <span class="toc-text">复杂度分析</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hash%E5%87%BD%E6%95%B0"><span class="toc-number">12.</span> <span class="toc-text">Hash函数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#MD%E7%BB%93%E6%9E%84%E7%AC%AC%E4%BA%8C%E5%8E%9F%E8%B1%A1%E6%94%BB%E5%87%BB"><span class="toc-number">12.1.</span> <span class="toc-text">MD结构第二原象攻击</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%BAMD%E7%BB%93%E6%9E%84%E5%A4%9A%E7%A2%B0%E6%92%9E"><span class="toc-number">12.2.</span> <span class="toc-text">强MD结构多碰撞</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%BAMD%E7%BB%93%E6%9E%84%E5%AF%86%E9%92%A5%E5%89%8D%E7%BC%80MAC%E5%AE%89%E5%85%A8"><span class="toc-number">12.3.</span> <span class="toc-text">强MD结构密钥前缀MAC安全</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AF%94%E7%89%B9%E8%BF%BD%E8%B8%AA%E6%B3%95%E2%80%94MD4%E4%B8%BA%E4%BE%8B"><span class="toc-number">12.4.</span> <span class="toc-text">比特追踪法—MD4为例</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2022/01/13/IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/" title="IO多路复用"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/fire.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="IO多路复用"/></a><div class="content"><a class="title" href="/2022/01/13/IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/" title="IO多路复用">IO多路复用</a><time datetime="2022-01-13T14:20:33.000Z" title="Created 2022-01-13 22:20:33">2022-01-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/01/12/Cppmove/" title="Cppmove"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/c-programming-icon-14.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Cppmove"/></a><div class="content"><a class="title" href="/2022/01/12/Cppmove/" title="Cppmove">Cppmove</a><time datetime="2022-01-12T05:00:37.000Z" title="Created 2022-01-12 13:00:37">2022-01-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/12/30/epoll/" title="epoll"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://gitee.com/cat-of-landlord/my-typora/raw/master/img/fire.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="epoll"/></a><div class="content"><a class="title" href="/2021/12/30/epoll/" title="epoll">epoll</a><time datetime="2021-12-30T06:51:05.000Z" title="Created 2021-12-30 14:51:05">2021-12-30</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By DM</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.2
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        insertScript: [200, () => {
+          document.querySelectorAll('mjx-container:not\([display]\)').forEach(node => {
+            const target = node.parentNode
+            if (target.nodeName.toLowerCase() === 'li') {
+              target.parentNode.classList.add('has-jax')
+            } else {
+              target.classList.add('has-jax')
+            }
+          });
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
