@@ -1,1 +1,7 @@
 site_name: Cat538's Blog
+
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
