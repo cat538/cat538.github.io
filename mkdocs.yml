@@ -19,6 +19,8 @@ theme:
     # - navigation.expand
     # - navigation.tabs
 
+use_directory_urls: false
+
 nav:
   - Prologue: "index.md"
   - Rust: 
