@@ -22,7 +22,7 @@ cover: "https://github.com/cat538/images-auto/raw/main/img/rustlogo.jpg"
 - Having several immutable references (`&T`) to the object (also known as **aliasing**).
 - Having one mutable reference (`&mut T`) to the object (also known as **mutability**).
 
-<img src="https://github.com/cat538/images-auto/raw/main/img/Rust container cheat sheet.png" alt="Rust container cheat sheet"  />
+<img src="https://github.com/cat538/images-auto/raw/main/img/Rust-container-cheat-sheet.png" alt="Rust container cheat sheet"  />
 
 ## Raw pointers
 
