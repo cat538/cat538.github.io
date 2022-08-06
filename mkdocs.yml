@@ -2,20 +2,62 @@ site_name: Cat538's Blog
 
 theme:
   name: material
-  language: zh
+  language: en
+  favicon: images/favicon.ico
+  palette:  # Offering a light and dark color palette
+    - scheme: default
+      toggle:
+        icon: material/brightness-7 
+        name: Switch to dark mode
+    - scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
   features:
-    - navigation.tabs
-    # - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.indexes
+    # - navigation.expand
+    # - navigation.tabs
 
 nav:
-  - 前言: "index.md"
-  - Rust:
-    - Cargo换源: "rust/Rust换源.md"
+  - Prologue: "index.md"
+  - Rust: 
+    - rust-configuration: "rust/rust-configuration.md"
+    - rust-study:         "rust/rust-study.md"
+    - rust-optin:         "rust/rust-option.md"
+    - rust-smart pointer: "rust/rust-smart pointer.md"
+    - rust-modules:       "rust/rust-modules.md"
+    - rust-macro:         "rust/rust-macro.md"
+    - rust-network:       "rust/rust-network.md"
+  - Tools:
+    - mkdocs:             "tools/mkdocs.md"
+    - regex:             "tools/regex.md"
+    - cmake:              "tools/cmake.md"
+    - matplotlib:         "tools/matplotlib.md"
+  - Courses:
+    - 密码分析学:           "courses/密码分析学复习.md"
+    - 密码学引论:           "courses/密码学引论复习.md"
+    - 操作系统:             "courses/操作系统复习.md"
   - Crypto:
-    - ECDSA-pk-recovery: "crypto/ecdsa-pk-recovery.md"
-  - 后记: "post.md"
+    - ecdsa-pk-recovery:  "crypto/ecdsa-pk-recovery.md"
+    - algo-rsa:           "crypto/algo-rsa.md"
+    - algo-fft&ntt:       "crypto/algo-fft&ntt.md"
+    - algo-montgomery:    "crypto/algo-montgomery.md"
+    - seal-ckks:          "crypto/seal-ckks.md"
+  - About: "about.md"
+
 
 markdown_extensions:
+  - attr_list   # allow to add HTML attributes and CSS classes to Markdown elements
+  - admonition
+  - pymdownx.details
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
   - pymdownx.arithmatex:
       generic: true
 
@@ -23,3 +65,6 @@ extra_javascript:
   - javascripts/mathjax.js
   - https://polyfill.io/v3/polyfill.min.js?features=es6
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
+extra_css:
+  - stylesheets/extra.css

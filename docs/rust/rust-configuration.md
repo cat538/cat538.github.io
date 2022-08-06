@@ -4,7 +4,7 @@ date: 2021-12-10 14:28:38
 tags: ['Rust']
 categories: ['Rust']
 description: "Rust 切换工具链+cargo 换源..."
-cover: "https://gitee.com/cat-of-landlord/my-typora/raw/master/img/rustlogo.jpg"
+cover: "https://github.com/cat538/images-auto/raw/main/img/rustlogo.jpg"
 ---
 
 ## 切换工具链
