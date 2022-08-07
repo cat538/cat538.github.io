@@ -1,11 +1,4 @@
----
-title: 蒙哥马利算法
-cover: 'https://github.com/cat538/images-auto/raw/main/img/fire.png'
-date: 2022-01-24 14:39:15
-tags: ['算法','密码学']
-categories: ['算法']
-mathjax: true
----
+## Montgomery Reduction
 
 在模运算计算中，蒙哥马利模乘，通常称为蒙哥马利乘法，是一种进行快速模乘的方法。它是由美国数学家Peter L. Montgomery在1985年提出的。该算法首先把整数表示成特殊的形式，称作Montgomery form。在Montgomery form下进行乘法运算，可以避免传统模乘中的开销最大的除法操作(变为高效的右移位运算)，对于计算机而言可以提升算法速度。
 
@@ -47,11 +40,11 @@ mathjax: true
 
 得到结果为11，小于模数17，因此11就是最终结果
 
-# Barrett reduction
+## Barrett reduction
 
 [Barrett reduction - Wikipedia](https://en.wikipedia.org/wiki/Barrett_reduction)
 
-## Single-word Barrett reduction
+### Single-word Barrett reduction
 
 最原始的`reduce`：
 

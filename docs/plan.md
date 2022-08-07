@@ -2,26 +2,67 @@
 
 ## 动态规划
 
-- [hdu 2084 数塔](http://acm.hdu.edu.cn/showproblem.php?pid=2084) 可以从上往下递推节省空间，也可以从下往上递推，代码更好写：$dp[i-1][j] = cur + max(dp[i][j],dp[i][j+1])$
+### 1维dp
 
-- [hdu 2018 母牛的故事](http://acm.hdu.edu.cn/showproblem.php?pid=2018) 简单递推计数: $dp[i] = dp[i-1]+dp[i-3]$, $dp[1] = 1,dp[2]=2,dp[3] =3$
+#### 复杂度$O(n)$
 
-- [hdu 2044 一只小蜜蜂...](http://acm.hdu.edu.cn/showproblem.php?pid=2044) 简单递推计数(Fibonacci): $dp[i][j] = dp[i][j-1]+dp[i][j-2]$, $dp[i][i+1] = 1, dp[i][i+2] = 2$
+这类题的当前状态由之前的常数个状态转移而来，因此时间复杂度在$O(n)$，典型的题即
 
-- [hdu 2041 超级楼梯](http://acm.hdu.edu.cn/showproblem.php?pid=2041) Fibonacci : 
+!!! example
+	- 最大字段和MIS: 第i个状态由第i-1个状态转移来
+	- 图像压缩: 第i个状态至多由前256个状态转移而来
 
-- [53. 最大子数组和 - 力扣](https://leetcode.cn/problems/maximum-subarray/) MIS
+以[53. 最大子数组和 - 力扣](https://leetcode.cn/problems/maximum-subarray/) MIS为例，实际代码如下：
 
-- [152. 乘积最大子数组- 力扣](https://leetcode.cn/problems/maximum-product-subarray/solution/) 类似MIS，但是需要注意转移方程的不同
+```C++
+int maxSubArray(vector<int>& nums) {
+    // dp[i] = if(dp[i-1]<0){ nums[i] } else{ dp[i-1]+nums[i] }
+    int n = nums.size();
+    int pre_sum{-1}, res{INT32_MIN};
+    for(int i=0;i<n;i++){
+        pre_sum = pre_sum < 0 ? nums[i] : pre_sum + nums[i];
+        res = max(res, pre_sum);
+    }
+    return res;
+}
+```
 
-- [1567. 乘积为正数的最长子数组长度- 力扣](https://leetcode.cn/problems/maximum-length-of-subarray-with-positive-product/solution/) 类似MIS，但是需要注意转移方程的不同+分类讨论
+
+
+
+- [509. 斐波那契数 - 力扣](https://leetcode.cn/problems/fibonacci-number/) $dp[i] = dp[i-1]+dp[i-2]$；
+
+- [70. 爬楼梯 - 力扣](https://leetcode.cn/problems/climbing-stairs/) 与斐波那契相同，$dp[i] = dp[i-1]+dp[i-2]$；
+
+- [746. 使用最小花费爬楼梯 - 力扣](https://leetcode.cn/problems/min-cost-climbing-stairs/) $dp[i] = min(dp[i-1], dp[i-2])$；
+
+- [53. 最大子数组和 - 力扣](https://leetcode.cn/problems/maximum-subarray/) MIS，$dp[i] = \texttt{if}(dp[i-1]<0)\quad\{nums[i]\}\quad\texttt{else}\quad\{dp[i-1]+nums[i] \}$
+
+- [152. 乘积最大子数组- 力扣](https://leetcode.cn/problems/maximum-product-subarray/solution/) 类似MIS，但是需要注意转移方程的不同:
+
+  ```python
+  dp_max[i] = max(dp_max[i-1]*nums[i], dp_min[i-1]*nums[i], nums[i])
+  dp_min[i] = min(dp_max[i-1]*nums[i], dp_min[i-1]*nums[i], nums[i])
+  ```
+
+- [1567. 乘积为正数的最长子数组长度- 力扣](https://leetcode.cn/problems/maximum-length-of-subarray-with-positive-product/solution/) 类似MIS，但是需要这题求长度，注意dp数组含义的改变以及转移方程相应调整
+
+  ```python
+  dp_pos[i] = if(nums[i]==0)  { 0 }
+              elif(nums[i]<0) { dp_neg[i-1]!=0 ? dp_neg[i-1]+1 : 0 }
+              elif(nums[i]>0) { dp_pos[i-1]+1 }
+  dp_neg[i] = if(nums[i]==0)  { 0 }
+              elif(nums[i]<0) { dp_neg[i-1]+1 }
+              elif(nums[i]>0) { dp_neg[i-1]!=0 ? dp_neg[i-1]+1 : 0}
+  ```
 
 - [918. 环形子数组的最大和 - 力扣 ](https://leetcode.cn/problems/maximum-sum-circular-subarray/) MIS的变种
   考虑两种情况，第一种情况是最大连续子数组在数组中间，这种类似于53求最大连续子数组；
   第二种情况是最大连续子数组在数组两边，这就需要求出最小连续子数组，然后用数组和减去最小连续子数组；
-  如果说这数组的所有数都是负数——
-
-- [213. 打家劫舍 II - 力扣](https://leetcode.cn/problems/house-robber-ii/) 考虑是否偷当前物品$\Longrightarrow$ 不偷转移到$f(k-1)$，偷转移到$f(k-2)$，对于环形数组分情况讨论
+  
+- [198. 打家劫舍 - 力扣](https://leetcode.cn/problems/house-robber/) $dp[i] = max(dp[i-1], dp[i-2]+val[i-2])$
+  
+- [213. 打家劫舍 II - 力扣](https://leetcode.cn/problems/house-robber-ii/) 对于环形数组分情况讨论（偷第1个 or 不偷第1个）
 
 - [740. 删除并获得点数 - 力扣](https://leetcode.cn/problems/delete-and-earn/) 打家劫舍的变体，通过一些技巧转化为打家劫舍
 
@@ -38,7 +79,13 @@
 
 - [714. 买卖股票的最佳时机含手续费 - 力扣](https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/) 与122相同，多了手续费，对递推关系稍加修改即可
 
-**背包：**
+### 2维dp
+
+#### 背包：
+
+这里把背包作为单独一种类型拉出来，这类题有固定套路：
+
+
 
 - [416. 分割等和子集](https://leetcode.cn/problems/partition-equal-subset-sum/)；0-1背包恰好装满
 - [474. 一和零](https://leetcode-cn.com/problems/ones-and-zeroes)；0-1背包最大价值3维
@@ -46,7 +93,6 @@
 - [879. 盈利计划 ](https://leetcode.cn/problems/profitable-schemes/)；
 - [1049. 最后一块石头的重量 II](https://leetcode.cn/problems/last-stone-weight-ii/)；转化为0-1背包尽可能多装的问题
 - [1230. 抛掷硬币](https://leetcode.cn/problems/toss-strange-coins/)；
-- 
 - [322. 零钱兑换](https://leetcode-cn.com/problems/coin-change)；完全背包恰好装满
 - [518. 零钱兑换 II ](https://leetcode-cn.com/problems/coin-change-2)；完全背包输出方案总数
 - [1449. 数位成本和为目标值的最大数字](https://leetcode.cn/problems/form-largest-integer-with-digits-that-add-up-to-target/)；
