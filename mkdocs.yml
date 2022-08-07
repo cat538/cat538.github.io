@@ -23,6 +23,7 @@ use_directory_urls: false
 
 nav:
   - Prologue: "index.md"
+  - Exercise: "plan.md"
   - Rust: 
     - rust-configuration: "rust/rust-configuration.md"
     - rust-study:         "rust/rust-study.md"
@@ -40,6 +41,7 @@ nav:
     - 密码分析学:           "courses/密码分析学复习.md"
     - 密码学引论:           "courses/密码学引论复习.md"
     - 操作系统:             "courses/操作系统复习.md"
+    - 算法设计与分析:        "courses/algorithm.md"
   - Crypto:
     - ecdsa-pk-recovery:  "crypto/ecdsa-pk-recovery.md"
     - algo-rsa:           "crypto/algo-rsa.md"
