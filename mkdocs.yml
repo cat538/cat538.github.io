@@ -34,9 +34,10 @@ nav:
     - rust-network:       "rust/rust-network.md"
   - Tools:
     - mkdocs:             "tools/mkdocs.md"
-    - regex:             "tools/regex.md"
     - cmake:              "tools/cmake.md"
+    - git:                "tools/git.md"
     - matplotlib:         "tools/matplotlib.md"
+    - regex:              "tools/regex.md"
   - Courses:
     - 密码分析学:           "courses/密码分析学复习.md"
     - 密码学引论:           "courses/密码学引论复习.md"
