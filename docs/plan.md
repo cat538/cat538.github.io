@@ -42,9 +42,9 @@ int maxSubArray(vector<int>& nums) {
 
 - [119. 杨辉三角 II - 力扣](https://leetcode.cn/problems/pascals-triangle-ii/) 同上
 
-- [931. 下降路径最小和 - 力扣](https://leetcode.cn/problems/minimum-falling-path-sum/) 类似杨辉三角 $dp[i][j] = val[i][j]+\min (dp[i-1][j-1],dp[i-1][j],dp[i-1][j+1])$
+- [931. 下降路径最小和 - 力扣](https://leetcode.cn/problems/minimum-falling-path-sum/)  $dp[i][j] = val[i][j]+\min (dp[i-1][j-1],dp[i-1][j],dp[i-1][j+1])$
 
-- [120. 三角形最小路径和 - 力扣](https://leetcode.cn/problems/triangle/) 类似杨辉三角 $dp[i][j] = val[i][j]+\min (dp[i-1][j-1],dp[i-1][j]$
+- [120. 三角形最小路径和 - 力扣](https://leetcode.cn/problems/triangle/)  $dp[i][j] = val[i][j]+\min (dp[i-1][j-1],dp[i-1][j])$
 
 - [53. 最大子数组和 - 力扣](https://leetcode.cn/problems/maximum-subarray/) MIS，$dp[i] = \texttt{if}(dp[i-1]<0)\quad\{nums[i]\}\quad\texttt{else}\quad\{dp[i-1]+nums[i] \}$
 
@@ -101,14 +101,23 @@ int maxSubArray(vector<int>& nums) {
     ```haskell
     dp[i] = dp[i-1] + dp[i-2] if s[i..i+1] and s[i-1..i+1]
     ```
-- [42. 接雨水 - 力扣（LeetCode）](https://leetcode.cn/problems/trapping-rain-water/)
-	```haskell
+- [42. 接雨水 - 力扣](https://leetcode.cn/problems/trapping-rain-water/)
+	
+  ```haskell
     cur[i] = min(left_max[i], right_max[i])-height[i]
     left_max[i] = max(height[i], left_max[i-1])
-    right_max[i] = max(height[i], right_max[i+1])
+	  right_max[i] = max(height[i], right_max[i+1])
 	```
 
+- [1314. 矩阵区域和 - 力扣](https://leetcode.cn/problems/matrix-block-sum/) 2维前缀和，注意2为前缀和矩阵增加了额外的一行一列全0，定义get位置函数，简化后续处理步骤
 
+  ```haskell
+  "前缀和数组：" dp[i][j]=dp[i][j-1]+dp[i-1][j]-dp[i-1][j-1]+val[i][j]
+  ```
+
+- [304. 二维区域和检索 - 矩阵不可变 - 力扣](https://leetcode.cn/problems/range-sum-query-2d-immutable/) 同上，2维前缀和
+
+- 
 
 #### 复杂度$O(n^2)$
 
