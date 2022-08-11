@@ -36,15 +36,25 @@ int maxSubArray(vector<int>& nums) {
 
 - [70. 爬楼梯 - 力扣](https://leetcode.cn/problems/climbing-stairs/) 与斐波那契相同，$dp[i] = dp[i-1]+dp[i-2]$；
 
-- [746. 使用最小花费爬楼梯 - 力扣](https://leetcode.cn/problems/min-cost-climbing-stairs/) $dp[i] = min(dp[i-1], dp[i-2])$；
+- [746. 使用最小花费爬楼梯 - 力扣](https://leetcode.cn/problems/min-cost-climbing-stairs/) $dp[i] = \min(dp[i-1], dp[i-2])$；
 
-- [118. 杨辉三角 - 力扣](https://leetcode.cn/problems/pascals-triangle/) $dp[i] = dp[i-1]+dp[i]$，注意边界条件
+- [118. 杨辉三角 - 力扣](https://leetcode.cn/problems/pascals-triangle/) $dp[i][j] = dp[i][j-1]+dp[i][j]$，注意边界条件
 
 - [119. 杨辉三角 II - 力扣](https://leetcode.cn/problems/pascals-triangle-ii/) 同上
 
 - [931. 下降路径最小和 - 力扣](https://leetcode.cn/problems/minimum-falling-path-sum/)  $dp[i][j] = val[i][j]+\min (dp[i-1][j-1],dp[i-1][j],dp[i-1][j+1])$
 
 - [120. 三角形最小路径和 - 力扣](https://leetcode.cn/problems/triangle/)  $dp[i][j] = val[i][j]+\min (dp[i-1][j-1],dp[i-1][j])$
+
+- [62. 不同路径 - 力扣](https://leetcode.cn/problems/unique-paths/) $dp[i][j] = dp[i-1][j]+dp[i][j-1])$
+
+- [63. 不同路径 II - 力扣](https://leetcode.cn/problems/unique-paths-ii/) 同上
+
+- [64. 最小路径和 - 力扣](https://leetcode.cn/problems/minimum-path-sum/) 同上，$dp[i][j] = \min(dp[i-1][j], dp[i][j-1])+grid[i][j]$
+
+- [1277. 统计全为 1 的正方形子矩阵 - 力扣](https://leetcode.cn/problems/count-square-submatrices-with-all-ones/) 
+
+- [221. 最大正方形 - 力扣](https://leetcode.cn/problems/maximal-square/) 
 
 - [53. 最大子数组和 - 力扣](https://leetcode.cn/problems/maximum-subarray/) MIS，$dp[i] = \texttt{if}(dp[i-1]<0)\quad\{nums[i]\}\quad\texttt{else}\quad\{dp[i-1]+nums[i] \}$
 
@@ -76,7 +86,7 @@ int maxSubArray(vector<int>& nums) {
 
 - [740. 删除并获得点数 - 力扣](https://leetcode.cn/problems/delete-and-earn/) 打家劫舍的变体，通过一些技巧转化为打家劫舍
 
-- [121. 买卖股票的最佳时机 - 力扣](https://leetcode.cn/problems/best-time-to-buy-and-sell-stock/) 1维dp，$f(k) = max(f(k-1),v_k - v_{pre\_min})$
+- [121. 买卖股票的最佳时机 - 力扣](https://leetcode.cn/problems/best-time-to-buy-and-sell-stock/) 1维dp，$dp[i] = \max(dp[i-1],v_i - v_{pre\_min})$
 
 - [122. 买卖股票的最佳时机 II - 力扣](https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-ii/submissions/) 2维dp：
 	
@@ -117,7 +127,7 @@ int maxSubArray(vector<int>& nums) {
 
 - [304. 二维区域和检索 - 矩阵不可变 - 力扣](https://leetcode.cn/problems/range-sum-query-2d-immutable/) 同上，2维前缀和
 
-- 
+- [1292. 元素和小于等于阈值的正方形的最大边长 - 力扣](https://leetcode.cn/problems/maximum-side-length-of-a-square-with-sum-less-than-or-equal-to-threshold/) 同上，2维前缀和
 
 #### 复杂度$O(n^2)$
 

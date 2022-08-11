@@ -1,6 +1,6 @@
 # cmake
 
-## 常用路径
+## 常用path
 
 - `CMAKE_SOURCE_DIR` : **顶级**cmakelists.txt的文件夹目录。
 - `CMAKE_CURRENT_SOURCE_DIR` : 一般来说，一个工程会有多个cmakelists.txt文件，对应当前文件目录。
@@ -14,9 +14,9 @@
 
 - `target_compile_features`可以更细粒度的指定C++的特性，如`cxx_auto_type`，`cxx_lambda`等，如果某个子项目需要C++20，但是i项目整体是17，可以对项目设置`target_compile_features(<project name> INTERFACE cxx_std_20)`
 
-## target_* 中的 PUBLIC  PRIVATE INTERFACE
+## PUBLIC  PRIVATE INTERFACE
 
-这类命令常用的有`target_link_libraries`，`target_include_directories`，`target_compile_definitions`等：
+target_* 命令常用的有`target_link_libraries`，`target_include_directories`，`target_compile_definitions`等：
 
 ```cmake
 target_compile_definitions(say-hello PUBLIC VERSION=4)
@@ -31,6 +31,17 @@ target_compile_definitions(say-hello PUBLIC VERSION=4)
 - `target_add_definitions`
 - `target_compile_options`
 
+## 常用flag
+
+- `-G <generator-name>` 指定build system generator，如"Ninja"，“Unix Makefiles”
+- `-T <toolset-spec>` 为generator指定Toolset, if supported. 只有Visual Studio，Xcode等支持这一选项
+
+build flag
+
+- `--target <tgt>..., -t <tgt>...` 指定target；默认target是all；`--target clean` 执行clean动作
+- `--config <cfg>` 对于multi-configuration 工具链（VS Xcode）， 指定cfg，如`--config Debug/Release`
+- 
+
 ## 第三方库引入
 
 cmake引入第三方库可以分为三种方式：
@@ -38,8 +49,6 @@ cmake引入第三方库可以分为三种方式：
 1. header only，如Boost，fmt(有 header only 版本)，这种库直接把头文件加入到当前工程头文件目录即可
 2. git module
 3. FetchContent
-
-
 
 ## Windows使用cmake
 
@@ -92,3 +101,10 @@ cmake --build . --config Release(默认是Debug)
 注意与nmake一样，这条命令执行必须要在有cl环境变量的shell中。一个直接的做法是使用 X64 Native Tool Command Prompt for VS 2022（其它版本，其它架构同理，下载VS后有对应的shell）；
 
 <figure><img src="cmake-study.assets/image-20220730204145599.png" alt="image-20220730204145599" style="zoom:50%;" /></figure>
+
+在windows上使用ninja+clang：
+
+```powershell
+cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=TRUE -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -S. -Bbuild -GNinja
+```
+
