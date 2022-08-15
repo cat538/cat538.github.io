@@ -52,10 +52,6 @@ int maxSubArray(vector<int>& nums) {
 
 - [64. 最小路径和 - 力扣](https://leetcode.cn/problems/minimum-path-sum/) 同上，$dp[i][j] = \min(dp[i-1][j], dp[i][j-1])+grid[i][j]$
 
-- [1277. 统计全为 1 的正方形子矩阵 - 力扣](https://leetcode.cn/problems/count-square-submatrices-with-all-ones/) 
-
-- [221. 最大正方形 - 力扣](https://leetcode.cn/problems/maximal-square/) 
-
 - [53. 最大子数组和 - 力扣](https://leetcode.cn/problems/maximum-subarray/) MIS，$dp[i] = \texttt{if}(dp[i-1]<0)\quad\{nums[i]\}\quad\texttt{else}\quad\{dp[i-1]+nums[i] \}$
 
 - [152. 乘积最大子数组- 力扣](https://leetcode.cn/problems/maximum-product-subarray/solution/) 类似MIS，但是需要注意转移方程的不同:
@@ -111,6 +107,7 @@ int maxSubArray(vector<int>& nums) {
     ```haskell
     dp[i] = dp[i-1] + dp[i-2] if s[i..i+1] and s[i-1..i+1]
     ```
+    
 - [42. 接雨水 - 力扣](https://leetcode.cn/problems/trapping-rain-water/)
 	
   ```haskell
@@ -118,16 +115,6 @@ int maxSubArray(vector<int>& nums) {
     left_max[i] = max(height[i], left_max[i-1])
 	  right_max[i] = max(height[i], right_max[i+1])
 	```
-
-- [1314. 矩阵区域和 - 力扣](https://leetcode.cn/problems/matrix-block-sum/) 2维前缀和，注意2为前缀和矩阵增加了额外的一行一列全0，定义get位置函数，简化后续处理步骤
-
-  ```haskell
-  "前缀和数组：" dp[i][j]=dp[i][j-1]+dp[i-1][j]-dp[i-1][j-1]+val[i][j]
-  ```
-
-- [304. 二维区域和检索 - 矩阵不可变 - 力扣](https://leetcode.cn/problems/range-sum-query-2d-immutable/) 同上，2维前缀和
-
-- [1292. 元素和小于等于阈值的正方形的最大边长 - 力扣](https://leetcode.cn/problems/maximum-side-length-of-a-square-with-sum-less-than-or-equal-to-threshold/) 同上，2维前缀和
 
 #### 复杂度$O(n^2)$
 
@@ -140,6 +127,12 @@ int maxSubArray(vector<int>& nums) {
 
 **已做过的相关题目：**
 
+- [300. 最长递增子序列 - 力扣](https://leetcode.cn/problems/longest-increasing-subsequence/) LIS
+
+    ```haskell
+    dp[i] = max(dp[j])+1 for j in [0..i] && nums[j]<nums[i]
+    ```
+    
 - [139. 单词拆分 - 力扣](https://leetcode.cn/problems/word-break/) 
 
     ```haskell
@@ -152,7 +145,6 @@ int maxSubArray(vector<int>& nums) {
     dp[i] = sum(dp[j]*dp[i-j-1]) for j in [0..i]
     ```
 
-    
 
 
 ### 2维dp
@@ -169,6 +161,33 @@ int maxSubArray(vector<int>& nums) {
     \end{align*}
     $$
 
+---
+
+**已做过的相关题目：**
+
+- [1314. 矩阵区域和 - 力扣](https://leetcode.cn/problems/matrix-block-sum/) **2维前缀和**，注意2为前缀和矩阵增加了额外的一行一列全0，定义get位置函数，简化后续处理步骤
+
+  ```haskell
+  "前缀和数组：" dp[i][j]=dp[i][j-1]+dp[i-1][j]-dp[i-1][j-1]+val[i][j]
+  ```
+
+- [304. 二维区域和检索 - 矩阵不可变 - 力扣](https://leetcode.cn/problems/range-sum-query-2d-immutable/) 同上，**2维前缀和**
+
+- [1292. 元素和小于等于阈值的正方形的最大边长 - 力扣](https://leetcode.cn/problems/maximum-side-length-of-a-square-with-sum-less-than-or-equal-to-threshold/) 同上，**2维前缀和**
+
+- [1277. 统计全为 1 的正方形子矩阵 - 力扣](https://leetcode.cn/problems/count-square-submatrices-with-all-ones/) 
+
+  ```haskell
+  dp[i][j] = min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1])+1 if matrix[i][j]==1
+  ```
+
+- [221. 最大正方形 - 力扣](https://leetcode.cn/problems/maximal-square/) 
+
+  ```haskell
+  dp[i][j] = min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1])+1 if matrix[i][j]==1
+  ```
+
+- 
 
 
 
