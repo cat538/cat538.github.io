@@ -3,7 +3,7 @@
 - 站内按下`F`可以打开搜索对话框，`ESC`关闭搜索对话框
 - 按下`P`或`,`转到上一页，`N`或`.`进入下一页
 
-## Commands
+<!-- ## Commands
 
 * `mkdocs new [dir-name]` - Create a new project.
 * `mkdocs serve` - Start the live-reloading docs server.
@@ -15,18 +15,7 @@
     mkdocs.yml    # The configuration file.
     docs/
         index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+        ...       # Other markdown pages, images and other files. -->
 
-!!! note
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla et euismod
-    nulla. Curabitur feugiat, tortor non consequat finibus, justo purus auctor
-    massa, nec semper lorem quam in massa.
-
-```c++
-#include<iostream>
-
-using namespace std;
-int main(){
-    return 0;
-}
-```
+!!! note "Contact"
+    - QQ: 1350359575

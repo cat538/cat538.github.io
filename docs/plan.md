@@ -82,9 +82,9 @@ int maxSubArray(vector<int>& nums) {
 
 - [740. 删除并获得点数 - 力扣](https://leetcode.cn/problems/delete-and-earn/) 打家劫舍的变体，通过一些技巧转化为打家劫舍
 
-- [121. 买卖股票的最佳时机 - 力扣](https://leetcode.cn/problems/best-time-to-buy-and-sell-stock/) 1维dp，$dp[i] = \max(dp[i-1],v_i - v_{pre\_min})$
+- [121. 买卖股票的最佳时机 - 力扣](https://leetcode.cn/problems/best-time-to-buy-and-sell-stock/) $dp[i] = \max(dp[i-1],val[i] - pre\_min)$
 
-- [122. 买卖股票的最佳时机 II - 力扣](https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-ii/submissions/) 2维dp：
+- [122. 买卖股票的最佳时机 II - 力扣](https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-ii/submissions/) 分两种情况讨论(可以视为2维dp)
 	
 	```python
 	dp_non[i]  = max(dp_non[i-1], dp_hold[i-1]+v_i)
@@ -94,7 +94,7 @@ int maxSubArray(vector<int>& nums) {
   
 - [309. 最佳买卖股票时机含冷冻期 - 力扣](https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-with-cooldown/) 
 
-- [714. 买卖股票的最佳时机含手续费 - 力扣](https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/) 与122相同，多了手续费，对递推关系稍加修改即可
+- [714. 买卖股票的最佳时机含手续费 - 力扣](https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/) 与122相同，多了手续费，对递推关系稍加修改
 
 - [413. 等差数列划分 - 力扣](https://leetcode.cn/problems/arithmetic-slices/) 
 
@@ -108,13 +108,13 @@ int maxSubArray(vector<int>& nums) {
     dp[i] = dp[i-1] + dp[i-2] if s[i..i+1] and s[i-1..i+1]
     ```
     
-- [42. 接雨水 - 力扣](https://leetcode.cn/problems/trapping-rain-water/)
+- [42. 接雨水 - 力扣](https://leetcode.cn/problems/trapping-rain-water/) 
 	
-  ```haskell
+    ```haskell
     cur[i] = min(left_max[i], right_max[i])-height[i]
     left_max[i] = max(height[i], left_max[i-1])
-	  right_max[i] = max(height[i], right_max[i+1])
-	```
+    right_max[i] = max(height[i], right_max[i+1])
+    ```
 
 #### 复杂度$O(n^2)$
 
@@ -167,9 +167,9 @@ int maxSubArray(vector<int>& nums) {
 
 - [1314. 矩阵区域和 - 力扣](https://leetcode.cn/problems/matrix-block-sum/) **2维前缀和**，注意2为前缀和矩阵增加了额外的一行一列全0，定义get位置函数，简化后续处理步骤
 
-  ```haskell
-  "前缀和数组：" dp[i][j]=dp[i][j-1]+dp[i-1][j]-dp[i-1][j-1]+val[i][j]
-  ```
+    ```haskell
+    "前缀和数组：" dp[i][j]=dp[i][j-1]+dp[i-1][j]-dp[i-1][j-1]+val[i][j]
+    ```
 
 - [304. 二维区域和检索 - 矩阵不可变 - 力扣](https://leetcode.cn/problems/range-sum-query-2d-immutable/) 同上，**2维前缀和**
 
@@ -177,18 +177,15 @@ int maxSubArray(vector<int>& nums) {
 
 - [1277. 统计全为 1 的正方形子矩阵 - 力扣](https://leetcode.cn/problems/count-square-submatrices-with-all-ones/) 
 
-  ```haskell
-  dp[i][j] = min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1])+1 if matrix[i][j]==1
-  ```
+    ```haskell
+    dp[i][j] = min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1])+1 if matrix[i][j]==1
+    ```
 
 - [221. 最大正方形 - 力扣](https://leetcode.cn/problems/maximal-square/) 
 
-  ```haskell
-  dp[i][j] = min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1])+1 if matrix[i][j]==1
-  ```
-
-- 
-
+    ```haskell
+    dp[i][j] = min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1])+1 if matrix[i][j]==1
+    ```
 
 
 #### 背包
@@ -207,6 +204,9 @@ int maxSubArray(vector<int>& nums) {
    F_k(y) = \max \{F_{k-1}(y), F_k(y-w_k)+v_k\}
    $$
    其中$F_k(y)$表示只装前k种物品，限重为y时的最大价值。
+
+---
+
 
 
 - [416. 分割等和子集](https://leetcode.cn/problems/partition-equal-subset-sum/)；0-1背包恰好装满
