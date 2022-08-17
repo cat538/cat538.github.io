@@ -165,7 +165,7 @@ int maxSubArray(vector<int>& nums) {
 
 **已做过的相关题目：**
 
-- [1314. 矩阵区域和 - 力扣](https://leetcode.cn/problems/matrix-block-sum/) **2维前缀和**，注意2为前缀和矩阵增加了额外的一行一列全0，定义get位置函数，简化后续处理步骤
+- [1314. 矩阵区域和 - 力扣](https://leetcode.cn/problems/matrix-block-sum/) **2维前缀和**；前缀和矩阵实现时增加额外1行1列全0，定义`get`方法，简化代码
 
     ```haskell
     "前缀和数组：" dp[i][j]=dp[i][j-1]+dp[i-1][j]-dp[i-1][j-1]+val[i][j]
@@ -175,17 +175,39 @@ int maxSubArray(vector<int>& nums) {
 
 - [1292. 元素和小于等于阈值的正方形的最大边长 - 力扣](https://leetcode.cn/problems/maximum-side-length-of-a-square-with-sum-less-than-or-equal-to-threshold/) 同上，**2维前缀和**
 
-- [1277. 统计全为 1 的正方形子矩阵 - 力扣](https://leetcode.cn/problems/count-square-submatrices-with-all-ones/) 
+- [1277. 统计全为 1 的正方形子矩阵 - 力扣](https://leetcode.cn/problems/count-square-submatrices-with-all-ones/) ⭐`dp[i][j]`表示以`(i,j)`为右下角最大正方形边长
 
     ```haskell
-    dp[i][j] = min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1])+1 if matrix[i][j]==1
+    dp[i][j] = min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1])+1 -- if matrix[i][j]==1
     ```
 
-- [221. 最大正方形 - 力扣](https://leetcode.cn/problems/maximal-square/) 
+- [221. 最大正方形 - 力扣](https://leetcode.cn/problems/maximal-square/) 同上
 
     ```haskell
-    dp[i][j] = min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1])+1 if matrix[i][j]==1
+    dp[i][j] = min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1])+1 -- if matrix[i][j]==1
     ```
+    
+- [5. 最长回文子串 - 力扣](https://leetcode.cn/problems/longest-palindromic-substring/) ⭐回文串去掉两端后仍是回文串
+
+    ```haskell
+	dp[i][j] = dp[i+1][j-1] && s[i] == s[j-1] -- dp[i][j]表示S[i..j]是否是回文串    
+    ```
+
+- [516. 最长回文子序列 - 力扣](https://leetcode.cn/problems/longest-palindromic-subsequence/) 同上
+
+    ```haskell
+	dp[i][j] = dp[i+1][j-1] + 2             -- if dp[i]==dp[j-1]
+    dp[i][j] = max(dp[i+1][j], dp[i][j-1])  -- if dp[i]!=dp[j-1]  
+    ```
+    
+- [1143. 最长公共子序列 - 力扣](https://leetcode.cn/problems/longest-common-subsequence/) **LCS** `dp[i][j]`表示`s1`的前`i`位与`s2`的前`j`位的LCS长度
+
+    ```haskell
+    dp[i][j] = dp[i-1][j-1] + 1				-- if s1[i]==s2[j]
+    dp[i][j] = max(dp[i-1][j], dp[i][j-1])	 -- if s1[i]!=s2[j]
+    ```
+
+    
 
 
 #### 背包
