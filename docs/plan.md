@@ -207,7 +207,14 @@ int maxSubArray(vector<int>& nums) {
     dp[i][j] = max(dp[i-1][j], dp[i][j-1])	 -- if s1[i]!=s2[j]
     ```
 
-    
+- [72. 编辑距离 - 力扣](https://leetcode.cn/problems/edit-distance/) `dp[i][j]`表示`word1`前`i`位子串到`word2`前`j`位子串的编辑距离
+
+    ```haskell
+    dp[i][j] = dp[i-1][j-1]                                 -- if word1[i]==word2[j]
+    dp[i][j] = min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1])+1  -- if word1[i]!=word2[j]
+    ```
+
+- [376. 摆动序列 - 力扣](https://leetcode.cn/problems/wiggle-subsequence/) 
 
 
 #### 背包
@@ -231,16 +238,16 @@ int maxSubArray(vector<int>& nums) {
 
 
 
-- [416. 分割等和子集](https://leetcode.cn/problems/partition-equal-subset-sum/)；0-1背包恰好装满
-- [474. 一和零](https://leetcode-cn.com/problems/ones-and-zeroes)；0-1背包最大价值3维
-- [494. 目标和 ](https://leetcode.cn/problems/target-sum/)；
-- [879. 盈利计划 ](https://leetcode.cn/problems/profitable-schemes/)；
-- [1049. 最后一块石头的重量 II](https://leetcode.cn/problems/last-stone-weight-ii/)；转化为0-1背包尽可能多装的问题
-- [1230. 抛掷硬币](https://leetcode.cn/problems/toss-strange-coins/)；
-- [322. 零钱兑换](https://leetcode-cn.com/problems/coin-change)；完全背包恰好装满
-- [518. 零钱兑换 II ](https://leetcode-cn.com/problems/coin-change-2)；完全背包输出方案总数
-- [1449. 数位成本和为目标值的最大数字](https://leetcode.cn/problems/form-largest-integer-with-digits-that-add-up-to-target/)；
-- [279. 完全平方数](https://leetcode.cn/problems/perfect-squares/)；完全背包
+- [416. 分割等和子集](https://leetcode.cn/problems/partition-equal-subset-sum/) 0-1背包恰好装满
+- [474. 一和零](https://leetcode-cn.com/problems/ones-and-zeroes) 0-1背包最大价值3维
+- [494. 目标和 ](https://leetcode.cn/problems/target-sum/) 
+- [879. 盈利计划 ](https://leetcode.cn/problems/profitable-schemes/) 
+- [1049. 最后一块石头的重量 II](https://leetcode.cn/problems/last-stone-weight-ii/) 转化为0-1背包尽可能多装的问题
+- [1230. 抛掷硬币](https://leetcode.cn/problems/toss-strange-coins/) 
+- [322. 零钱兑换](https://leetcode-cn.com/problems/coin-change) 完全背包恰好装满
+- [518. 零钱兑换 II ](https://leetcode-cn.com/problems/coin-change-2) 完全背包输出方案总数
+- [1449. 数位成本和为目标值的最大数字](https://leetcode.cn/problems/form-largest-integer-with-digits-that-add-up-to-target/) 
+- [279. 完全平方数](https://leetcode.cn/problems/perfect-squares/) 完全背包
 
 
 
