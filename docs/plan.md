@@ -50,7 +50,11 @@ int maxSubArray(vector<int>& nums) {
 
 - [63. 不同路径 II - 力扣](https://leetcode.cn/problems/unique-paths-ii/) 同上
 
-- [64. 最小路径和 - 力扣](https://leetcode.cn/problems/minimum-path-sum/) 同上，$dp[i][j] = \min(dp[i-1][j], dp[i][j-1])+grid[i][j]$
+- [64. 最小路径和 - 力扣](https://leetcode.cn/problems/minimum-path-sum/) 同上，$dp[i][j] = \min(dp[i-1][j], dp[i][j-1])+grid[i][j])$
+
+- [264. 丑数 II - 力扣](https://leetcode.cn/problems/ugly-number-ii/) $dp[i] = \min({dp[p2]*2, dp[p3]*3, dp[p5]*5})$
+
+- [313. 超级丑数 - 力扣](https://leetcode.cn/problems/super-ugly-number/) //!TODO
 
 - [53. 最大子数组和 - 力扣](https://leetcode.cn/problems/maximum-subarray/) MIS，$dp[i] = \texttt{if}(dp[i-1]<0)\quad\{nums[i]\}\quad\texttt{else}\quad\{dp[i-1]+nums[i] \}$
 
@@ -207,7 +211,7 @@ int maxSubArray(vector<int>& nums) {
     dp[i][j] = max(dp[i-1][j], dp[i][j-1])	 -- if s1[i]!=s2[j]
     ```
 
-- [72. 编辑距离 - 力扣](https://leetcode.cn/problems/edit-distance/) `dp[i][j]`表示`word1`前`i`位子串到`word2`前`j`位子串的编辑距离
+- [72. 编辑距离 - 力扣](https://leetcode.cn/problems/edit-distance/) `dp[i][j]`表示`word1`前`i`位子串与`word2`前`j`位子串的编辑距离
 
     ```haskell
     dp[i][j] = dp[i-1][j-1]                                 -- if word1[i]==word2[j]
@@ -244,10 +248,10 @@ int maxSubArray(vector<int>& nums) {
 - [879. 盈利计划 ](https://leetcode.cn/problems/profitable-schemes/) 
 - [1049. 最后一块石头的重量 II](https://leetcode.cn/problems/last-stone-weight-ii/) 转化为0-1背包尽可能多装的问题
 - [1230. 抛掷硬币](https://leetcode.cn/problems/toss-strange-coins/) 
-- [322. 零钱兑换](https://leetcode-cn.com/problems/coin-change) 完全背包恰好装满
-- [518. 零钱兑换 II ](https://leetcode-cn.com/problems/coin-change-2) 完全背包输出方案总数
+- [322. 零钱兑换](https://leetcode-cn.com/problems/coin-change) 完全背包恰好装满；$dp[i][j]=\min(dp[i-1][j], dp[i][j-vals[i]]+1)$初始`dp[0]=0 dp[i]=MAX which i != 0` 
+- [279. 完全平方数](https://leetcode.cn/problems/perfect-squares/) 完全背包恰好装满；$dp[i][j] = \min(dp[i-1][j], dp[i][j-vals[i]]+1)$初始`dp[i]=i` 
+- [518. 零钱兑换 II ](https://leetcode-cn.com/problems/coin-change-2) 完全背包输出方案总数；$dp[i][j]=dp[i-1][j]+dp[i][j-vals[i]]$初始`dp[0]=1 dp[i]=0 which i != 0` 
 - [1449. 数位成本和为目标值的最大数字](https://leetcode.cn/problems/form-largest-integer-with-digits-that-add-up-to-target/) 
-- [279. 完全平方数](https://leetcode.cn/problems/perfect-squares/) 完全背包
 
 
 
