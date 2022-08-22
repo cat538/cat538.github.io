@@ -255,3 +255,69 @@ int maxSubArray(vector<int>& nums) {
 
 
 
+## 回溯
+
+回溯算法是在一棵树上的 **深度优先遍历**（**因为要找所有的解，所以需要遍历**）；以[39. 组合总和 - 力扣（LeetCode）](https://leetcode.cn/problems/combination-sum/) 为例，其代码模板如下：
+
+```c++
+vector<vector<int>> res_{};
+vector<int> temp_{};
+vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+    dfs(candidates, target, 0);
+    return res_;
+}
+
+void dfs(vector<int>& candidates, int target, int cur_idx){
+    int n = candidates.size();
+    if(0 == target){
+        res_.emplace_back(temp_);
+        return;
+    }
+    if(target < 0) return; // 剪枝优化
+    for(int i = cur_idx; i < n;i++) {
+        temp_.emplace_back(candidates[i]);
+        dfs(candidates, target-candidates[i], i);
+        temp_.pop_back();
+    }
+}
+```
+
+<figure><img src="plan.assets/image-20220822163759947.png" alt="image-20220822163759947" style="zoom:67%;" /></figure>
+
+
+
+1. 排列组合问题
+
+   - [77. 组合 - 力扣](https://leetcode.cn/problems/combinations/) 输出$C_n^k$种方案
+
+   - [39. 组合总和 - 力扣](https://leetcode.cn/problems/combination-sum/) 完全背包输出具体方案，数据量不大可以用`dfs`+剪枝
+
+   - [40. 组合总和 II - 力扣](https://leetcode.cn/problems/combination-sum-ii/) 0-1背包输出具体方案，数据量不大可以用`dfs`+剪枝
+
+   - [78. 子集 - 力扣](https://leetcode.cn/problems/subsets/) 输出$C_n^1+C_n^2+\cdots$种方案
+
+   - [90. 子集 II - 力扣](https://leetcode.cn/problems/subsets-ii/) ⭐去重
+
+   - [17. 电话号码的字母组合 - 力扣](https://leetcode.cn/problems/letter-combinations-of-a-phone-number/) 正常回溯(字符串可以传值从而不必回溯)
+
+   - [46. 全排列 - 力扣](https://leetcode.cn/problems/permutations/) 使用`mark`数组
+
+   - [47. 全排列 II - 力扣](https://leetcode.cn/problems/permutations-ii/) ⭐去重
+   - [60. 排列序列 - 力扣](https://leetcode.cn/problems/permutation-sequence/) 
+   - [93. 复原 IP 地址 - 力扣](https://leetcode.cn/problems/restore-ip-addresses/) 
+
+- 分割问题
+  131.分割回文串
+  93.复原IP地址
+  子集问题
+  78.子集
+  90.子集II
+  排列问题
+  46.全排列
+  47.全排列II
+  棋盘问题
+  51.N皇后
+  37.解数独
+  其他
+  491.递增子序列
+  332.重新安排行程
