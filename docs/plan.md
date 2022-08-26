@@ -289,21 +289,16 @@ void dfs(vector<int>& candidates, int target, int cur_idx){
 1. 排列组合问题
 
    - [77. 组合 - 力扣](https://leetcode.cn/problems/combinations/) 输出$C_n^k$种方案
-
    - [39. 组合总和 - 力扣](https://leetcode.cn/problems/combination-sum/) 完全背包输出具体方案，数据量不大可以用`dfs`+剪枝
-
    - [40. 组合总和 II - 力扣](https://leetcode.cn/problems/combination-sum-ii/) 0-1背包输出具体方案，数据量不大可以用`dfs`+剪枝
-
    - [78. 子集 - 力扣](https://leetcode.cn/problems/subsets/) 输出$C_n^1+C_n^2+\cdots$种方案
-
    - [90. 子集 II - 力扣](https://leetcode.cn/problems/subsets-ii/) ⭐去重
-
    - [17. 电话号码的字母组合 - 力扣](https://leetcode.cn/problems/letter-combinations-of-a-phone-number/) 正常回溯(字符串可以传值从而不必回溯)
-
-   - [46. 全排列 - 力扣](https://leetcode.cn/problems/permutations/) 使用`mark`数组
-
+   - [46. 全排列 - 力扣](https://leetcode.cn/problems/permutations/) 使用`used`数组
    - [47. 全排列 II - 力扣](https://leetcode.cn/problems/permutations-ii/) ⭐去重
-   - [60. 排列序列 - 力扣](https://leetcode.cn/problems/permutation-sequence/) 
+   - [60. 排列序列 - 力扣](https://leetcode.cn/problems/permutation-sequence/) ⭐求全排列第K项，考虑如何剪枝
+2. 分割问题
+   - [131. 分割回文串 - 力扣](https://leetcode.cn/problems/palindrome-partitioning/) 
    - [93. 复原 IP 地址 - 力扣](https://leetcode.cn/problems/restore-ip-addresses/) 
 
 - 分割问题
