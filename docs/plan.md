@@ -286,33 +286,46 @@ void dfs(vector<int>& candidates, int target, int cur_idx){
 
 
 
-1. 排列组合问题
+### 排列、组合、子集问题
 
-   - [77. 组合 - 力扣](https://leetcode.cn/problems/combinations/) 输出$C_n^k$种方案
-   - [39. 组合总和 - 力扣](https://leetcode.cn/problems/combination-sum/) 完全背包输出具体方案，数据量不大可以用`dfs`+剪枝
-   - [40. 组合总和 II - 力扣](https://leetcode.cn/problems/combination-sum-ii/) 0-1背包输出具体方案，数据量不大可以用`dfs`+剪枝
-   - [78. 子集 - 力扣](https://leetcode.cn/problems/subsets/) 输出$C_n^1+C_n^2+\cdots$种方案
-   - [90. 子集 II - 力扣](https://leetcode.cn/problems/subsets-ii/) ⭐去重
-   - [17. 电话号码的字母组合 - 力扣](https://leetcode.cn/problems/letter-combinations-of-a-phone-number/) 正常回溯(字符串可以传值从而不必回溯)
-   - [46. 全排列 - 力扣](https://leetcode.cn/problems/permutations/) 使用`used`数组
-   - [47. 全排列 II - 力扣](https://leetcode.cn/problems/permutations-ii/) ⭐去重
-   - [60. 排列序列 - 力扣](https://leetcode.cn/problems/permutation-sequence/) ⭐求全排列第K项，考虑如何剪枝
-2. 分割问题
-   - [131. 分割回文串 - 力扣](https://leetcode.cn/problems/palindrome-partitioning/) 
-   - [93. 复原 IP 地址 - 力扣](https://leetcode.cn/problems/restore-ip-addresses/) 
+- [77. 组合 - 力扣](https://leetcode.cn/problems/combinations/) 输出$C_n^k$种方案
+- [39. 组合总和 - 力扣](https://leetcode.cn/problems/combination-sum/) 完全背包输出具体方案，数据量不大可以用`dfs`+剪枝
+- [40. 组合总和 II - 力扣](https://leetcode.cn/problems/combination-sum-ii/) 0-1背包输出具体方案，数据量不大可以用`dfs`+剪枝
+- [78. 子集 - 力扣](https://leetcode.cn/problems/subsets/) 输出$C_n^1+C_n^2+\cdots$种方案
+- [90. 子集 II - 力扣](https://leetcode.cn/problems/subsets-ii/) ⭐去重
+- [17. 电话号码的字母组合 - 力扣](https://leetcode.cn/problems/letter-combinations-of-a-phone-number/) 正常回溯(字符串可以传值从而不必回溯)
+- [46. 全排列 - 力扣](https://leetcode.cn/problems/permutations/) 使用`used`数组
+- [47. 全排列 II - 力扣](https://leetcode.cn/problems/permutations-ii/) ⭐去重
+- [60. 排列序列 - 力扣](https://leetcode.cn/problems/permutation-sequence/) ⭐求全排列第K项，考虑如何剪枝
 
-- 分割问题
-  131.分割回文串
-  93.复原IP地址
-  子集问题
-  78.子集
-  90.子集II
-  排列问题
-  46.全排列
-  47.全排列II
-  棋盘问题
-  51.N皇后
-  37.解数独
-  其他
-  491.递增子序列
-  332.重新安排行程
+### 字符串分割问题
+
+- [131. 分割回文串 - 力扣](https://leetcode.cn/problems/palindrome-partitioning/) 
+- [93. 复原 IP 地址 - 力扣](https://leetcode.cn/problems/restore-ip-addresses/) 
+
+### 棋盘问题(游戏问题)
+
+- [37. 解数独 - 力扣](https://leetcode.cn/problems/sudoku-solver/) 
+- [51. N 皇后 - 力扣](https://leetcode.cn/problems/n-queens/) 
+
+
+
+## 二分
+
+二分搜索模板代码：
+
+```c++
+int search(vector<int>& nums, int target) {
+    int r = nums.size(), l = 0, mid{}; // 左闭右开在[l,r)范围内search
+    while(l<r) {
+    	mid = (l+r)/2;
+    	if(nums[mid] == target) return mid;
+        else if(nums[mid] > target) r = mid;
+        else l = mid+1;
+    }
+    return -1;
+}
+```
+
+- [704. 二分查找 - 力扣](https://leetcode.cn/problems/binary-search/) 
+- 
