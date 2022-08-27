@@ -191,7 +191,7 @@ int maxSubArray(vector<int>& nums) {
     dp[i][j] = min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1])+1 -- if matrix[i][j]==1
     ```
     
-- [5. 最长回文子串 - 力扣](https://leetcode.cn/problems/longest-palindromic-substring/) ⭐回文串去掉两端后仍是回文串
+- [5. 最长回文子串 - 力扣](https://leetcode.cn/problems/longest-palindromic-substring/) ⭐回文串去掉两端后仍是回文串；复杂度$O(n^2)$
 
     ```haskell
 	dp[i][j] = dp[i+1][j-1] && s[i] == s[j-1] -- dp[i][j]表示S[i..j]是否是回文串    
@@ -300,13 +300,15 @@ void dfs(vector<int>& candidates, int target, int cur_idx){
 
 ### 字符串分割问题
 
-- [131. 分割回文串 - 力扣](https://leetcode.cn/problems/palindrome-partitioning/) 
-- [93. 复原 IP 地址 - 力扣](https://leetcode.cn/problems/restore-ip-addresses/) 
+- [131. 分割回文串 - 力扣](https://leetcode.cn/problems/palindrome-partitioning/) 隔板法遍历回溯搜索
+- [93. 复原 IP 地址 - 力扣](https://leetcode.cn/problems/restore-ip-addresses/) 隔板法遍历回溯搜索
 
 ### 棋盘问题(游戏问题)
 
-- [37. 解数独 - 力扣](https://leetcode.cn/problems/sudoku-solver/) 
+- [37. 解数独 - 力扣](https://leetcode.cn/problems/sudoku-solver/) `dfs`搜索结果 使用全局变量记录是否搜到，从而在搜到后及时退出搜索
 - [51. N 皇后 - 力扣](https://leetcode.cn/problems/n-queens/) 
+- [52. N皇后 II - 力扣](https://leetcode.cn/problems/n-queens-ii/) 同上
+- [79. 单词搜索 - 力扣](https://leetcode.cn/problems/word-search/) `dfs`搜索结果 使用全局变量记录是否搜到，从而在搜到后及时退出搜索
 
 
 
@@ -315,17 +317,19 @@ void dfs(vector<int>& candidates, int target, int cur_idx){
 二分搜索模板代码：
 
 ```c++
-int search(vector<int>& nums, int target) {
-    int r = nums.size(), l = 0, mid{}; // 左闭右开在[l,r)范围内search
-    while(l<r) {
-    	mid = (l+r)/2;
-    	if(nums[mid] == target) return mid;
-        else if(nums[mid] > target) r = mid;
-        else l = mid+1;
-    }
-    return -1;
+// 返回`vec`中第一个大于等于 target 元素的下标
+int my_lower_bound(vector<int> &vec, int target) {
+  int l = 0, r = vec.size(), mid{}; // [l,r)
+  while (l < r) {
+    mid = l + (r - l) / 2;
+    if (target > vec[mid]) l = mid + 1; // 若target > nums[mid] 应在右区间寻找
+    else r = mid; // 否则(小于等于)在左区间寻找
+  }
+  return l; // 最后l和r必定重合，返回l或r均可
 }
 ```
 
 - [704. 二分查找 - 力扣](https://leetcode.cn/problems/binary-search/) 
+- [35. 搜索插入位置 - 力扣](https://leetcode.cn/problems/search-insert-position/) 返回第一个大于等于 target 元素的下标 即`lower_bound`功能
+- [852. 山脉数组的峰顶索引 - 力扣 ](https://leetcode.cn/problems/peak-index-in-a-mountain-array/) 
 - 
