@@ -334,6 +334,10 @@ int my_lower_bound(vector<int> &vec, int target) {
 - [35. 搜索插入位置 - 力扣](https://leetcode.cn/problems/search-insert-position/) 返回第一个大于等于 target 元素的下标 即`lower_bound`功能
 - [34. 在排序数组中查找元素的第一个和最后一个位置 - 力扣](https://leetcode.cn/problems/find-first-and-last-position-of-element-in-sorted-array/) `lower_bound`+`upper_bound`
 - [852. 山脉数组的峰顶索引 - 力扣 ](https://leetcode.cn/problems/peak-index-in-a-mountain-array/) 
-- [33. 搜索旋转排序数组 - 力扣](https://leetcode.cn/problems/search-in-rotated-sorted-array/) 将数组从中间分开成左右两部分的时候，一定有一部分的数组是有序的；且：以最低点为分割点，**右**半部分**最大值**一定小于**左**半部分**最小值**
+- [162. 寻找峰值 - 力扣](https://leetcode.cn/problems/find-peak-element/) 
+- [33. 搜索旋转排序数组 - 力扣](https://leetcode.cn/problems/search-in-rotated-sorted-array/) ⭐将数组从中间分开成左右两部分的时候，一定有一部分的数组是有序的；且：以最低点为分割点，**右**半部分**最大值**一定小于**左**半部分**最小值**
 - [81. 搜索旋转排序数组 II - 力扣](https://leetcode.cn/problems/search-in-rotated-sorted-array-ii/) 元素有重复
+- [153. 寻找旋转排序数组中的最小值 - 力扣](https://leetcode.cn/problems/find-minimum-in-rotated-sorted-array/) 使用右边界作为基准元素
+- [154. 寻找旋转排序数组中的最小值 II - 力扣](https://leetcode.cn/problems/find-minimum-in-rotated-sorted-array-ii/) 有重复
 - [74. 搜索二维矩阵 - 力扣](https://leetcode.cn/problems/search-a-2d-matrix/) 先对行二分（注意这里我们要找到行首元素小于target的最后一行，即`upper_bound-1`），再对列二分
+- 
