@@ -46,9 +46,41 @@ build flag
 
 cmake引入第三方库可以分为三种方式：
 
-1. header only，如Boost，fmt(有 header only 版本)，这种库直接把头文件加入到当前工程头文件目录即可
-2. git module
-3. FetchContent
+### header only
+
+如Boost，fmt(有 header only 版本)，这种库直接把头文件加入到当前工程头文件目录即可
+
+### git submodule
+
+### FetchContent
+
+[FetchContent — CMake 3.24.2 Documentation](https://cmake.org/cmake/help/latest/module/FetchContent.html)
+
+该模块主要包括四个命令：
+
+1. `FetchContent_Declare(<name> <contentOptions> [OVERRIDE_FIND_PACKAGE |FIND_PACKAGE_ARGS args...])` 描述如何下载依赖库，**name** 声明下载库的名称，**contentOptions** 描述获取、更新外部库的方式（常用的有通过 Git Repo下载，通过 URL 下载等）
+
+   - 关于`<contentOptions>`中的`GIT_TAG`:
+
+     ```
+     it is advisable to use a hash for GIT_TAG rather than a branch or tag name. A commit hash is more secure and helps to confirm that the downloaded contents are what you expected.
+     eg:
+     FetchContent_Declare(
+       googletest
+       GIT_REPOSITORY https://github.com/google/googletest.git
+       GIT_TAG        703bd9caab50b139428cea1aaff9974ebee5742e # release-1.10.0
+     )
+     ```
+
+   - 关于`FIND_PACKAGE_ARGS`
+
+2. `FetchContent_MakeAvaliable(<name1> [<name2>...])`
+
+3. `FetchContent_Populate(<name>)`
+
+   `FetchContent_MakeAvailable` 会先检查依赖是否已经构建完成，因此不会重复构建，但 `FetchContent_Populate` 并不会，重复构建会报错，因此， 使用 `FetchContent_Populate` 前，必须按照上述示例，使用 `FetchContent_GetProperties` 获取变量 `<lowercaseName>_POPULATED`，检测是否需要构建该依赖。
+
+4. `FetchContent_GetProperties(<name> [SOURCE_DIR <srcDirVar>] [BINARY_DIR <binDirVar>] [POPULATED <doneVar>])`
 
 ## Windows使用cmake
 

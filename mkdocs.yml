@@ -35,6 +35,7 @@ nav:
   - Tools:
     - mkdocs:             "tools/mkdocs.md"
     - cmake:              "tools/cmake.md"
+    - catch2:             "tools/catch2.md"
     - docker:             "tools/docker.md"
     - git:                "tools/git.md"
     - matplotlib:         "tools/matplotlib.md"
@@ -51,6 +52,8 @@ nav:
     - algo-fft&ntt:       "crypto/algo-fft&ntt.md"
     - algo-montgomery:    "crypto/algo-montgomery.md"
     - seal-ckks:          "crypto/seal-ckks.md"
+  - Cpp:
+    - ranges:             "ranges.md"
   - About: "about.md"
 
 

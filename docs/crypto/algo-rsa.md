@@ -43,15 +43,14 @@ $c = m^e\pmod{n}\quad m = c^d\pmod{n}\quad\Longrightarrow m^{ed}\equiv m\pmod{n}
 
 分情况：
 
-- $(m,n) = 1\Longrightarrow$ 直接欧拉​定理
+- $p\mid m$  则有 $m^{\varphi(n)+1}\equiv m \pmod p$
 
-- $(m,n)\neq1\Longrightarrow 至少有 p|m ~或~ q|m$
+- $p\nmid m$ 则有 $m^{p-1}\equiv 1 \pmod p \Longrightarrow m^{k(p-1)(q-1)+1}\equiv m\pmod p$
 
-  以$p|m$为例：$m\equiv0\pmod{p}\Longrightarrow m^{k\varphi(n)+1}\equiv m\pmod{p}$
 
-  无论$q|m~or~q\nmid m $，均有$m^{k\varphi(n)+1}\equiv m\pmod{p}$前者用欧拉，后者同上一行
+因此无论$p|m$ or $p\nmid m $，均有$m^{k\varphi(n)+1}\equiv m\pmod{p}$，同理可以证明$m^{k\varphi(n)+1}\equiv m\pmod{q}$
 
-  而$pq$互素，因此有$m^{k\varphi(n)+1}\equiv1\pmod{n}$
+而$pq$互素，因此根据中国剩余定理有$m^{k\varphi(n)+1}\equiv1\pmod{n}$
 
 
 
