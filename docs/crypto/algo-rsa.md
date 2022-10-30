@@ -11,7 +11,7 @@ mathjax: true
 
 1. 随机选择大素数$p、q$
 
-2. 计算$n = p\cdot q\quad 、\quad \varphi(n) = (p-1)(q-1)$  其中$\varphi()$为欧拉函数，$\varphi(n) = \varphi(p)\varphi(q)$
+2. 计算$n = p\cdot q~~,~~\varphi(n) = (p-1)(q-1)$  其中$\varphi()$为欧拉函数，$\varphi(n) = \varphi(p)\varphi(q)$
 
 3. 选择$e:gcd(e,(\varphi(n))) = 1$
 
@@ -48,7 +48,7 @@ $c = m^e\pmod{n}\quad m = c^d\pmod{n}\quad\Longrightarrow m^{ed}\equiv m\pmod{n}
 - $p\nmid m$ 则有 $m^{p-1}\equiv 1 \pmod p \Longrightarrow m^{k(p-1)(q-1)+1}\equiv m\pmod p$
 
 
-因此无论$p|m$ or $p\nmid m $，均有$m^{k\varphi(n)+1}\equiv m\pmod{p}$，同理可以证明$m^{k\varphi(n)+1}\equiv m\pmod{q}$
+因此无论$p|m$ or $p\nmid m$，均有$m^{k\varphi(n)+1}\equiv m\pmod{p}$，同理可以证明$m^{k\varphi(n)+1}\equiv m\pmod{q}$
 
 而$pq$互素，因此根据中国剩余定理有$m^{k\varphi(n)+1}\equiv1\pmod{n}$
 
@@ -69,15 +69,19 @@ $c = m^e\pmod{n}\quad m = c^d\pmod{n}\quad\Longrightarrow m^{ed}\equiv m\pmod{n}
 #### 解密算法的加速：
 
 因为解密方知道p的分解m、n所以可以把$m = {c}^d\pmod n$换成两个方程：
-$$
-m_1 = c_1^{d_1}\pmod p\\
-m_2 = c_2^{d_2}\pmod q\\
-其中c_1 = c \pmod p,c_2 = c\pmod q\\
-d_1 = d\pmod {p-1},d_2 = d\pmod {q-1}
-$$
+
+\begin{align*}
+m_1 &= c_1^{d_1}\pmod p\\
+m_2 &= c_2^{d_2}\pmod q\\
+\end{align*}
+
+其中
+
+- $c_1 = c \pmod p,c_2 = c\pmod q$
+
+- $d_1 = d\pmod {p-1},d_2 = d\pmod {q-1}$
+
 然后用CRT逆回去即可，能够提高4-8倍
-
-
 
 ### RSA安全性分析
 
