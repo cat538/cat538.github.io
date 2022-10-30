@@ -46,7 +46,7 @@
 
 ### Single-word Barrett reduction
 
-最原始的`reduce`：
+为了计算$c = a \pmod n$，最原始的`reduce`：
 
 ``` go
 func reduce(a uint) uint {
@@ -55,3 +55,18 @@ func reduce(a uint) uint {
 }
 ```
 
+其中除法比较慢，Barret reduction考虑用$q = m/2^k$来近似$1/n$，这样除以$n$就变成了乘以$m$再除以$2^k$。因此对于一个固定的模数$n$，我们可以选择一个合适的k，并预计算出m，这样之后每次计算$a\mod n,~b\mod n,~c\mod n~ \cdots$时，Barret reduction将其转化为一次乘法和一次移位运算，避免了除法。
+
+这里可以看到，算法要求我们选取合适的$k$并计算出合适的$m$，保证$m/2^k$能够近似$1/n$
+``` go
+func reduce(a uint) uint {
+    q := (a * m) >> k
+    return a - q * n
+}
+```
+
+为了选取合适的m，如果对于给定k，因为$q = m/2^k = 1/n$，那么有$m=2^k/n$。同时为了保证m是整数并且防止算出的$\frac{a\cdot m}{2^k}$过大，通常取$m = \lfloor\frac{2^k}{n}\rfloor$
+
+那么k选什么精度合适呢？答案是通常取$k\geq \lceil 2\log_2 n \rceil$(如果模数n是1024 bits，那么取k = 20)。事实上k的选取限制算法能够计算的a的取值范围：
+
+用$m/2^k$近似$1/n$的误差记作$e$，则$e = \frac{1}{n}-\frac{m}{2^k}$，因此计算出的$q = a \cdot \frac{m}{2^k}$的误差为$a\cdot e$，如果要保证结果是有效的，那么我们要保证$ae<1$，则有$a<1/e$。
