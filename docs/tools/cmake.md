@@ -1,8 +1,14 @@
 # cmake
 
+> 官方文档: [cmake documentation](https://cmake.org/cmake/help/latest/index.html)
+
+CMake 是一个管理源代码构建的工具。最初，CMake 被设计为一个生成各种 Makefile 方言(various dialects of Makefile)的生成器，如今 CMake 生成现代buildsystems（例如 Ninja）以及用于 IDE（例如 Visual Studio 和 Xcode）的项目文件。
+
+CMake 广泛用于 C 和 C++ 语言，但它也可以用于构建其他语言的源代码。
+
 ## 常用path
 
-- `CMAKE_SOURCE_DIR` : **顶级**cmakelists.txt的文件夹目录。
+- `CMAKE_SOURCE_DIR` : **顶级**`cmakelists.txt`的文件所在目录。
 - `CMAKE_CURRENT_SOURCE_DIR` : 一般来说，一个工程会有多个cmakelists.txt文件，对应当前文件目录。
 - `CMAKE_BINRAY_DIR` : 对应cmake的build的目录，主要是运行时生成的文件目录。
 - `CMAKE_CURRENT_BINARY_DIR` : 对应build里的目录。
@@ -10,9 +16,9 @@
 - `CMAKE_PREFIX_PATH` : api(find_libray/path)包含模块时的搜索目录。
 - `CMAKE_INSTALL_PREFIX` : 调用install相关函数，要生成/保存的根目录路径。
 
+<!-- ## 常用命令
 
-
-- `target_compile_features`可以更细粒度的指定C++的特性，如`cxx_auto_type`，`cxx_lambda`等，如果某个子项目需要C++20，但是i项目整体是17，可以对项目设置`target_compile_features(<project name> INTERFACE cxx_std_20)`
+- `target_compile_features`可以更细粒度的指定C++的特性，如`cxx_auto_type`，`cxx_lambda`等，如果某个子项目需要C++20，但是i项目整体是17，可以对项目设置`target_compile_features(<project name> INTERFACE cxx_std_20)` -->
 
 ## PUBLIC  PRIVATE INTERFACE
 
@@ -31,7 +37,7 @@ target_compile_definitions(say-hello PUBLIC VERSION=4)
 - `target_add_definitions`
 - `target_compile_options`
 
-## 常用flag
+## cmake常用flag
 
 - `-G <generator-name>` 指定build system generator，如"Ninja"，“Unix Makefiles”
 - `-T <toolset-spec>` 为generator指定Toolset, if supported. 只有Visual Studio，Xcode等支持这一选项
@@ -40,21 +46,33 @@ build flag
 
 - `--target <tgt>..., -t <tgt>...` 指定target；默认target是all；`--target clean` 执行clean动作
 - `--config <cfg>` 对于multi-configuration 工具链（VS Xcode）， 指定cfg，如`--config Debug/Release`
-- 
 
-## 第三方库引入
 
-cmake引入第三方库可以分为三种方式：
+## 依赖管理
+> 官方文档: [Using Dependencies Guide](https://cmake.org/cmake/help/latest/guide/using-dependencies/index.html#guide:Using%20Dependencies%20Guide)
 
-### header only
+一个Project将经常依赖于其他 projects, assets, and artifacts。 CMake 提供了许多方法将依赖项引入构建。其中主要的方法是 `find_package()` 命令和 `FetchContent` 模块。
 
-如Boost，fmt(有 header only 版本)，这种库直接把头文件加入到当前工程头文件目录即可
+### header only lib
+如Boost，fmt等，这种库直接把头文件加入到当前工程头文件目录即可
 
-### git submodule
+### Using Pre-built Packages With `find_package()`
+> [find_package — CMake Documentation](https://cmake.org/cmake/help/latest/command/find_package.html)
 
-### FetchContent
 
-[FetchContent — CMake 3.24.2 Documentation](https://cmake.org/cmake/help/latest/module/FetchContent.html)
+项目所需的package可能已经在用户系统的某个位置构建并可用。这个package可能是用cmake构建的，也可能是用其它方式构建的，甚至有可能是一个根本不需要构建的文件集合。cmake为这些场景提供了`find_package()`命令。
+
+`find_package()`搜索众所周知的位置，以及项目或用户提供的其他路径。 它还支持package components and packages being optional。 该命令提供结果变量以允许项目根据是否找到包或特定组件来自定义其自己的行为。
+```cmake
+find_package(Catch2)
+find_package(GTest REQUIRED)
+find_package(Boost 1.79 COMPONENTS date_time)
+```
+### Downloading And Building From Source With `FetchContent`
+> [FetchContent — CMake 3.24.2 Documentation](https://cmake.org/cmake/help/latest/module/FetchContent.html)
+
+
+依赖项不一定have to be pre-built才能被 CMake 调用。 依赖项也可以作为主项目的一部分从源代码构建。 `FetchContent` 模块提供下载依赖项源代码并将其添加到主项目buildsystem的功能。 The dependency's sources will be built along with the rest of the main-project, just as though the sources were part of the main-project's own sources.
 
 该模块主要包括四个命令：
 
@@ -62,18 +80,15 @@ cmake引入第三方库可以分为三种方式：
 
    - 关于`<contentOptions>`中的`GIT_TAG`:
 
-     ```
-     it is advisable to use a hash for GIT_TAG rather than a branch or tag name. A commit hash is more secure and helps to confirm that the downloaded contents are what you expected.
-     eg:
+     ```cmake
+     # it is advisable to use a hash for GIT_TAG rather than a branch or tag name. A commit hash is more secure and helps to confirm that the downloaded contents are what you expected.
+     # eg:
      FetchContent_Declare(
        googletest
        GIT_REPOSITORY https://github.com/google/googletest.git
        GIT_TAG        703bd9caab50b139428cea1aaff9974ebee5742e # release-1.10.0
      )
      ```
-
-   - 关于`FIND_PACKAGE_ARGS`
-
 2. `FetchContent_MakeAvaliable(<name1> [<name2>...])`
 
 3. `FetchContent_Populate(<name>)`
@@ -81,6 +96,53 @@ cmake引入第三方库可以分为三种方式：
    `FetchContent_MakeAvailable` 会先检查依赖是否已经构建完成，因此不会重复构建，但 `FetchContent_Populate` 并不会，重复构建会报错，因此， 使用 `FetchContent_Populate` 前，必须按照上述示例，使用 `FetchContent_GetProperties` 获取变量 `<lowercaseName>_POPULATED`，检测是否需要构建该依赖。
 
 4. `FetchContent_GetProperties(<name> [SOURCE_DIR <srcDirVar>] [BINARY_DIR <binDirVar>] [POPULATED <doneVar>])`
+
+**一般的使用模式如下：**
+- first declare all the dependencies it wants to use
+- then ask for them to be made available
+
+```cmake
+FetchContent_Declare(
+  catch2
+  GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+  GIT_TAG        0de60d8e7ead1ddd5ba8c46b901c122eac20bf94 # 3.1.0
+)
+FetchContent_Declare(
+  fmt
+  GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+  GIT_TAG        48f525d025cadbedce0b2288ff8e19b6877341e4 # 9.1.0
+)
+FetchContent_MakeAvailable(catch2 fmt)  # 要求cmake 3.14以上
+```
+`FetchContent`支持各种下载方法，包括从 URL 下载和提取archives（支持一系列archives格式），以及包括 Git、Subversion 和 Mercurial 在内的多种repository formats。Custom download, update, and patch commands can also be used to support arbitrary use cases.
+
+当使用 FetchContent 将依赖项添加到project时，project就链接到了依赖项的target，像project中的任何其他target一样。
+
+### `FetchContent` and `find_package()` Integration
+某些依赖项支持通过both `find_package()` and `FetchContent`两种方式添加到project。
+
+项目可以通过使用 `FetchContent_Declare()` 的 `FIND_PACKAGE_ARGS` option 来表明it is happy to accept a dependency by either method(`FetchContent` and `find_package()`)。 这允许 FetchContent_MakeAvailable() 首先尝试通过调用 find_package() 来满足依赖关系，如果有的话，使用 FIND_PACKAGE_ARGS 关键字后面的参数。 如果没有找到依赖项，则它是从源代码构建，如前所述。
+```cmake
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  GIT_REPOSITORY https://github.com/google/googletest.git
+  GIT_TAG        703bd9caab50b139428cea1aaff9974ebee5742e # release-1.10.0
+  FIND_PACKAGE_ARGS NAMES GTest
+)
+FetchContent_MakeAvailable(googletest)
+
+add_executable(ThingUnitTest thing_ut.cpp)
+target_link_libraries(ThingUnitTest GTest::gtest_main)
+```
+上面这个例子将会首先调用 `find_package(googletest NAMES GTest)`。 CMake 提供了一个 `FindGTest` Module，因此如果它发现某个地方安装了 GTest package，它将直接使其可用，并且不会从源代码构建依赖项(**也不会去下载源码了**)。如果没有找到 GTest 包，它将从下载源码，并从源代码构建。
+
+### Dependency Providers
+> [dependency provider](https://cmake.org/cmake/help/latest/command/cmake_language.html#dependency-providers)
+
+开发人员可能对how a dependency is provided to the project更感兴趣。您可能希望使用自己构建的特定版本的包。您可能想要使用第三方包管理器。出于安全或性能原因，您可能希望将某些请求重定向到您控制的系统上的不同 URL。 CMake 通过 Dependency Providers 支持这些场景。
+
+A dependency provider can be set to intercept `find_package()` and `FetchContent_MakeAvailable()` calls
 
 ## Windows使用cmake
 
