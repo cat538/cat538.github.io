@@ -15,29 +15,14 @@ CMake 广泛用于 C 和 C++ 语言，但它也可以用于构建其他语言的
 - `CMAKE_MODULE_PATH` : api(include/find_package)包含别的cmake文件时的搜索目录。
 - `CMAKE_PREFIX_PATH` : api(find_libray/path)包含模块时的搜索目录。
 - `CMAKE_INSTALL_PREFIX` : 调用install相关函数，要生成/保存的根目录路径。
+- `CMAKE_EXPORT_COMPILE_COMMANDS=TRUE` : 如果使用clangd，需要将该选项设为true(似乎默认值也是true)，指定生成`compile_commands.json`文件。clangd依赖该文件做静态分析
+- `CMAKE_TOOLCHAIN_FILE` : 如果使用vcpkg，需要指定该路径(详见vcpkg文档)
 
 <!-- ## 常用命令
 
 - `target_compile_features`可以更细粒度的指定C++的特性，如`cxx_auto_type`，`cxx_lambda`等，如果某个子项目需要C++20，但是i项目整体是17，可以对项目设置`target_compile_features(<project name> INTERFACE cxx_std_20)` -->
 
-## PUBLIC  PRIVATE INTERFACE
-
-target_* 命令常用的有`target_link_libraries`，`target_include_directories`，`target_compile_definitions`等：
-
-```cmake
-target_compile_definitions(say-hello PUBLIC VERSION=4)
-```
-
-这条命令在预编译阶段之前插入宏 `#define VERSION 4`，其中`PUBLIC`表示这个宏对于`say-hello`这个库以**及link了`say-hello`这个库的模块**可见；如果是`PRIVATE`，则这个宏仅对`say-hello`可见；而`INTERFACE`与`PRIVATE`相反，设置为`INTERFACE`后，对于外部可见，而对于模块内部不可见。
-
-直观地来说`PUBLIC`会将某个属性向外"传播"，`PRIVATE`自己"独享"，`INTERFACE`只暴露给外部
-
-- `target_include_directories` 设置为`PUBLIC`常用于库文件向外export 头文件
-- `target_link_libraries` 
-- `target_add_definitions`
-- `target_compile_options`
-
-## cmake常用flag
+## 常用flag
 
 - `-G <generator-name>` 指定build system generator，如"Ninja"，“Unix Makefiles”
 - `-T <toolset-spec>` 为generator指定Toolset, if supported. 只有Visual Studio，Xcode等支持这一选项
@@ -48,12 +33,42 @@ build flag
 - `--config <cfg>` 对于multi-configuration 工具链（VS Xcode）， 指定cfg，如`--config Debug/Release`
 
 
+## PUBLIC  PRIVATE INTERFACE
+
+`target_*` 命令常用的有`target_link_libraries`，`target_include_directories`，`target_compile_definitions`等：
+
+```cmake
+target_compile_definitions(say-hello PUBLIC VERSION=4)
+```
+
+这条命令在预编译阶段之前插入宏 `#define VERSION 4`，其中`PUBLIC`表示这个宏对于`say-hello`这个库以**及link了`say-hello`这个库的模块**可见；如果是`PRIVATE`，则这个宏仅对`say-hello`可见；而`INTERFACE`与`PRIVATE`相反，设置为`INTERFACE`后，对于外部可见，而对于模块内部不可见。
+
+再举一个例子，对于`target_include_directories`命令来说：
+```cmake
+# `PUBLIC` let all receivers accesss header files
+target_include_directories(
+  ${LIB_NAME} PUBLIC 
+  ${PROJECT_SOURCE_DIR}/include
+)
+```
+- 设置为`PUBLIC`，会将`${PROJECT_SOURCE_DIR}/include`目录下的头文件暴露给引用该库的其它project；
+- 如果设置为`PRIVATE`，则该目录下的头文件对于引用该库的项目是不可见的；
+- 如果设置为`INTERFACE`，则该目录下的头文件对于该项目不可见，对于引用该项目的其它project可见。
+
+直观地来说`PUBLIC`会将某个属性向外"传播"，`PRIVATE`自己"独享"，`INTERFACE`只暴露给外部
+
+- `target_include_directories` 设置为`PUBLIC`常用于库文件向外export 头文件
+- `target_link_libraries` 通常设置为`PRIVATE`，使得开发该库时引用的第三方库对于引用该库的其它项目不可见(如开发一个库时用到的`Catch2`，`benchmark`，`fmt`等测试，调试用的库)
+- `target_add_definitions`
+- `target_compile_options`
+
+
 ## 依赖管理
 > 官方文档: [Using Dependencies Guide](https://cmake.org/cmake/help/latest/guide/using-dependencies/index.html#guide:Using%20Dependencies%20Guide)
 
 一个Project将经常依赖于其他 projects, assets, and artifacts。 CMake 提供了许多方法将依赖项引入构建。其中主要的方法是 `find_package()` 命令和 `FetchContent` 模块。
 
-### header only lib
+### header-only lib
 如Boost，fmt等，这种库直接把头文件加入到当前工程头文件目录即可
 
 ### Using Pre-built Packages With `find_package()`
@@ -146,17 +161,23 @@ A dependency provider can be set to intercept `find_package()` and `FetchContent
 
 ## Windows使用cmake
 
-在Windows平台下，`cl.exe`对应`gcc` or `clang`，`link.exe`对应`ld`；通常在安装VS后，电脑上会有多个`cl.exe`，他们分别对应不同host架构和target架构：
+在Windows平台下，`cl.exe`是visual c++的编译器，对应*nix平台下常见的`gcc` or `clang`；windows下的`link.exe`对应`ld`；通常在安装Visual Studio后，电脑上会有多个`cl.exe`，他们分别对应不同host架构和target架构：
 
 <img src="./cmake-study.assets/image-20220730190848346.png" alt="image-20220730190848346" style="zoom:50%;" />
 
 但是如果从外部终端直接使用`cl.exe main.cpp`无法直接编译，因为`cl.exe`需要通过命令，或通过环境变量设置`include dir`。使用windows下这套编译链接工具最简单的方法是打开 X64 Native Tool Command Prompt for VS 2022，这个shell 预设置了这套工具运行所需要的环境变量（其它架构同理）。
 
-如果想要从外部终端使用这套环境变量可以执行脚本 如：`vcvarsall.bat x64`(脚本的位置需要自己寻找)
+如果想要从外部终端使用这套环境变量可以执行脚本 如：`vcvarsall.bat x64`(脚本的位置需要自己寻找)。
+
+> 需要注意的是如果从powershell运行`.bat`脚本，则不会正确设置环境变量，这是因为powershell执行`.bat`脚本是通过开一个`cmd`子进程再执行脚本，执行完毕后`cmd`subprocess退出，设置的环境变量随之消失。
+> 
+> 如果想要在powershell中调用该脚本，一个方案是使用cmd启动`vcvars64.bat`脚本，再从cmd中启动powershell... 
+> 
+> [run vcvarsall, but cl and other still unavailable](https://stackoverflow.com/questions/65773728/run-vcvarsall-but-cl-and-other-still-unavailable)
 
 ### nmake
 
-nmake是一个命令行工具，是Microsoft Visual Studio中的附带命令，可以使用cmake构建build system 时指定 使用nmake：`cmake -G "NMake Makefiles"`
+nmake是Microsoft Visual Studio中的附带命令行工具。**使用namke编译奇慢无比**，原因是namke不支持多任务编译，如非必要(openssl文档中指定使用nmake)，尽量不用这个工具。如果要使用`nmake`可以在cmake构建buildsystem 时指定使用`-G`参数指定generator为nmake：`cmake -G "NMake Makefiles"`
 
 ![image-20220730194727781](./cmake-study.assets/image-20220730194727781.png)
 
@@ -168,7 +189,7 @@ nmake是一个命令行工具，是Microsoft Visual Studio中的附带命令，�
 
 ### MSBuild
 
-MSBuild 是 Visual Studio 中所有项目（包括 C++ C# 项目）的native build system。 在 Visual Studio IDE 中构建项目时，它会调用 msbuild.exe，该工具又会使用 `.vcxproj` 项目文件以及各种 `.targets` 和 `.props` 文件。Visual Studio 依赖MSBuild，但是MSBuild不依赖Visual Studio。MSBuild是nmake的替代品。MSBuild所管理的工程文件（`.sln`，`.vcxprj`）使用的是xml语法。
+MSBuild 是 Visual Studio 中所有项目（包括 C++ C# 项目）的native build system。 在 Visual Studio IDE 中构建项目时，它会调用 msbuild.exe，该工具又会使用 `.vcxproj` 项目文件以及各种 `.targets` 和 `.props` 文件。Visual Studio 依赖MSBuild，但是MSBuild不依赖Visual Studio。**MSBuild是nmake的替代品**。MSBuild所管理的工程文件（`.sln`，`.vcxprj`）使用的是xml语法。
 
 如前文所述，在Windows上，cmake默认会选择MSBuild作为默认的build system generator，在命令行使用MSBuild的步骤：
 
@@ -178,7 +199,7 @@ cmake ..
 cmake --build . --config Release(默认是Debug)
 ```
 
-我们经常看到的步骤是`cmake ..`之后`make`；这里使用`cmake --build .` 命令代替可以做到跨平台，这样即使是使用Ninja 或者 MSBuild 或者NMake Makefiles等生成的build tree 都可以被正确构建。
+我们经常看到的步骤是`cmake ..`之后`make`；这里使用`cmake --build .` 命令代替，这样即使是使用Ninja 或者 MSBuild 或者NMake Makefiles等不同generators生成的build tree 都可以被正确构建。
 
 而我们常见的在`cmake ..`之后使用`make`其实是假设了使用`Unix Make`生成`build tree`，此时project files 主要是Makefile等，需要使用make去build。
 
@@ -199,6 +220,10 @@ cmake --build . --config Release(默认是Debug)
 在windows上使用ninja+clang：
 
 ```powershell
-cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=TRUE -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -S. -Bbuild -GNinja
+cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=TRUE`
+-DCMAKE_BUILD_TYPE=Release`
+-DCMAKE_C_COMPILER=clang`
+-DCMAKE_CXX_COMPILER=clang++`
+-S. -Bbuild -GNinja
 ```
 
