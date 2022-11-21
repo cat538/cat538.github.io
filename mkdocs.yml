@@ -40,6 +40,7 @@ nav:
     - git:                "tools/git.md"
     - matplotlib:         "tools/matplotlib.md"
     - powershell:         "tools/powershell.md"
+    - profile:            "tools/profile.md"
     - regex:              "tools/regex.md"
   - Courses:
     - 密码分析学:           "courses/密码分析学复习.md"
