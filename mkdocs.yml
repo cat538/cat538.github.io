@@ -54,7 +54,7 @@ nav:
     - algo-montgomery:    "crypto/algo-montgomery.md"
     - seal-ckks:          "crypto/seal-ckks.md"
   - Cpp:
-    - ranges:             "ranges.md"
+    - ranges:             "cpp/ranges.md"
   - About: "about.md"
 
 

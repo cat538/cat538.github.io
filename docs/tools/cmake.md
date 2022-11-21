@@ -36,13 +36,13 @@ build flag
 
 - `list`，用于对list进行增删改查等操作
 
-  例如，如果某个库没有提供用于查找该库的官方`cmake`脚本(用于module mode 的module 或者 config mode 的configuration文件)，则需要自己编写查找该库的cmake脚本 or 使用第三方提供的脚本，然后将脚本所在的文件夹加入`CMAKE_MODULE_PATH`；cmake在执行`find_package`时会优先使用module mode，执行`CMAKE_MODULE_PATH`下的对应module搜索该库
+    例如，如果某个库没有提供用于查找该库的官方`cmake`脚本(用于module mode 的module 或者 config mode 的configuration文件)，则需要自己编写查找该库的cmake脚本 or 使用第三方提供的脚本，然后将脚本所在的文件夹加入`CMAKE_MODULE_PATH`；cmake在执行`find_package`时会优先使用module mode，执行`CMAKE_MODULE_PATH`下的对应module搜索该库
 
-  而`CMAKE_MODULE_PATH`是一个列表，这就需要我们把自定义的脚本路径添加到`CMAKE_MODULE_PATH`中，让cmake找到该脚本，此时使用`list(APPEND CMAKE_MODULE_PATH <user-defined-module-path>)`
+    而`CMAKE_MODULE_PATH`是一个列表，这就需要我们把自定义的脚本路径添加到`CMAKE_MODULE_PATH`中，让cmake找到该脚本，此时使用`list(APPEND CMAKE_MODULE_PATH <user-defined-module-path>)`
 
-  ```cmake
-  list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMake")
-  ```
+    ```cmake
+    list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMake")
+    ```
 
 - `set`
 
@@ -74,6 +74,7 @@ target_include_directories(
   ${PROJECT_SOURCE_DIR}/include
 )
 ```
+
 - 设置为`PUBLIC`，会将`${PROJECT_SOURCE_DIR}/include`目录下的头文件暴露给引用该库的其它project；
 - 如果设置为`PRIVATE`，则该目录下的头文件对于引用该库的项目是不可见的；
 - 如果设置为`INTERFACE`，则该目录下的头文件对于该项目不可见，对于引用该项目的其它project可见。
@@ -136,69 +137,69 @@ find_package(Boost 1.79 COMPONENTS date_time)
 
 1. `FetchContent_Declare` 描述如何添加(下载)依赖库，其Signature如下
 
-   ```cmake
-   FetchContent_Declare(
-     <name>
-     <contentOptions>...
-     [SYSTEM]
-     [OVERRIDE_FIND_PACKAGE | FIND_PACKAGE_ARGS args...]
-   )
-   ```
+    ```cmake
+    FetchContent_Declare(
+      <name>
+      <contentOptions>...
+      [SYSTEM]
+      [OVERRIDE_FIND_PACKAGE | FIND_PACKAGE_ARGS args...]
+    )
+    ```
 
-   主要用到的参数：`name` 声明下载库的名称，`contentOptions` 描述获取、更新外部库的方式（常用的有通过 Git 下载，通过 URL 下载等）
+    主要用到的参数：`name` 声明下载库的名称，`contentOptions` 描述获取、更新外部库的方式（常用的有通过 Git 下载，通过 URL 下载等）
 
-   ```cmake
-   # it is advisable to use a hash for GIT_TAG rather than a branch or tag name. A commit hash is more secure and helps to confirm that the downloaded contents are what you expected.
-   # eg:
-   FetchContent_Declare(
-     googletest	# 大小写不敏感
-     GIT_REPOSITORY https://github.com/google/googletest.git
-     GIT_TAG        703bd9caab50b139428cea1aaff9974ebee5742e # release-1.10.0
-   )
-   ```
+    ```cmake
+    # it is advisable to use a hash for GIT_TAG rather than a branch or tag name. A commit hash is more secure and helps to confirm that the downloaded contents are what you expected.
+    # eg:
+    FetchContent_Declare(
+      googletest	# 大小写不敏感
+      GIT_REPOSITORY https://github.com/google/googletest.git
+      GIT_TAG        703bd9caab50b139428cea1aaff9974ebee5742e # release-1.10.0
+    )
+    ```
 
-   **使用时需要注意以下几点**
+    **使用时需要注意以下几点**
 
-   - **多次调用`FetchContent_Declare`**：The `FetchContent_Declare()` function records the options that describe how to populate the specified content. If such details have already been recorded earlier in this project (regardless of where in the project hierarchy), this and all later calls for the same content `<name>` are ignored. This "first to record, wins" approach is what allows hierarchical projects to have parent projects override content details of child projects.
+    - **多次调用`FetchContent_Declare`**：The `FetchContent_Declare()` function records the options that describe how to populate the specified content. If such details have already been recorded earlier in this project (regardless of where in the project hierarchy), this and all later calls for the same content `<name>` are ignored. This "first to record, wins" approach is what allows hierarchical projects to have parent projects override content details of child projects.
 
 2. `FetchContent_MakeAvaliable` 让之前通过`FetchContent_Declare`声明的依赖变得可用（加入buildsystem中）
 
-   **使用时需要注意以下几点**
+    **使用时需要注意以下几点**
 
-   - **哪条命令会下载依赖**：调用`FetchContent_Declare`不下载依赖；真正的下载动作发生在调用`FetchContent_MakeAvaliable`时。
+    - **哪条命令会下载依赖**：调用`FetchContent_Declare`不下载依赖；真正的下载动作发生在调用`FetchContent_MakeAvaliable`时。
 
-   - **离线（不通过下载）添加依赖**：可以通过指定本地路径的方式来添加依赖；通过设置`FETCHCONTENT_SOURCE_DIR_<uppercaseName>`变量来指定依赖在local fs的位置。这样在调用`FetchContent_MakeAvailable`时，就不会再从`Declare`中指定的网络位置下载源码。
+    - **离线（不通过下载）添加依赖**：可以通过指定本地路径的方式来添加依赖；通过设置`FETCHCONTENT_SOURCE_DIR_<uppercaseName>`变量来指定依赖在local fs的位置。这样在调用`FetchContent_MakeAvailable`时，就不会再从`Declare`中指定的网络位置下载源码。
 
-     - `FETCHCONTENT_FULLY_DISCONNECTED` 变量默认为`OFF`，设置为`ON`时，不会进行任何下载和更新动作，当确定依赖已经存在于指定位置且不需要更新，可以设置为`ON`加速configure过程；
-     - `FETCHCONTENT_UPDATES_DISCONNECTED`类似，只跳过更新阶段，如果依赖不存在，会去下载
+        - `FETCHCONTENT_FULLY_DISCONNECTED` 变量默认为`OFF`，设置为`ON`时，不会进行任何下载和更新动作，当确定依赖已经存在于指定位置且不需要更新，可以设置为`ON`加速configure过程；
+        - `FETCHCONTENT_UPDATES_DISCONNECTED`类似，只跳过更新阶段，如果依赖不存在，会去下载
 
-     效果有点类似于`add_subdirectory`（但是不需要指定binary source directory）
+        效果有点类似于`add_subdirectory`（但是不需要指定binary source directory）
 
-     ```cmake
-     set(FETCHCONTENT_SOURCE_DIR_FMT ${3RD_LIB_DIR}/fmt) # spicify `fmt` dir at local fs
-     FetchContent_Declare(
-       fmt
-       GIT_REPOSITORY https://github.com/fmtlib/fmt.git
-       GIT_TAG        48f525d025cadbedce0b2288ff8e19b6877341e4 # 9.1.0
-     )
-     FetchContent_MakeAvailable(fmt) # Won't download from github, add from local fs
-     ```
+        ```cmake
+        set(FETCHCONTENT_SOURCE_DIR_FMT ${3RD_LIB_DIR}/fmt) # spicify `fmt` dir at local fs
+        FetchContent_Declare(
+          fmt
+          GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+          GIT_TAG        48f525d025cadbedce0b2288ff8e19b6877341e4 # 9.1.0
+        )
+        FetchContent_MakeAvailable(fmt) # Won't download from github, add from local fs
+        ```
 
-   - 第一次调用`FetchContent_MakeAvaliable`之后，再调用`FetchContent_Declare`会被忽略。因此，对于依赖的声明`FetchContent_Declare`**必须在第一次调用**`FetchContent_MakeAvaliable`之前。
+    - **Declare与MakeAvaliable顺序**：第一次调用`FetchContent_MakeAvaliable`之后，再调用`FetchContent_Declare`会被忽略。因此，对于依赖的声明`FetchContent_Declare`**必须在第一次调用**`FetchContent_MakeAvaliable`之前。
 
-   > ```cmake
-   > # WRONG: Should declare all details first
-   > FetchContent_Declare(uses_other ...)
-   > FetchContent_MakeAvailable(uses_other)
-   > 
-   > FetchContent_Declare(other ...)    # Will be ignored, uses_other beat us to it
-   > FetchContent_MakeAvailable(other)  # Would use details declared by uses_other
-   > #================================================================================
-   > # CORRECT: All details declared first, so they will take priority
-   > FetchContent_Declare(uses_other ...)
-   > FetchContent_Declare(other ...)
-   > FetchContent_MakeAvailable(uses_other other)
-   > ```
+        ```cmake
+        # WRONG: Should declare all details first
+        FetchContent_Declare(uses_other ...)
+        FetchContent_MakeAvailable(uses_other)
+
+        FetchContent_Declare(other ...)    # Will be ignored, uses_other beat us to it
+        FetchContent_MakeAvailable(other)  # Would use details declared by uses_other
+        #================================================================================
+        # CORRECT: All details declared first, so they will take priority
+        FetchContent_Declare(uses_other ...)
+        FetchContent_Declare(other ...)
+        FetchContent_MakeAvailable(uses_other other)
+        ```
 
 **一般的使用模式如下：**
 
@@ -232,7 +233,7 @@ endif()
 
 1. `FetchContent_Populate(<name>)`
 
-   `FetchContent_MakeAvailable` 会先检查依赖是否已经构建完成，因此不会重复构建，但 `FetchContent_Populate` 并不会，重复构建会报错，因此， 使用 `FetchContent_Populate` 前，必须按照上述示例，使用 `FetchContent_GetProperties` 获取变量 `<lowercaseName>_POPULATED`，检测是否需要构建该依赖。
+    `FetchContent_MakeAvailable` 会先检查依赖是否已经构建完成，因此不会重复构建，但 `FetchContent_Populate` 并不会，重复构建会报错，因此， 使用 `FetchContent_Populate` 前，必须按照上述示例，使用 `FetchContent_GetProperties` 获取变量 `<lowercaseName>_POPULATED`，检测是否需要构建该依赖。
 
 2. `FetchContent_GetProperties(<name> [SOURCE_DIR <srcDirVar>] [BINARY_DIR <binDirVar>] [POPULATED <doneVar>])`
 
@@ -267,7 +268,7 @@ A dependency provider can be set to intercept `find_package()` and `FetchContent
 
 在Windows平台下，`cl.exe`是visual c++的编译器，对应*nix平台下常见的`gcc` or `clang`；windows下的`link.exe`对应`ld`；通常在安装Visual Studio后，电脑上会有多个`cl.exe`，他们分别对应不同host架构和target架构：
 
-<img src="./cmake-study.assets/image-20220730190848346.png" alt="image-20220730190848346" style="zoom:50%;" />
+<figure><img src="./cmake-study.assets/image-20220730190848346.png" alt="image-20220730190848346" style="zoom:50%;" /></figure>
 
 但是如果从外部终端直接使用`cl.exe main.cpp`无法直接编译，因为`cl.exe`需要通过命令，或通过环境变量设置`include dir`。使用windows下这套编译链接工具最简单的方法是打开 X64 Native Tool Command Prompt for VS 2022，这个shell 预设置了这套工具运行所需要的环境变量（其它架构同理）。
 
@@ -283,7 +284,7 @@ A dependency provider can be set to intercept `find_package()` and `FetchContent
 
 nmake是Microsoft Visual Studio中的附带命令行工具。**使用namke编译奇慢无比**，原因是namke不支持多任务编译，如非必要(openssl文档中指定使用nmake)，尽量不用这个工具。如果要使用`nmake`可以在cmake构建buildsystem 时指定使用`-G`参数指定generator为nmake：`cmake -G "NMake Makefiles"`
 
-![image-20220730194727781](./cmake-study.assets/image-20220730194727781.png)
+<figure><img src="./cmake-study.assets/image-20220730194727781.png" alt="image-20220730190848346" style="zoom:70%;" /></figure>
 
 关于其它的构建系统可以使用`cmake --help`查看：
 
@@ -297,7 +298,7 @@ MSBuild 是 Visual Studio 中所有项目（包括 C++ C# 项目）的native bui
 
 如前文所述，在Windows上，cmake默认会选择MSBuild作为默认的build system generator，在命令行使用MSBuild的步骤：
 
-```
+```powershell
 cd build
 cmake ..
 cmake --build . --config Release(默认是Debug)

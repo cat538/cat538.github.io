@@ -5,6 +5,7 @@ C++20 引入`ranges` library 来源于 `ranges-v3`，它是算法和迭代器库
 
 ## Range concepts
 首先了解`ranges`提供的几个基础的concept:
+
 1. *range*
     ```C++
     template< class T >
@@ -15,14 +16,17 @@ C++20 引入`ranges` library 来源于 `ranges-v3`，它是算法和迭代器库
     ```
     其中`ranges::begin()`Returns an iterator to the first element of the argument.
 
-    而`ranges::end()`Returns a sentinel indicating the end of a range.  [Tutorial: C++20’s Iterator Sentinels](https://www.foonathan.net/2020/03/iterator-sentinel/)
+    而`ranges::end()`Returns a sentinel indicating the end of a range.  
+    > [Tutorial: C++20’s Iterator Sentinels](https://www.foonathan.net/2020/03/iterator-sentinel/)
 
     可以看到对于类型T，如果expression `ranges::begin(t);`和`ranges::end(t)`成立，那么T就是一个range。其含义为我们可以通过提供T的一个迭代器和一个sentinel在该范围内进行迭代。
+
 2. *view*
     ```C++
     template<class T>
     concept view = ranges::range<T> && std::movable<T> && ranges::enable_view<T>;
     ```
+
 ## Views
 views是ranges库的核心，ranges库功能有多丰富，取决于其提供多少种views。在`std::ranges`中预定义了一系列的views类型
 
