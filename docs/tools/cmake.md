@@ -15,7 +15,7 @@ CMake 广泛用于 C 和 C++ 语言，但它也可以用于构建其他语言的
 - `CMAKE_MODULE_PATH` : api(include/find_package)包含别的cmake文件时的搜索目录。
 - `CMAKE_PREFIX_PATH` : api(find_libray/path)包含模块时的搜索目录。
 - `CMAKE_INSTALL_PREFIX` : 调用install相关函数，要生成/保存的根目录路径。
-- `CMAKE_EXPORT_COMPILE_COMMANDS=TRUE` : 如果使用clangd，需要将该选项设为true(似乎默认值也是true)，指定生成`compile_commands.json`文件。clangd依赖该文件做静态分析
+- `CMAKE_EXPORT_COMPILE_COMMANDS=TRUE` : 如果使用clangd，需要将该选项设为true(似乎默认值也是true)，指定生成`compile_commands.json`文件。clangd依赖该文件做静态分析。
 - `CMAKE_TOOLCHAIN_FILE` : 如果使用vcpkg，需要指定该路径(详见vcpkg文档)
 
 <!-- ## 常用命令
@@ -31,6 +31,29 @@ build flag
 
 - `--target <tgt>..., -t <tgt>...` 指定target；默认target是all；`--target clean` 执行clean动作
 - `--config <cfg>` 对于multi-configuration 工具链（VS Xcode）， 指定cfg，如`--config Debug/Release`
+
+## 常用命令
+
+- `list`，用于对list进行增删改查等操作
+
+  例如，如果某个库没有提供用于查找该库的官方`cmake`脚本(用于module mode 的module 或者 config mode 的configuration文件)，则需要自己编写查找该库的cmake脚本 or 使用第三方提供的脚本，然后将脚本所在的文件夹加入`CMAKE_MODULE_PATH`；cmake在执行`find_package`时会优先使用module mode，执行`CMAKE_MODULE_PATH`下的对应module搜索该库
+
+  而`CMAKE_MODULE_PATH`是一个列表，这就需要我们把自定义的脚本路径添加到`CMAKE_MODULE_PATH`中，让cmake找到该脚本，此时使用`list(APPEND CMAKE_MODULE_PATH <user-defined-module-path>)`
+
+  ```cmake
+  list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMake")
+  ```
+
+- `set`
+
+- `option`
+
+- `include`
+
+- `aux_source_directory`
+
+- `find_library`
+
 
 
 ## PUBLIC  PRIVATE INTERFACE
@@ -59,8 +82,8 @@ target_include_directories(
 
 - `target_include_directories` 设置为`PUBLIC`常用于库文件向外export 头文件
 - `target_link_libraries` 通常设置为`PRIVATE`，使得开发该库时引用的第三方库对于引用该库的其它项目不可见(如开发一个库时用到的`Catch2`，`benchmark`，`fmt`等测试，调试用的库)
-- `target_add_definitions`
-- `target_compile_options`
+- `target_add_definitions` 用于添加宏定义
+- `target_compile_options` 用于添加编译选项；例如`target_compile_options(${LIB_NAME} PRIVATE -maes)`，对于指定`target`在编译时使用aesni
 
 
 ## 依赖管理
@@ -80,41 +103,107 @@ target_include_directories(
 `find_package()`搜索众所周知的位置，以及项目或用户提供的其他路径。 它还支持package components and packages being optional。 该命令提供结果变量以允许项目根据是否找到包或特定组件来自定义其自己的行为。
 ```cmake
 find_package(Catch2)
-find_package(GTest REQUIRED)
+find_package(GTest REQUIRED)	# REQUIRED: 如果没找到: abort cmake configure
 find_package(Boost 1.79 COMPONENTS date_time)
 ```
+关于`find_package`和`find_library`：
+
+> [cmake - Package vs Library - Stack Overflow](https://stackoverflow.com/questions/23832339/package-vs-library)
+>
+> Imagine you want to use zlib in your project, you need to find the header file `zlib.h`, and the library `libz.so` (on Linux). You can use the low-level cmake commands `find_path` and `find_library` to find them, or you can use `find_package(ZLIB)`. The later command will try to find out all what is necessary to use zlib. It can be extra macro definitions, or dependencies.
+>
+> **Update, more detail about `find_package`**: when the CMake command `find_package(SomeThing)` is called, [as in the documentation](https://cmake.org/cmake/help/v3.0/command/find_package.html), there are two possible modes that cmake can run:
+>
+> - the module mode (that searches for a file `FindSomeThing.cmake`)
+> - or the config mode (that searches for a file named `SomeThingConfig.cmake`)
+>
+> For ZLIB, there is a module named `FindZLIB`, shipped with CMake itself (on my Linux machine that is the file `/usr/share/cmake/Modules/FindZLIB.cmake`). That module is a CMake script that uses the CMake API to search for ZLIB files in default locations, or ask the user for the location if it cannot be found automatically.
+
+#### find_package 的搜索模式
+
+1. **Module mode**
+2. **Config mode**
+3. **FetchContent redirection mode**(3.24之后引入)
+
 ### Downloading And Building From Source With `FetchContent`
+
 > [FetchContent — CMake 3.24.2 Documentation](https://cmake.org/cmake/help/latest/module/FetchContent.html)
 
 
 依赖项不一定have to be pre-built才能被 CMake 调用。 依赖项也可以作为主项目的一部分从源代码构建。 `FetchContent` 模块提供下载依赖项源代码并将其添加到主项目buildsystem的功能。 The dependency's sources will be built along with the rest of the main-project, just as though the sources were part of the main-project's own sources.
 
-该模块主要包括四个命令：
+该模块主要包括以下几个命令：
 
-1. `FetchContent_Declare(<name> <contentOptions> [OVERRIDE_FIND_PACKAGE |FIND_PACKAGE_ARGS args...])` 描述如何下载依赖库，**name** 声明下载库的名称，**contentOptions** 描述获取、更新外部库的方式（常用的有通过 Git Repo下载，通过 URL 下载等）
+1. `FetchContent_Declare` 描述如何添加(下载)依赖库，其Signature如下
 
-   - 关于`<contentOptions>`中的`GIT_TAG`:
+   ```cmake
+   FetchContent_Declare(
+     <name>
+     <contentOptions>...
+     [SYSTEM]
+     [OVERRIDE_FIND_PACKAGE | FIND_PACKAGE_ARGS args...]
+   )
+   ```
+
+   主要用到的参数：`name` 声明下载库的名称，`contentOptions` 描述获取、更新外部库的方式（常用的有通过 Git 下载，通过 URL 下载等）
+
+   ```cmake
+   # it is advisable to use a hash for GIT_TAG rather than a branch or tag name. A commit hash is more secure and helps to confirm that the downloaded contents are what you expected.
+   # eg:
+   FetchContent_Declare(
+     googletest	# 大小写不敏感
+     GIT_REPOSITORY https://github.com/google/googletest.git
+     GIT_TAG        703bd9caab50b139428cea1aaff9974ebee5742e # release-1.10.0
+   )
+   ```
+
+   **使用时需要注意以下几点**
+
+   - **多次调用`FetchContent_Declare`**：The `FetchContent_Declare()` function records the options that describe how to populate the specified content. If such details have already been recorded earlier in this project (regardless of where in the project hierarchy), this and all later calls for the same content `<name>` are ignored. This "first to record, wins" approach is what allows hierarchical projects to have parent projects override content details of child projects.
+
+2. `FetchContent_MakeAvaliable` 让之前通过`FetchContent_Declare`声明的依赖变得可用（加入buildsystem中）
+
+   **使用时需要注意以下几点**
+
+   - **哪条命令会下载依赖**：调用`FetchContent_Declare`不下载依赖；真正的下载动作发生在调用`FetchContent_MakeAvaliable`时。
+
+   - **离线（不通过下载）添加依赖**：可以通过指定本地路径的方式来添加依赖；通过设置`FETCHCONTENT_SOURCE_DIR_<uppercaseName>`变量来指定依赖在local fs的位置。这样在调用`FetchContent_MakeAvailable`时，就不会再从`Declare`中指定的网络位置下载源码。
+
+     - `FETCHCONTENT_FULLY_DISCONNECTED` 变量默认为`OFF`，设置为`ON`时，不会进行任何下载和更新动作，当确定依赖已经存在于指定位置且不需要更新，可以设置为`ON`加速configure过程；
+     - `FETCHCONTENT_UPDATES_DISCONNECTED`类似，只跳过更新阶段，如果依赖不存在，会去下载
+
+     效果有点类似于`add_subdirectory`（但是不需要指定binary source directory）
 
      ```cmake
-     # it is advisable to use a hash for GIT_TAG rather than a branch or tag name. A commit hash is more secure and helps to confirm that the downloaded contents are what you expected.
-     # eg:
+     set(FETCHCONTENT_SOURCE_DIR_FMT ${3RD_LIB_DIR}/fmt) # spicify `fmt` dir at local fs
      FetchContent_Declare(
-       googletest
-       GIT_REPOSITORY https://github.com/google/googletest.git
-       GIT_TAG        703bd9caab50b139428cea1aaff9974ebee5742e # release-1.10.0
+       fmt
+       GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+       GIT_TAG        48f525d025cadbedce0b2288ff8e19b6877341e4 # 9.1.0
      )
+     FetchContent_MakeAvailable(fmt) # Won't download from github, add from local fs
      ```
-2. `FetchContent_MakeAvaliable(<name1> [<name2>...])`
 
-3. `FetchContent_Populate(<name>)`
+   - 第一次调用`FetchContent_MakeAvaliable`之后，再调用`FetchContent_Declare`会被忽略。因此，对于依赖的声明`FetchContent_Declare`**必须在第一次调用**`FetchContent_MakeAvaliable`之前。
 
-   `FetchContent_MakeAvailable` 会先检查依赖是否已经构建完成，因此不会重复构建，但 `FetchContent_Populate` 并不会，重复构建会报错，因此， 使用 `FetchContent_Populate` 前，必须按照上述示例，使用 `FetchContent_GetProperties` 获取变量 `<lowercaseName>_POPULATED`，检测是否需要构建该依赖。
-
-4. `FetchContent_GetProperties(<name> [SOURCE_DIR <srcDirVar>] [BINARY_DIR <binDirVar>] [POPULATED <doneVar>])`
+   > ```cmake
+   > # WRONG: Should declare all details first
+   > FetchContent_Declare(uses_other ...)
+   > FetchContent_MakeAvailable(uses_other)
+   > 
+   > FetchContent_Declare(other ...)    # Will be ignored, uses_other beat us to it
+   > FetchContent_MakeAvailable(other)  # Would use details declared by uses_other
+   > #================================================================================
+   > # CORRECT: All details declared first, so they will take priority
+   > FetchContent_Declare(uses_other ...)
+   > FetchContent_Declare(other ...)
+   > FetchContent_MakeAvailable(uses_other other)
+   > ```
 
 **一般的使用模式如下：**
-- first declare all the dependencies it wants to use
-- then ask for them to be made available
+
+- first declare all the dependencies it wants to use `FetchContent_Declare`
+- then ask for them to be made available `FetchContent_MakeAvailable`
 
 ```cmake
 FetchContent_Declare(
@@ -129,14 +218,29 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(catch2 fmt)  # 要求cmake 3.14以上
 ```
-`FetchContent`支持各种下载方法，包括从 URL 下载和提取archives（支持一系列archives格式），以及包括 Git、Subversion 和 Mercurial 在内的多种repository formats。Custom download, update, and patch commands can also be used to support arbitrary use cases.
+但是需要注意`FetchContent_MakeAvailable`是在3.14之后引入的，如果版本小于3.14，可以用如下命令手动populate依赖：
 
-当使用 FetchContent 将依赖项添加到project时，project就链接到了依赖项的target，像project中的任何其他target一样。
+```cmake
+FetchContent_GetProperties(catch2)
+if(NOT catch2_POPULATED)
+  FetchContent_Populate(catch2)
+  add_subdirectory(${catch2_SOURCE_DIR} ${catch2_BINARY_DIR})
+endif()
+```
+
+具体来说：
+
+1. `FetchContent_Populate(<name>)`
+
+   `FetchContent_MakeAvailable` 会先检查依赖是否已经构建完成，因此不会重复构建，但 `FetchContent_Populate` 并不会，重复构建会报错，因此， 使用 `FetchContent_Populate` 前，必须按照上述示例，使用 `FetchContent_GetProperties` 获取变量 `<lowercaseName>_POPULATED`，检测是否需要构建该依赖。
+
+2. `FetchContent_GetProperties(<name> [SOURCE_DIR <srcDirVar>] [BINARY_DIR <binDirVar>] [POPULATED <doneVar>])`
 
 ### `FetchContent` and `find_package()` Integration
+
 某些依赖项支持通过both `find_package()` and `FetchContent`两种方式添加到project。
 
-项目可以通过使用 `FetchContent_Declare()` 的 `FIND_PACKAGE_ARGS` option 来表明it is happy to accept a dependency by either method(`FetchContent` and `find_package()`)。 这允许 FetchContent_MakeAvailable() 首先尝试通过调用 find_package() 来满足依赖关系，如果有的话，使用 FIND_PACKAGE_ARGS 关键字后面的参数。 如果没有找到依赖项，则它是从源代码构建，如前所述。
+项目可以通过使用 `FetchContent_Declare()` 的 `FIND_PACKAGE_ARGS` option 来表明it is happy to accept a dependency by either method(`FetchContent` and `find_package()`)。 这允许 FetchContent_MakeAvailable() 首先尝试通过调用 `find_package()` 来满足依赖关系，如果`find_package()`找到了的话，使用 FIND_PACKAGE_ARGS 关键字后面的参数。 如果没有找到依赖项，则它是从源代码构建，如前所述。
 ```cmake
 include(FetchContent)
 FetchContent_Declare(
