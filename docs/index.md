@@ -18,4 +18,11 @@
         ...       # Other markdown pages, images and other files. -->
 
 !!! note "Contact"
-    - QQ: 1350359575
+    - [:material-github: my github](https://github.com/cat538)
+
+
+!!! abstract "TODO"
+    - rust `Vec`和`String`源码分析，涉及`Char`的理解
+    - rust macro 的更新
+    - Cpp move semantic
+    - MLC
