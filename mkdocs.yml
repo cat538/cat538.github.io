@@ -32,7 +32,9 @@ nav:
     - rust-modules:       "rust/rust-modules.md"
     - rust-macro:         "rust/rust-macro.md"
     - rust-network:       "rust/rust-network.md"
+    - rust-str:           "rust/rust-str.md"
   - Tools:
+    - anaconda:           "tools/anaconda.md"
     - mkdocs:             "tools/mkdocs.md"
     - cmake:              "tools/cmake.md"
     - catch2:             "tools/catch2.md"

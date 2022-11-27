@@ -74,7 +74,7 @@ gperftools是google开源的profile工具。适用于Unix平台下的程序，�
    google-pprof --svg bin-proj main.prof > res.svg	# 生成svg矢量图，还支持--pdf --text 等格式
    ```
 
-**生成火焰图(flame graph)**
+生成火焰图(flame graph)
 
 依赖 [brendangregg/FlameGraph: Stack trace visualizer (github.com)](https://github.com/brendangregg/FlameGraph)
 
@@ -102,6 +102,7 @@ google-pprof --collapsed bin-proj main.prof > main.0.cbt	# 使用 --collapsed �
 ## perf
 
 > [Perf Wiki (kernel.org)](https://perf.wiki.kernel.org/index.php/Main_Page)
+> [Linux Perf 性能分析工具及火焰图浅析 - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/54276509?from=singlemessage)
 
  Linux profiling with performance counters.它涵盖了从CPU到软件层面各种时间的监控追踪能力，非常强大。
 
@@ -114,11 +115,15 @@ The userspace `perf` command present a simple to use interface with commands lik
 - `perf top`: see live event count
 - `perf bench`: run different kernel microbenchmarks
 
-
+```bash
+perf list # 查看perf支持的监控event
+perf report -i perf.data # 查看text形式报告
+```
 
 **使用方法**
 
 ```shell
+# 下面这条命令attach到指定pid的进程
 perf record -F 500 -p $task_id -o perf.data -g sleep $time &
 wait
 ## 参数
@@ -128,5 +133,15 @@ wait
 ##-o，--output=，Output file name.
 ##-g，--call-graph，Do call-graph (stack chain/backtrace) recording.
 ##sleep，采集时长，单位s
+# 或者直接运行：
+perf record -F 500 -g ./bin-proj
+perf report -i perf.data > perf.report
 ```
 
+**生成火焰图**
+
+```bash
+perf script -i perf.data > out.perf
+~/downloads/FlameGraph/stackcollapse-perf.pl out.perf > out.floded
+~/downloads/FlameGraph/flamegraph.pl out.floded > flame.bin.svg
+```
