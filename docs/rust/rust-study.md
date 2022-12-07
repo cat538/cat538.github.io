@@ -1,12 +1,4 @@
----
-title: Rust学习
-date: 2021-7-5 19:50:30
-tags: ['Rust']
-categories: ['Rust']
-description: "Rust basic syntax..."
-cover: "https://github.com/cat538/images-auto/raw/main/img/rustlogo.jpg"
----
-
+# Rust 入门记录
 
 ## 变量
 
@@ -14,11 +6,10 @@ cover: "https://github.com/cat538/images-auto/raw/main/img/rustlogo.jpg"
 
 **定义常量使用const而不是let**
 
-let定义的 Variable 虽然默认不可变，但是与const还是存在区别。
+Rust 中`let`定义的 Variable 虽然默认不可变，但是与const还是存在区别：
 
 - constant 的生命周期是整个作用域
-
-编译器可以推断 variable 的类型，但是声明 constant 必须指明其类型
+- 编译器可以推断 variable 的类型，但是定义 constant 必须显式声明类型
 
 constant必须使用 `constant expression` 来设置，如：
 
@@ -44,24 +35,25 @@ const TST: A = A::new();
 
 rust 有两种数据类型： scalar and compound，即所谓简单类型和复合类型
 
-> Keep in mind that Rust is a *statically typed language*, which means that it must know the types of all variables at compile time
+> 记住 Rust is a **statically typed language**, 这意味着rust需要在编译期知道所有变量的类型（想想js或python?）
 
 **Scalar：**
 
-integers, 
+- integers, 
 
-floating-point numbers, 
+- floating-point numbers, 
 
-Booleans, and 
+- Booleans, and 
 
-characters
+- characters
 
-关于 integer的溢出：
+### 关于 integer的溢出：
 
-When you’re compiling in debug mode, Rust includes checks for integer overflow that cause your program to *panic* at runtime if this behavior occurs. Rust uses the term panicking when a program exits with an error; we’ll discuss panics in more depth in the "Unrecoverable Errors with panic!"section in Chapter 9 of the Rust Programming Language Book.
+- debug模式编译时：rust执行integer overflow chek。如果程序运行时发生整数溢出，会直接panic；
 
-When you’re compiling in release mode with the --release flag, Rust does *not* include checks for integer overflow that cause panics. Instead, if overflow occurs, Rust performs *two’s complement wrapping*. In short, values greater than the maximum value the type can hold “wrap around” to the minimum of the values the type can hold. In the case of a u8, 256 becomes 0, 257 becomes 1, and so on. The program won’t panic, but the variable will have a value that probably isn’t what you were expecting it to have. Relying on integer overflow’s wrapping behavior is considered an error. If you want to wrap explicitly, you can use the standard library type `Wrapping`
-
+- release模式编译时(`cargo build --release`)：rust不执行integer overflow check。如果程序运行时发生整数溢出，将进行wrap（与C语言默认行为相同），即，大于该类型最大值的数值将会“wrap around”到该类型可以容纳的最小值。在 u8 的情况下，256 变为 0，257 变为 1，依此类推。
+  
+    如果要显式wrap，可以使用标准库类型 `Wrapping`（**但是，可能是我眼界窄，从未见人使用过**）：
 ```rust
 let zero = Wrapping(0u8);
 let tff = Wrapping(255u8);
@@ -69,9 +61,15 @@ println!("{}", zero + tff + tff);
 // 254
 ```
 
-Rust 中 char 是4字节，并且每个字符represents a Unicode Scalar Value,which means it can represent a lot more than just ASCII.
+### char类型
+!!!note
+    关于字符和字符串类型，更详细的解释见[rust-str](./rust-str.md)
 
-Unicode Scalar Values range from U+0000 to U+D7FF and U+E000 to U+10FFFF inclusive
+与C语言中的简单使用8位有符号整型来代表`char`类型不同：
+
+Rust 中 `char` 类型是4字节，并且每个字符表示一个 `Unicode Scalar Value`,which means it can represent a lot more than just ASCII.
+
+> Unicode Scalar Values range from `U+0000` to `U+D7FF` and `U+E000` to `U+10FFFF` inclusive
 
 ```rust
 let c = '端';
@@ -86,8 +84,7 @@ println!("result len: {} bytes",result.len());
 // result len: 1 bytes
 ```
 
-可以看到编码成utf-8之后，一个中文占3个字节，英文占一个字节
-
+可以看到编码成utf-8之后，一个中文占3个字节，英文占一个字节。
 
 
 ### 复合数据类型(compound)
@@ -104,42 +101,111 @@ println!("{} is {} years old.", name, age);
 
 
 ## 函数
+> Function bodies are made up of a series of **statements** optionally ending in an **expression**. 
 
-关于statement 和 expression的区别：
 
+### 语句statement 和 表达式expression
+
+> **TL;DR:** *Statements*  **do not** return a value. *Expressions* evaluate to a resulting value. 
+> 
 > Rust is an **expression-based language**, this is an important distinction to understand. Other languages don’t have the same distinctions, so let’s look at what statements and expressions are and how their differences affect the bodies of functions.
->
-> We’ve actually already used statements and expressions. *Statements* are instructions that perform some action and **do not** return a value. *Expressions* evaluate to a resulting value. 
-
-
+> 
 
 ```rust
 let x = (let y = 6);
 ```
 
-The let y = 6 statement does not return a value, so there isn’t anything for x to bind to. This is different from what happens in other languages, such as **C and Ruby, where the assignment returns the value of the assignment**.
+`let y = 6`语句不返回值，所以 x 没有任何东西可以绑定。这与其他语言（例如 C 和 Ruby）中发生的情况不同，C的赋值语句返回赋值的值，因此可以写`int x = y = 3`（这也是为什么C++中，为一个自定义class定义`operator=`需要返回`Object&`），而在rust是不可行的。
 
+表达式可以是语句的一部分：`let y = 6`中的`6`是一个表达式，它计算出的值是`6`；函数调用是一个表达式；宏调用是一个表达式；我们用来创建新作用域的大括号（代码块） `{}` 也是一个表达式，例如：
+```rust
+fn main() {
+    let y = {
+        let x = 3;
+        x + 1
+    };
 
-
+    println!("The value of y is: {}", y);
+}
+```
 ##  Ownership(所有权)
 
-分配和访问 stack上的数据快于heap上的数据
+- 分配和访问 stack上的数据快于heap上的数据
 
-> **Pushing to the stack is faster than allocating on the heap** because the allocator never has to search for a place to store new data; that location is always at the top of the stack. Comparatively, allocating space on the heap requires more work, because the allocator must first find a big enough space to hold the data and then perform bookkeeping to prepare for the next allocation.
->
-> **Accessing data in the heap is slower than accessing data on the stack** because you have to follow a pointer to get there. Contemporary processors are faster if they jump around less in memory.  By the same token, a processor can do its job better if it works on data that’s close to other data (as it is on the stack) rather than farther away (as it can be on the heap). Allocating a large amount of space on the heap can also take time.
+    > **Pushing to the stack is faster than allocating on the heap**。因为分配栈变量不必搜索存储新数据的位置；只需要移动栈顶指针（ESP）。相比之下，在堆上分配空间需要更多的工作，因为分配器必须首先找到足够大的空间来存放数据，然后进行标记，为下一次分配做准备。
+    >
+    > **Accessing data in the heap is slower than accessing data on the stack**。
+    主要是cache的原因，在内存中跳动小，局部性好，速度就会更快。同样的道理，在堆上分配大量的空间也会花费时间。
 
-### what is borrowing？
+所有权的规则：
 
-> We call having references as function parameters *borrowing*.
+- Rust 中的每一个值都有一个被称为其 所有者（owner）的变量。
+- 值在任一时刻有且只有一个所有者。
+- 当所有者（变量）离开作用域，这个值将被丢弃。
 
-关于引用的两个条件
+**考虑C++中的`unique_ptr`**
 
-- At any given time, you can have *either* one mutable reference *or* any number of immutable references.
-- References must always be valid.
+### 引用(reference)和借用(borrowing)
+!!! note "TL;DR"
+    关于引用的两个条件：
+
+    - 在任意给定时间，要么 只能有一个可变引用，要么 只能有多个不可变引用。
+    - 引用必须总是有效的(编译器检查并禁止Dangling References)。
+> 我们将创建一个引用的行为称为 借用（borrowing）
+
+多数情况下，我们更希望能访问数据，同时不取得其所有权。为实现这点，Rust 使用 了**借用**（borrowing）机制。对象可以通过引用（`&T`）来传递，从而取代通过 值（`T`）来传递。
+
+**另外需要注意的一点是：**
+
+一个数据可以有多个不可变借用，但是在使用数据的不可变借用的同时，不能使用数据的可变借用。
+
+或者说，同一时间内只允许**一个**可变借用。仅当最后一次使用可变借用**之后**，原始数据才可以再次借用。如下例子：
+
+```rust
+struct Point { x: i32, y: i32, z: i32 }
+
+fn main() {
+    let mut point = Point { x: 0, y: 0, z: 0 };
+    let borrowed_point = &point;
+    let another_borrow = &point;
+    // 数据可以通过引用或原始类型来访问
+    println!("Point has coordinates: ({}, {}, {})",
+                borrowed_point.x, another_borrow.y, point.z); 
+    // 报错！`point` 不能以可变方式借用，因为当前还有不可变借用。
+    // let mutable_borrow = &mut point;
+    // TODO ^ 试一试去掉此行注释
+    
+    // 被借用的值在这里被重新使用
+    println!("Point has coordinates: ({}, {}, {})",
+                borrowed_point.x, another_borrow.y, point.z);
+    // 不可变的引用不再用于其余的代码，因此可以使用可变的引用重新借用。
+    let mutable_borrow = &mut point;
+    // 通过可变引用来修改数据
+    mutable_borrow.x = 5;
+    mutable_borrow.y = 2;
+    mutable_borrow.z = 1;
+    // 报错！不能再以不可变方式来借用 `point`，因为它当前已经被可变借用。
+    // let y = &point.y;
+    // TODO ^ 试一试去掉此行注释
+
+    // 报错！无法打印，因为 `println!` 用到了一个不可变引用。
+    // println!("Point Z coordinate is {}", point.z);
+    // TODO ^ 试一试去掉此行注释
+
+    // 正常运行！可变引用能够以不可变类型传入 `println!`
+    println!("Point has coordinates: ({}, {}, {})",
+                mutable_borrow.x, mutable_borrow.y, mutable_borrow.z);
+
+    // 可变引用不再用于其余的代码，因此可以重新借用
+    let new_borrowed_point = &point;
+    println!("Point now has coordinates: ({}, {}, {})",
+             new_borrowed_point.x, new_borrowed_point.y, new_borrowed_point.z);
+}
+```
 
 ## Macro(宏)
-
+!!! note
+    这一部分详细信息见[rust-macro](./rust-macro.md)
 **关于macro的声明位置：**
 
 > In order to use a macro outside of its module, you need to do something special to the module to lift the macro out into its parent.
@@ -165,18 +231,16 @@ fn main() {
 
 必须使用`#[macro_export]`，而不能`macros::my_macro!()`
 
-
-
-
-
 ## String
+!!!note
+    关于字符和字符串类型，更详细的解释见[rust-str](./rust-str.md)
 
-string不能使用 index，不妨探究一下String的存储方式：
+string不能使用 index。
+
+rust中的String存储方式：
 
 ```rust
 #[derive(PartialOrd, Eq, Ord)]
-#[cfg_attr(not(test), rustc_diagnostic_item = "string_type")]
-#[stable(feature = "rust1", since = "1.0.0")]
 pub struct String {
     vec: Vec<u8>,
 }
@@ -185,7 +249,6 @@ pub struct String {
 在`string.rs`中可以很清楚的看到，String只是对`Vec<u8>`做了一个包装
 
 因此 从 Rust 的角度来讲，事实上有三种相关方式可以理解字符串：字节、标量值和字形簇（最接近人们眼中 **字母** 的概念）。
-
 
 
 ## Type Conversion
@@ -210,7 +273,14 @@ RUST_BACKTRACE=1 cargo run
 
 ### 错误处理指导原则
 
+在当有可能会导致有害状态的情况下建议使用 `panic!` —— 有害状态是指当一些假设、保证、协议或不可变性被打破的状态，例如无效的值、自相矛盾的值或者被传递了不存在的值 —— 外加如下几种情况：
 
+有害状态是非预期的行为，与偶尔会发生的行为相对，比如用户输入了错误格式的数据。
+在此之后代码的运行依赖于不处于这种有害状态，而不是在每一步都检查是否有问题。
+没有可行的手段来将有害状态信息编码进所使用的类型中的情况。我们会在第十七章 “将状态和行为编码为类型” 部分通过一个例子来说明我们的意思。
+如果别人调用你的代码并传递了一个没有意义的值，最好的情况也许就是`panic!`并警告使用你的库的人他的代码中有 bug 以便他能在开发时就修复它。类似的，如果你正在调用不受你控制的外部代码，并且它返回了一个你无法修复的无效状态，那么 `panic!` 往往是合适的。
+
+然而当错误预期会出现时，返回 `Result` 仍要比调用 `panic!` 更为合适。这样的例子包括解析器接收到格式错误的数据，或者 HTTP 请求返回了一个表明触发了限流的状态。在这些例子中，应该通过返回 `Result` 来表明失败预期是可能的，这样将有害状态向上传播，调用者就可以决定该如何处理这个问题。使用 `panic!` 来处理这些情况就不是最好的选择。
 
 ## Pattern match
 
@@ -459,9 +529,7 @@ let s: &'static str = "I have a static lifetime.";
 
 
 
-# 死灵书学习
-
-## 别名（alias）
+## Rustling-别名（alias）
 
 ```c
 int compute(int* input, int* output) {

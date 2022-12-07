@@ -24,5 +24,6 @@
 !!! abstract "TODO"
     - rust `Vec`和`String`源码分析，涉及`Char`的理解
     - rust macro 的更新
+    - rust error handling
     - Cpp move semantic
     - MLC

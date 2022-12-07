@@ -33,14 +33,22 @@ git config -–global core.editor vim
 ## git commands
 
 ### 撤销操作
-1. 撤销 `add` 操作:
+- `git reset`: 通过将当前 Git HEAD 重置为指定状态来撤消提交或取消暂存更改。
+    1. 如果传递了路径，则它作为“unstage”工作；
+    2. 如果传递了提交哈希或分支，则它作为“uncommit”工作。
+    3. More information: <https://git-scm.com/docs/git-reset>.
+
+1. 撤销 `add` 操作(unstage):
     
     使用`reset`命令
     - 后面什么都不跟的，就是上一次add 里面的内容全部撤销
     - 后面跟文件名，就是对某个文件进行撤销
-    ```
-    git reset HEAD 
-    git reset HEAD XXX 
+    ```bash
+    # Unstage everything:
+    git reset
+
+    # Unstage specific file(s):
+    git reset path/to/file1 path/to/file2 ...
     ```
 
     在 `HEAD` 后面加 `^` 或者 `~` 其实就是以 `HEAD` 为基准，来表示之前的版本，因为 `HEAD` 被认为是当前分支的最新版本，那么 `HEAD~` 和 `HEAD^` 都是指次新版本，也就是倒数第二个版本，`HEAD~~` 和 `HEAD^^` 都是指次次新版本，也就是倒数第三个版本，以此类推。

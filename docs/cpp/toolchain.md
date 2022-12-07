@@ -7,6 +7,7 @@
 的教程进行编译，
 ### Windows
 windows编译参考其中的**Using Ninja alongside Visual Studio**部分：
+
 1. 打开developer command prompt with the appropriate environment
 2. `mkdir build`
 3. `cd build`
@@ -26,6 +27,7 @@ windows编译参考其中的**Using Ninja alongside Visual Studio**部分：
 在Debian系的安装参考[llvm-apt-repo](https://apt.llvm.org/)
 
 ## Linux 管理多版本工具链
+!! TODO
 
 sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 10 \
     --slave /usr/bin/g++ g++ /usr/bin/g++-9 \

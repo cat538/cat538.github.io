@@ -1,21 +1,8 @@
----
-title: Rust智能指针
-date: 2021-7-16 19:29:43
-tags: ['Rust']
-categories: ['Rust']
-description: "Rust 指针 Box、Rc、RefCell、Arc、Cell、Cow的介绍和对比…"
-cover: "https://github.com/cat538/images-auto/raw/main/img/rustlogo.jpg"
----
+# Rust-smart pointer
 
-
-
-## 阅读材料
-
-[CS 242: Smart pointers (stanford-cs242.github.io)](https://stanford-cs242.github.io/f19/lectures/07-2-smart-pointers)
+> [CS 242: Smart pointers (stanford-cs242.github.io)](https://stanford-cs242.github.io/f19/lectures/07-2-smart-pointers)
 
 ---
-
-
 
 **Rust内存管理的基本原则:**
 

@@ -1,3 +1,5 @@
+# Rust-str
+
 ## Char
 在rust中`char`类型表示单个字符。更具体地说，`char`实际上是“Unicode 标量值”(Unicode Scalar Value)。
 > 这里涉及到Unicode 相关的知识，具体来说

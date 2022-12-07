@@ -1,12 +1,6 @@
----
-title: rust-网络
-cover: 'https://github.com/cat538/images-auto/raw/main/img/fire.png'
-date: 2022-05-30 22:31:19
-tags: ['rust']
-categories:
-mathjax:
----
+# Rust-network
 
+## `std::network`
 标准库的`net` moudle提供了 TCP/UDP 连接的基本原语
 
 - [`TcpListener`](https://doc.rust-lang.org/std/net/struct.TcpListener.html) 和 [`TcpStream`](https://doc.rust-lang.org/std/net/struct.TcpStream.html) provide functionality for communication over TCP
@@ -36,3 +30,4 @@ mathjax:
 
 **需要注意**：在可能的情况下，Rust默认禁用对子进程继承套接字对象。例如，通过在UNIX系统中使用`CLOEXEC`标志或在Windows中使用`HANDLE_FLAG_INHERIT`标志。
 
+## tokio

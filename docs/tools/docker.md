@@ -1,6 +1,6 @@
 # Docker
 
-更好的教程：[教程：开始在 Visual Studio Code 中使用 Docker 应用 | Microsoft Docs](https://docs.microsoft.com/zh-cn/visualstudio/docker/tutorials/docker-tutorial)
+> 更好的教程：[教程：开始在 Visual Studio Code 中使用 Docker 应用 | Microsoft Docs](https://docs.microsoft.com/zh-cn/visualstudio/docker/tutorials/docker-tutorial)
 
 这个教程涵盖以下主题：
 

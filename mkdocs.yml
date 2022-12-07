@@ -25,7 +25,7 @@ nav:
   - Prologue: "index.md"
   - Exercise: "plan.md"
   - Rust: 
-    - rust-configuration: "rust/rust-configuration.md"
+    - rust-toolchain:     "rust/rust-toolchain.md"
     - rust-study:         "rust/rust-study.md"
     - rust-optin:         "rust/rust-option.md"
     - rust-smart pointer: "rust/rust-smart pointer.md"
@@ -33,11 +33,11 @@ nav:
     - rust-macro:         "rust/rust-macro.md"
     - rust-network:       "rust/rust-network.md"
     - rust-str:           "rust/rust-str.md"
+    - rust-attribute:     "rust/rust-attribute.md"
   - Tools:
-    - anaconda:           "tools/anaconda.md"
+    # - anaconda:           "tools/anaconda.md"
     - mkdocs:             "tools/mkdocs.md"
     - cmake:              "tools/cmake.md"
-    - catch2:             "tools/catch2.md"
     - docker:             "tools/docker.md"
     - git:                "tools/git.md"
     - matplotlib:         "tools/matplotlib.md"
@@ -57,6 +57,10 @@ nav:
     - seal-ckks:          "crypto/seal-ckks.md"
   - Cpp:
     - ranges:             "cpp/ranges.md"
+    - align:              "cpp/align.md"
+    - benchmark:          "cpp/benchmark.md"
+    - move:               "cpp/move.md"
+    - toolchain:          "cpp/toolchain.md"
   - About: "about.md"
 
 

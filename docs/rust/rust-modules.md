@@ -1,11 +1,4 @@
----
-title: Rust包管理系统
-date: 2021-12-06 12:55:48
-tags: ['Rust']
-categories: 'Rust'
-description: '关于Rust中的包管理系统,Packages,Crates,Modules,Path...'
-cover: "https://github.com/cat538/images-auto/raw/main/img/rustlogo.jpg"
----
+# Rust-modules
 
 <img src="https://github.com/cat538/images-auto/raw/main/img/image-20211024205703750.png" alt="image-20211024205703750" style="zoom: 67%;" />
 
