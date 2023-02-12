@@ -61,6 +61,7 @@ nav:
     - align:              "cpp/align.md"
     - benchmark:          "cpp/benchmark.md"
     - move:               "cpp/move.md"
+    - toolchain:          "cpp/toolchain.md"
   - Mlc:
     - ffi:                "mlc/tvm-ffi.md"
     - dlc-survey:         "mlc/dlc-survey.md"
