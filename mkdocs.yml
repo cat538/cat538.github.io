@@ -40,7 +40,7 @@ nav:
     - cmake:              "tools/cmake.md"
     - docker:             "tools/docker.md"
     - git:                "tools/git.md"
-    - matplotlib:         "tools/matplotlib.md"
+    # - matplotlib:         "tools/matplotlib.md"
     - powershell:         "tools/powershell.md"
     - profile:            "tools/profile.md"
     - regex:              "tools/regex.md"
@@ -49,6 +49,7 @@ nav:
     - 密码学引论:           "courses/密码学引论复习.md"
     - 操作系统:             "courses/操作系统复习.md"
     - 算法设计与分析:        "courses/algorithm.md"
+    - 编译原理:             "courses/编译原理.md"
   - Crypto:
     - ecdsa-pk-recovery:  "crypto/ecdsa-pk-recovery.md"
     - algo-rsa:           "crypto/algo-rsa.md"
@@ -60,7 +61,11 @@ nav:
     - align:              "cpp/align.md"
     - benchmark:          "cpp/benchmark.md"
     - move:               "cpp/move.md"
-    - toolchain:          "cpp/toolchain.md"
+  - Mlc:
+    - ffi:                "mlc/tvm-ffi.md"
+    - dlc-survey:         "mlc/dlc-survey.md"
+    # - tvm-relay:          "mlc/tvm-relay.md"
+    - torch-fx:           "mlc/torch-fx.md"
   - About: "about.md"
 
 
