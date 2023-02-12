@@ -568,3 +568,16 @@ fn comput(input:&i32, output:&mut i32) {
 
 ![image-20210825005100468](https://github.com/cat538/images-auto/raw/main/img/image-20210825005100468.png)![image-20210825005110601](https://github.com/cat538/images-auto/raw/main/img/image-20210825005110601.png)
 
+## Rust monad
+
+这里以 I/O 操作为例，下面是与 ChatGPT的对话：
+
+> 🐋: what's the main difference between monad I/O style and C-like I/O style?
+>
+> 🦭: The main difference between Monad I/O style and C-like I/O style lies in the way they handle Input/Output (I/O) operations.
+> 
+> In the C-like I/O style, I/O is performed by calling functions and passing parameters, and **I/O functions are typically side-effecting and can change the state of the system**. For example, to read a line of text from standard input in C, you might use the fgets function, which reads a specified number of characters from an input stream into a buffer, and can change the position of the input stream's file pointer.
+> 
+> On the other hand, the Monad I/O style, which is commonly used in functional programming languages, **models I/O as a computation that produces a value and possibly has a side effect**. In this style, I/O operations are performed by constructing a computation, usually represented as a monad, that represents the I/O action. The monad can then **be executed by a runtime system, which will perform the actual I/O** and return the result to the caller.
+> 
+> One of the main advantages of the Monad I/O style is that it makes it easier to write code that is pure and composable, as it **separates the description of I/O operations from their execution**, which can make it easier to test and reason about the code. In contrast, C-like I/O style can make it harder to write code that is pure, as I/O functions can have side effects that change the state of the system and make it difficult to predict the outcome of a computation.

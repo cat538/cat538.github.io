@@ -28,7 +28,74 @@ enum Option<T> {
 - 可以使用 `match` 语句来解开 `Option`
 - 可以使用`unwrap()`来获得`Option`中的`Some`，但如果使用这种方式，获得`None`的时候程序将会panic
 
+### Monad operation
 
+实际上 `Option` 是一个Monad，使用`Option`的编程范式应该是函数式的，而不是总是先使用`match` 或者`unwrap*()`取出其中的值。下面是与 ChatGPT的对话：
+
+> 🐋: Show me an example of monad in rust
+> 
+> 🦭: Here's an example of using monads in Rust:
+>
+> ```rust
+> use std::option::Option;
+> 
+> fn add_two_numbers(x: i32, y: i32) -> Option<i32> {
+>     Some(x + y)
+> }
+> 
+> fn square_number(x: i32) -> Option<i32> {
+>     Some(x * x)
+> }
+> 
+> fn main() {
+>     let result = add_two_numbers(2, 3)
+>         .and_then(square_number)
+>         .unwrap_or(-1);
+> 
+>     println!("Result: {}", result);
+> }
+> ```
+> 
+> In this example, we have two functions `add_two_numbers` and `square_number` that each return an `Option` monad. The `and_then` method is used to chain these functions together and perform a calculation on the result of the first function before passing it to the next. The `unwrap_or` method is used to provide a default value if either of the functions return None.
+> 
+> In this example, the calculation `add_two_numbers(2, 3)` results in `Some(5)`, which is then passed to `square_number` and returns `Some(25)`. Finally, the value is unwrapped to `25` and printed to the console.
+> 
+> 🐋: What's the difference between this programming paradigm and first checking whether the value exists, and then calculating
+> 
+> 🦭: The main difference between using monads and checking for values before performing a calculation **is the way that error handling and control flow are managed**.
+> 
+> 在执行计算之前检查值时，通常会使用 `if` 语句检查值是否存在且有效，如果存在则执行计算。 这种方法通常会导致嵌套的 `if` 语句，并可能导致代码难以阅读和维护。
+> 
+> 相反，当使用 monad 时，错误处理和控制流以 声明式 的方法处理。 您可以使用 monad 将操作链接在一起并自动处理错误情况，而不需要显式条件判断，不使用嵌套的 `if` 语句。 这使得代码更干净、更简洁、更易于阅读和维护。
+> 
+> For example, consider the following code that **checks for values before performing a calculation**:
+>
+> ```rust
+> let x = get_input();
+> let y = get_input();
+> 
+> if x.is_some() && y.is_some() {
+>     let x = x.unwrap();
+>     let y = y.unwrap();
+>     let result = x + y;
+>     println!("Result: {}", result);
+> } else {
+>     println!("Error: invalid input");
+> }
+> ```
+> 此代码使用 `is_some` 方法检查 x 和 y 是否为 `Some` 值，如果是，则解包并执行计算。
+> 
+> Here's the same code written using monads:
+>
+> ```rust
+> let result = get_input()
+>     .and_then(|x| get_input().map(|y| x + y))
+>     .unwrap_or_else(|| println!("Error: invalid input"));
+> 
+> println!("Result: {}", result);
+> ```
+>
+> 在这段代码中， `and_then` 方法用于将两个 `get_input` 调用链接在一起并执行计算， `unwrap_or_else` 方法用于处理错误情况。 结果与前面的示例相同，但代码更干净、更简洁。
 
 ### 使用`Option<T>` 为什么比使用空值要好？
 

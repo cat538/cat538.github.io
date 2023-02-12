@@ -17,6 +17,7 @@ CMake 广泛用于 C 和 C++ 语言，但它也可以用于构建其他语言的
 - `CMAKE_INSTALL_PREFIX` : 调用install相关函数，要生成/保存的根目录路径。
 - `CMAKE_EXPORT_COMPILE_COMMANDS=TRUE` : 如果使用clangd，需要将该选项设为true(似乎默认值也是true)，指定生成`compile_commands.json`文件。clangd依赖该文件做静态分析。
 - `CMAKE_TOOLCHAIN_FILE` : 如果使用vcpkg，需要指定该路径(详见vcpkg文档)
+- `CMAKE_UNITY_BUILD`：new in *3.16*；[CMAKE_UNITY_BUILD — CMake 3.25.1 Documentation](https://cmake.org/cmake/help/latest/variable/CMAKE_UNITY_BUILD.html)
 
 <!-- ## 常用命令
 
@@ -191,7 +192,7 @@ find_package(Boost 1.79 COMPONENTS date_time)
         # WRONG: Should declare all details first
         FetchContent_Declare(uses_other ...)
         FetchContent_MakeAvailable(uses_other)
-
+        
         FetchContent_Declare(other ...)    # Will be ignored, uses_other beat us to it
         FetchContent_MakeAvailable(other)  # Would use details declared by uses_other
         #================================================================================

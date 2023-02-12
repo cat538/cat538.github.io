@@ -3,6 +3,7 @@
     ```bash
     conda info -e
     ```
+
 2. 创建虚拟环境
     ```bash
     conda create -n <env name> python=<py version> [packages...]
@@ -18,3 +19,10 @@
     ```bash
     conda remove -n <env name> --all
     ```
+
+5. 删除没用的包和缓存，释放磁盘空间
+
+    ```bash
+    conda clean --all
+    ```
+

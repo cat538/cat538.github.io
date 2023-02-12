@@ -60,6 +60,11 @@ git config -–global core.editor vim
     注意，仅仅是撤回commit操作，对文件的改动仍然保留。
     与`--soft`相对的`--hard` 将会撤销`commit`撤销`add`， 并**删除工作空间的改动代码**
 
+    特殊情况：如果在**第一次**commit，想要撤销，使用`git reset --soft HEAD^`没有用，需要使用如下命令。
+    ```
+    git update-ref -d HEAD
+    ```
+    
 3. 撤销`commit` 命令的注释:
     ```
     git commit --amend
