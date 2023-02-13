@@ -27,16 +27,15 @@ nav:
   - Rust: 
     - rust-toolchain:     "rust/rust-toolchain.md"
     - rust-study:         "rust/rust-study.md"
-    - rust-optin:         "rust/rust-option.md"
-    - rust-smart pointer: "rust/rust-smart pointer.md"
+    - rust-attributes:     "rust/rust-attributes.md"
     - rust-modules:       "rust/rust-modules.md"
     - rust-macro:         "rust/rust-macro.md"
+    - rust-smart pointer: "rust/rust-smart pointer.md"
     - rust-network:       "rust/rust-network.md"
+    - rust-optin:         "rust/rust-option.md"
     - rust-str:           "rust/rust-str.md"
-    - rust-attribute:     "rust/rust-attribute.md"
   - Tools:
     # - anaconda:           "tools/anaconda.md"
-    - mkdocs:             "tools/mkdocs.md"
     - cmake:              "tools/cmake.md"
     - docker:             "tools/docker.md"
     - git:                "tools/git.md"
@@ -44,6 +43,7 @@ nav:
     - powershell:         "tools/powershell.md"
     - profile:            "tools/profile.md"
     - regex:              "tools/regex.md"
+    - mkdocs:             "tools/mkdocs.md"
   - Courses:
     - 密码分析学:           "courses/密码分析学复习.md"
     - 密码学引论:           "courses/密码学引论复习.md"
@@ -63,7 +63,8 @@ nav:
     - move:               "cpp/move.md"
     - toolchain:          "cpp/toolchain.md"
   - Mlc:
-    - ffi:                "mlc/tvm-ffi.md"
+    - tvm-install:        "mlc/tvm-install.md"
+    - tvm-ffi:            "mlc/tvm-ffi.md"
     - dlc-survey:         "mlc/dlc-survey.md"
     # - tvm-relay:          "mlc/tvm-relay.md"
     - torch-fx:           "mlc/torch-fx.md"

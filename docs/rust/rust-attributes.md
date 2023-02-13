@@ -1,7 +1,10 @@
 
-# 属性(Attribute)
+# 属性(Attributes)
 
-> 参考: [Rust Reference-Attributes](https://rustwiki.org/zh-CN/reference/attributes.html)
+> ref: 
+> 
+> - [Rust Reference-Attributes-cn](https://rustwiki.org/zh-CN/reference/attributes.html)
+> - [Rust Reference-Attributes-en](https://doc.rust-lang.org/reference/attributes.html)
 
 写这一篇的出发点是了解rust中的条件编译。
 
@@ -24,16 +27,44 @@
    
     - 条件编译(Conditional compilation)
 
-        - `cfg` — 控制条件编译。
-        - `cfg_attr` — 选择性包含属性。
+        - `cfg` — 控制条件编译
+
+            ```rust
+            // A conditionally-compiled module
+            #[cfg(target_os = "linux")]
+            mod bar { /* ... */ }
+            ```
+        
+        - `cfg_attr` — 选择性包含属性
 
     - 测试(Testing)
-        - `test` — 将函数标记为测试函数。
-        - `ignore` — 禁止测试此函数。
-        - `should_panic` — 表示测试应该产生 panic。
+        - `test` — 将函数标记为测试函数
+
+            ```rust
+            // A function marked as a unit test
+            #[test]
+            fn test_foo() { /* ... */ }
+            ```
+
+        - `ignore` — 禁止测试此函数
+
+            ```rust
+            #[test]
+            #[ignore = "not yet implemented"]
+            fn test_bar() { /* ... */ }
+            ```
+
+        - `should_panic` — 表示测试应该产生 panic
 
     - 诊断(Diagnostics)
         - `allow、warn、deny、forbid` — 更改默认的 lint检查级别。
+
+            ```rust
+            // A lint attribute used to suppress a warning/error
+            #[allow(non_camel_case_types)]
+            type int8_t = i8;
+            ```
+
         - `deprecated` — 生成弃用通知。
         - `must_use` — 为未使用的值生成 lint 提醒。
     
