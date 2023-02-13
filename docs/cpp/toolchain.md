@@ -13,7 +13,7 @@ windows编译参考其中的**Using Ninja alongside Visual Studio**部分：
 3. `cd build`
 4. `set CC=cl`
 5. `set CXX=cl`
-6. `cmake -GNinja -DLLVM_ENABLE_PROJECTS="clang;lldb;clang-tools-extra" -DCMAKE_INSTALL_PREFIX="D:/install" -DLLVM_TARGETS_TO_BUILD=x86 -DCMAKE_BUILD_TYPE=Release ..\llvm`
+6. `cmake -GNinja -DLLVM_ENABLE_PROJECTS="clang;lldb;clang-tools-extra" -DCMAKE_INSTALL_PREFIX="D:/install" -DLLVM_TARGETS_TO_BUILD=X86 -DCMAKE_BUILD_TYPE=Release ..\llvm`
 7. `ninja` // this will build clang
 8. `ninja install` // this will install clang
 
