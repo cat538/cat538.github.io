@@ -36,7 +36,6 @@ unsafe { *yraw = 3; }
 ```
 
 
-
 ## Box
 
 **资源分配在堆上，依靠`Deref`和`Drop`来管理堆上的资源，零运行时开销，类似C++的unique_ptr，是最常用的套娃。**
@@ -57,14 +56,13 @@ pub enum List {
 - 可变借用：`Box::borrow_mut()`、`Box::as_mut()`、`Box::deref_mut()`
 
 
-
-#### 相关接口：
+### 相关方法
 
 - `Box::into_raw()`转换为裸指针`*mut T`，从而可以通过`unsafe`来修改本来不会被修改的——Box中的值
 - `Box::from_raw()`为`into_raw()`的对应接口，(打印裸指针可以获得其地址)
 - `Box::leak()`将Box转换为可变引用`&mut T`
 
-#### 实现自己的Box
+### 实现自己的Box
 
 ```rust
 #[derive(Debug)]
@@ -79,7 +77,10 @@ impl<T> MyBox<T> {
             ptr::copy(&t as *const T, ptr, layout.size());
             ptr
         };
-        mem::forget(t);
+        // 如果没有这一句，在 退出当前函数作用域时
+        // 会调用 `drop(t)`，想象一下如果 T 是 `String`, `Vec`等类型
+        // 会发生什么?
+        mem::forget(t); 
         MyBox { ptr }
     }
 }
@@ -95,7 +96,7 @@ impl<T> MyBox<T> {
 
 - The `mem::forget` says “don’t try to call destructors on `t`, just forget about it.”：
 
-  > If our `Box<T>` contains a type that has pointers somewhere else, e.g. a `Box<Box<i32>>`, we don’t want to memcpy the box bits but then have Rust still destruct the original `Box<i32>`, meaning our memcpy’d version now points to invalid data. Here, `mem::forget` ensures that the destructors don’t run until we call them in `Box::drop`. 
+    > If our `Box<T>` contains a type that has pointers somewhere else, e.g. a `Box<Box<i32>>`, we don’t want to memcpy the box bits but then have Rust still destruct the original `Box<i32>`, meaning our memcpy’d version now points to invalid data. Here, `mem::forget` ensures that the destructors don’t run until we call them in `Box::drop`. 
 
 - 最后返回`MyBox`
 
@@ -151,16 +152,15 @@ impl<T> Drop for MyBox<T> {
 类似C++的析构函数；在这个函数中调用`dealloc`(等价于C中的`free`)释放堆上的内存
 
 
-
-## Rc
+## `Rc` and `Weak`
 
 > 有些情况单个值可能会有多个所有者。例如，在图数据结构中，多个边可能指向相同的节点，而这个节点从概念上讲为所有指向它的边所拥有。节点直到没有任何边指向它之前都不应该被清理。为了启用多所有权，Rust 有一个叫做 `Rc<T>` 的类型。其名称为 **引用计数**（*reference counting*）的缩写
 
-**资源分配在堆上，依靠`Deref`和`Drop`来管理堆上的资源，使用引用计数算法，类似C++中shared_ptr。**
+**资源分配在堆上，依靠`Deref`和`Drop`来管理堆上的资源，使用引用计数算法，类似C++中shared_ptr**
 
 `Rc::clone()`将引用计数+1，不会真的复制对象
 
- `Rc`没有实现`DerefMut`，因此其管理的是不可变引用
+`Rc`没有实现`DerefMut`，因此其管理的是不可变引用
 
 循环引用可能会产生内存泄露：因为两个对象相互引用，最终都不会得到释放
 
@@ -206,6 +206,11 @@ Cell是一种提供内部可变性的容器，类似智能手机电池，看似�
 **适合实现了Copy的类型，或者体积小的struct，因为get方法是直接按位复制的。**
 **无运行时开销，运行时安全**
 
+`Cell` 不是 Rust 中的一种智能指针，而是一种内部可变性的容器。 内部可变性（Interior mutability）是 Rust 中的一个设计模式， 指**尽管被包装在不可变引用中但仍可以可变的类型**。在 Rust 中，这通常是使用不安全代码实现的， `Cell` 和 `RefCell` 类型提供了一种安全便捷的方式来实现内部可变性。 
+
+`Cell` 用于包装值并允许它们在单线程环境中可变。它提供了一种基于类型的机制来改变存储在内部的值，并确保存储的值在 `Cell` 的生命周期内保持有效。 
+
+因此，虽然 `Cell` 确实提供了一种管理值的生命周期和所有权的方法，但它不是传统意义上的智能指针类型，因为它不管理内存分配或释放。相反，它提供了一种内部可变性机制。
 
 
 ## 总结

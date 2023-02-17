@@ -1,5 +1,6 @@
 ## Lvalues and Rvalues
 > Ref:
+> 
 > - [Move semantics in C++ and Rust: The case for destructive moves](https://radekvit.medium.com/move-semantics-in-c-and-rust-the-case-for-destructive-moves-d816891c354b)
 > - [MS: How to write a move constructor and move assignment operator](https://learn.microsoft.com/en-us/cpp/cpp/move-constructors-and-move-assignment-operators-cpp?view=msvc-170)
 
@@ -170,6 +171,9 @@ vec.emplace_back(std::move(s));
 // 在move后，s仍然是可用的，这与rust非常不同
 ```
 
+在Rust中 TODO:
 
 ## Perfect forwarding
 Perfect forwarding 完美转发
+
+TODO: 

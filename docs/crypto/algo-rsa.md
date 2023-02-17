@@ -1,11 +1,4 @@
----
-title: RSA解析
-date: 2021-05-01 15:33:03
-categories: '密码学'
-description: "关于RSA算法的相关证明、应用场景，及公钥题目中一些常见套路..."
-cover: "https://github.com/cat538/images-auto/raw/main/img/cipher-16421552297502.png"
-mathjax: true
----
+# Algorithm-rsa
 
 ## RSA加密
 
@@ -149,7 +142,7 @@ $m'/x$即为$m^*$
 
 #### 克服同态攻击的RSA OAEP模式
 
-
+TODO: 
 
 #### 其它问题
 

@@ -35,7 +35,7 @@
     ```
 
     - 其中`DenseRange`：Run this benchmark once for all values in the range [start..limit] with specific step
-    - 其中`Arg()`：向目标函数传入的参数，注意在`BM_*`函数种要使用`state.range(x)`来指明第`x`个参数；传入多个参数时(如三个)类似：`Arg({1, "2", 3})`
+    - 其中 `Arg()` ：向目标函数传入的参数，注意在`BM_*`函数中要使用 `state.range(x)` 来指明第`x`个参数；传入多个参数时(如三个)类似： `Arg({1, "2", 3})`
 
 - 防止编译器优化：
 
@@ -43,13 +43,21 @@
 
     ```C++
     std::uint64_t FibonacciIter(std::uint64_t number) {
-    int pre{1}, cur{1}, tmp{};
-    for (size_t i = 1; i < number; i++) {
-        benchmark::DoNotOptimize(tmp = cur);
-        benchmark::DoNotOptimize(cur += pre);
-        benchmark::DoNotOptimize(pre = tmp);
-    }
-    return cur;
+      int pre{1}, cur{1}, tmp{};
+      for (size_t i = 1; i < number; i++) {
+          benchmark::DoNotOptimize(tmp = cur);
+          benchmark::DoNotOptimize(cur += pre);
+          benchmark::DoNotOptimize(pre = tmp);
+      }
+      return cur;
     }
     ```
 
+- 使用 `Unit` 指定读数单位：
+
+    ```c++
+    BENCHMARK(FibonacciIter)
+      ->Unit(benchmark::kMillisecond)
+      ->RangeMultiplier(1 << 1)
+      ->Range(1ll, 1ll << 7);
+    ```

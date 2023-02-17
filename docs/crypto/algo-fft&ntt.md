@@ -1,10 +1,6 @@
----
-title: FFT&NTT
-date: 2021-07-29 13:36:54
-tags: '数据结构&算法'
-categories: '数据结构&算法'
-description: "FFT算法以及其变种——NTT(数论变换)算法..."
-# FFT在多项式的应用
+# Algorithm-fft&ntt
+
+主要关注 FFT在多项式运算中的应用
 
 两个多项式相乘传统算法复杂度$O(n^2)$；
 

@@ -1,7 +1,8 @@
 # TVM-ffi
-> 代码基于 tlc-pack/relax dc7072efe290d7e8c69d8e216311510981fc82e1
-> 
-> ref: 
+
+本文 **基于 tlc-pack/relax dc7072efe290d7e8c69d8e216311510981fc82e1**
+
+> Ref: 
 > 
 > - [深入理解TVM：Python/C++互调(下)](https://mp.weixin.qq.com/s?__biz=Mzg5MzU4NTU5Nw==&mid=2247483737&idx=1&sn=7b881ee096ac42b8975d6383256121a6&chksm=c02dd08bf75a599d8c03abe57f17c5f88fe5e66d14a9d3650d3399e9f99201553dcb79a9a7b7&scene=178&cur_album_id=1811050680510447621#rd)
 
@@ -202,7 +203,7 @@ class Registry {
   friend struct Manager;
 };
 ```
-`name_`很好理解，在上面的例子中，即为`relay.op.nn._make.relu`；而`func_`的类型是`PackedFunc`，是对函数指针的一个包装，刚才例子中使用`set_body`方法传入的lambda会经过包装后赋值给`func_`，后续会对`PackedFunc`这一TVM的关键结构详细说明。
+`name_`很好理解，在上面的例子中，即为`relay.op.nn._make.relu`；而`func_`的类型是`PackedFunc`，是对函数指针的一个包装，刚才例子中使用`set_body`方法传入的lambda会经过包装后赋值给`func_`，对于 `PackedFunc` 的详细信息可以参考 [tvm-type](./tvm-type.md)
 
 看一下刚才`TVM_REGISTER_GLOBAL`用到的`Register`方法，和`set_body`方法，定义如下：
 ```c++

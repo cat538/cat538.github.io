@@ -22,8 +22,12 @@
 
 
 !!! abstract "TODO"
+    2023.2.14
+    
+    - tvm-type system
+    - tvm-relay lowering
+    - tvm-relax
     - rust `Vec`和`String`源码分析，涉及`Char`的理解
-    - rust macro 的更新
-    - rust error handling
-    - Cpp move semantic
-    - MLC
+    - rust-macro 的更新
+    - rust-smart pointer 的更新
+    - rust-error handling
