@@ -166,15 +166,38 @@ static uint32_t _GetOrAllocRuntimeTypeIndex() {
 
 - `_GetOrAllocRuntimeTypeIndex` 简单地调用父类 `Object::GetOrAllocRuntimeTypeIndex` 方法， 该方法又会调用 `TypeContext` 单例的：`TypeContext::Global()->GetOrAllocRuntimeTypeIndex`； 
 
-    `TypeContext` 类声明和实现都位于 `src/runtime/object.cc`中， 其负责管理分配， 验证 TVM 中的类型， 其通过`Global`暴露全局唯一单例，其 `GetOrAllocRuntimeTypeIndex` 方法负责为一个类型 分配一个 index， 并建立该类型 `_type_key` 与 index 之间的双向索引。
+    TypeContext 类声明和实现都位于 `src/runtime/object.cc`中， 其负责管理分配， 验证 TVM 中的类型， 其通过`Global`暴露全局唯一单例，其 `GetOrAllocRuntimeTypeIndex` 方法负责为一个类型 分配一个 index， 并建立该类型 `_type_key` 与 index 之间的双向索引。
 
-    `TypeContext` 使用一个 `std::vector<TypeInfo> type_table_;` 存储 TVM 中所有注册过的类型信息， 一个类型的index即 其累心信息在 该表中的索引下标； 一个类型对应的 `TypeInfo` 包括了该类型的 name， index， parent_index， num_slots 等信息
+    TypeContext 使用一个 `std::vector<TypeInfo> type_table_;` 存储 TVM 中所有注册过的类型信息， 一个类型的index即 其类型信息在 该表中的索引下标； 一个类型对应的 `TypeInfo` 包括了该类型的 name， index， parent_index， num_slots 等信息
 
-    `TypeContext` 的 `GetOrAllocRuntimeTypeIndex` 方法在被调用时，检查表中对应索引项是否已经初始化，如果没有初始化（说明该类型尚未注册到该Context中），则构造相应项
+    TypeContext 的 `GetOrAllocRuntimeTypeIndex` 方法在被调用时，检查表中对应索引项是否已经初始化，如果没有初始化（说明该类型尚未注册到该Context中），则构造相应项
 
-- `RuntimeTypeIndex` 是一个类型暴露给外部信息的接口， 外部通过这个函数来获得类型索引等相关信息。
+- `RuntimeTypeIndex` 是一个类型向外部暴露信息的接口， 外部通过这个函数来获得类型索引等相关信息。一个应用实例：在`include/tvm/runtime/object.h` 中的 `IsInstance` 功能为 Check if the object is an instance of `TargetType`， 其中使用 `RuntimeTypeIndex` 进行加速检查：
 
-通过同样的 type_key 可以将 C++ 与 Python 的类型匹配上，而设计 type_index 则是为了性能考虑。具体的两边类型匹配可以在 `python/tvm/_ffi/_cython/object.pxi` 查阅
+    ```c++
+    template <typename TargetType>
+    inline bool Object::IsInstance() const {
+      if (std::is_same<TargetType, Object>::value) return true;
+      if (TargetType::_type_final) {
+          return type_index_ == TargetType::RuntimeTypeIndex();
+      } else {
+          // quick check using type_index
+          uint32_t begin = TargetType::RuntimeTypeIndex();
+          if (TargetType::_type_child_slots != 0) {
+            uint32_t end = begin + TargetType::_type_child_slots;
+            if (type_index_ >= begin && type_index_ < end) return true;
+          } else {
+            if (type_index_ == begin) return true;
+          }
+          if (!TargetType::_type_child_slots_can_overflow) return false;
+          if (type_index_ < TargetType::RuntimeTypeIndex()) return false;
+          // slow path using type hierarchy
+          return DerivedFrom(TargetType::RuntimeTypeIndex());
+      }
+    }
+    ```
+
+💡总体来说，通过同样的 type_key 可以将 C++ 与 Python 的类型匹配上，**而设计 type_index 则是为了性能考虑**。具体的两边类型匹配可以在 `python/tvm/_ffi/_cython/object.pxi` 查阅
 
 TODO: 额外的 serialize/format/reflection/python binding/hash 等功能则实现在 `node` 目录下，有兴趣可自行查阅。
 
@@ -219,8 +242,8 @@ PackedFunc 的关键在于 TVMArgs 和 TVMRetValue 结构。我们限制了可�
 
 - `int`, `float` and `string`
 - `PackedFunc` 本身
-- Module for compiled modules
-- `DLTensor*` for tensor object exchange
+- `Module` for compiled modules
+- `DLTensor*`(见dlpack) for tensor object exchange
 - TVM `Object` to represent any object in IR
 
 由于一个 PackedFunc 可以将另一个 PackedFunc 作为参数，因此可以将函数从 Python（作为 PackedFunc）传递给 C++:
@@ -246,10 +269,10 @@ callhello = tvm.get_global_func("callhello")
 callhello(f)
 ```
 
-- TVM 的所有编译器 pass 函数都以 PackedFunc 的类型暴露给前端
-- 编译好的模块还将编译好的函数作为 PackedFunc 类型返回
+- TVM 的所有编译器 pass 函数都以 `PackedFunc` 的类型暴露给前端
+- 编译好的模块还将编译好的函数作为 `PackedFunc` 类型返回
 
-PackedFunc 源码如下：
+`PackedFunc` 源码如下：
 
 ```c++
 class PackedFuncObj : public Object {
@@ -375,6 +398,8 @@ class TypeNode : public Object {
 
     `TensorType` 是 relay 中最常用到的类型； `TensorType` has **a fixed dimension, data type**
 
+    可以看到 `TensorTypeNode` 中有一个 `shape` field， 这表示shape是 TensorType的一部分；即 
+    
 - `FunctypeNode` 定义位于 `include/tvm/ir/type.h` **可以看作C++中的 template function**
 
     ```c++
@@ -399,18 +424,77 @@ class TypeNode : public Object {
 
 ### 3.2. Expr
 
-Expr类作为表达式类，主要处理各种类型的数据，以及表示IR语句中控制结构、分支信息，其派生也要比Type类更加复杂一些，主要分为 `PrimExpr` 和 `RelayExpr` 两类。
+无论是Relay IR还是Tensor IR都共享TVM IR基础设施，TVM IR 基础设施中除了 Type 系统， 另一个重要的部分就是表达式 expressions 。 表达式主要处理各种类型的数据，以及表示IR语句中控制结构、分支信息，其派生也要比Type类更加复杂一些。在TVM中， 表达式使用 `Expr` 类来表示， 其有两个直接子类： `RelayExpr` 和 `PrimExpr` 。 
 
-- `PrimExpr`: 主要在 tir 模块中定义，可以相对直接地映射到 low-level code
-- `RelayExpr`: 所有的非 `PrimExpr`
+此外继承自 Object 的 Stmt 在后文会介绍到，也是IR中的元素，与 Expr 的区别在于：Stmt 表示if判断、赋值，不处理Type类型的数据值，相当于陈述语句。
 
-无论是Relay IR还是Tensor IR都共享TVM IR基础设施，其中除了类型系统，表达式部分分为了RelayExpr和PrimExpr，下图简单列举了TensorIR中的主要数据结构PrimExpr，可以看到一些字符串类型、整数类型、浮点类型的常量表示、加减乘除等基本运算、与或非运算、Let表达式（这里是将值绑定到变量上并执行body）、调用算子Call（这里还可以调用primitive 算子，即硬件intrinsics）等。此外继承自object的stmt在后文会介绍到，也是IR中的元素，与Expr的区别在于：stmt表示if判断、赋值，不处理Type类型的数据值，相当于陈述语句，感兴趣的读者可以去阅读源码。这是只是Tensor IR的部分表达式，基于PrimExpr使得Tensor IR具有强大的表达能力和优化能力。
+接下来关注Tensor IR 中对应的 `PrimExpr` 和 Relay IR 中对应的 `RelayExpr`： 
 
+- `PrimExprNode`: 主要在 `tir` 模块中定义，可以相对直接地映射到 low-level code:
 
+    ```c++
+    class PrimExprNode : public BaseExprNode {
+     public:
+      DataType dtype; // POD 类型; 是一个对于 `DLDataType` 的封装
+      static constexpr const char* _type_key = "PrimExpr";
+      static constexpr const uint32_t _type_child_slots = 38;
+      TVM_DECLARE_BASE_OBJECT_INFO(PrimExprNode, BaseExprNode);
+    };
+    ```
 
-接下来首先介绍Relay表达式 RelayExpr:
+    `PrimExprNode` 里的 `DataType` 与前文提到的 `TypeNode` 中的 `runtime::DataType` 是同一个类型，即 一个对于 dlpack 中 `DLDataType` 类型的封装；
+    因此，在 TVM 中， primitive expression 的类型为 POD 类型
 
-<div class="autocb" style="text-align:center;"><img src="./tvm-type.assets\autocb_0.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
+    其子类包括:
+
+    1. `BinaryOpNode`(其子类有 `Add`, `Mod`, `Mul`, `Min` 等二元op), `CmpOpNode`, `AndNode`, `OrNode`, `NotNode` 等基本的算数运算和逻辑运算表达式；
+    2. `FloatImmNode`, `IntImmNode`, `StringImmNode` 等常量表达式
+    3. `CastNode`, `BroadCastNode`, `LoadNode`, `BufferLoadNode`, `ProducerLoadNode` 等数据操作表达式
+    4. `LetNode`, `VarNode`, `SelectNode`, `ReduceNode`, `CallNode` 等表达式
+    5. ...
+
+    <div class="autocb" style="text-align:center;"><img src="./tvm-type.assets\autocb_2.png" style="zoom: 60%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
+
+- `RelayExprNode`: 主要在 `relay` 模块中定义， `RelayExpr` 是所有的 non-primitive expressions 的基类
+
+    ```c++
+    class RelayExprNode : public BaseExprNode {
+     public:
+      // This can be undefined before type inference.
+      // This value is discarded during serialization.
+      mutable Type checked_type_ = Type(nullptr); // result of type checking.
+
+      // Stores the result of structure information of the
+      // expression that encapsulate both static shape and
+      // runtime information such as shape.
+      mutable Optional<ObjectRef> struct_info_ = Optional<ObjectRef>();
+
+      inline const Type& checked_type() const;
+
+      template <typename TTypeNode>
+      inline const TTypeNode* type_as() const; // check if `checked_type_` is backed by TTypeNode
+
+      // this describes where the result of evaluating the expression should be stored
+      // first-order values (tuples, references, ADTs) must be stored on the same virtual device
+      // 对于函数类型， 表示函数调用返回值的存储device， 而不是函数本身的存储device
+      // VirtualDevice's Target field describes how the body of the function should be compiled
+      // 函数调用返回值所在的device 与 函数 body的存储 device 相同
+      // *type of virtual_device_ needs to be ObjectRef to avoid a circular import* ???
+      mutable ObjectRef virtual_device_;
+
+      // 如果 `virtual_device_` 未设置， 返回 VirtualDevice::FullyUnconstrained()
+      // 对于函数类型， 返回值是函数调用返回值的存储device， 而不是函数本身的存储device
+      // 函数调用返回值所在的device 与 函数 body的存储 device 相同
+      // `src/relay/transforms/device_planner.cc` 中有详细内容
+      VirtualDevice virtual_device() const;
+
+      static constexpr const char* _type_key = "RelayExpr";
+      static constexpr const uint32_t _type_child_slots = 22;
+      TVM_DECLARE_BASE_OBJECT_INFO(RelayExprNode, BaseExprNode);
+    };
+    ```
+
+    <div class="autocb" style="text-align:center;"><img src="./tvm-type.assets\autocb_0.png" style="zoom: 45%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
 
 RelayExpr中的变量值表示分为：全局变量 `GlobalVar` 和局部变量 `Var` ，在IR中使用不同的前缀区分(`@`、`%`)，本地变量Variable一般用作函数的参数或者配合let表达式绑定使用。
 
@@ -480,3 +564,10 @@ class DynTensorTypeNode : public BaseTensorTypeNode {
   TVM_DECLARE_FINAL_OBJECT_INFO(DynTensorTypeNode, BaseTensorTypeNode);
 };
 ```
+
+> Dynamic shape 是 TVM-Relay 的一大短板，核心原因是 relay 把Tensor的shape作为type的信息之一存进去了（即 Tensor[(m, n)]和Tensor[(m, 4)]是不同的type，且不可分析。relax引入了一个新的type叫DynTensor，其中包含的信息是dtype和shape的纬度，但shape本身的表达式是独立存储的。也就是Tensor[(m, n)]和Tensor[(_, _)]都是同一个type， 但是Tensor[(_, _)]和Tensor[(_, _, _)]是不同类型。这样从原生上支持了symbolic shape。
+>
+> !!! warning "疑问"
+      这里的不可分析是什么意思？
+>
+

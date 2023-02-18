@@ -236,7 +236,7 @@ DLC 中的编译方案主要可分为两类：即时（JIT）和提前（AOT）�
 除了预定义的pass，开发人员还可以在前端定义自定义pass。 一旦 DL 模型被导入并转换为计算图，大多数 DLC 就可以确定每个操作的输入张量和输出张量的形状。 此功能允许 DLC 根据形状信息执行优化。 图3 显示了使用 Tensorflow XLA 进行计算图优化的示例。 在本节中，我们将前端优化分为三类：
 1）<u>节点级优化</u>，2）<u>块级（窥孔，局部）优化</u>，以及 3）<u>数据流级（全局）优化</u>
 
-<div class="autocb" style="text-align:center;"><img src="./dlc-survey\autocb_0.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
+<div class="autocb" style="text-align:center;"><img src="./dlc-survey.assets\autocb_0.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
 
 #### 4.3.1. Node-level optimizations
 
