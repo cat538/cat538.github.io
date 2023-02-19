@@ -22,7 +22,7 @@
 
     执行`install`之后会显示安装的位置，默认应该是在`C:\Program Files(X86)`，可以自己放到合适的位置。
 
-    不过，如果是简单使用 TVM 上层应用， `install` 步骤可省略。 **并不需要将编译出来的库路径加入系统环境变量，才能让ffi模块找到这些库**，因为 TVM 上层 ffi 会根据 环境变量`TVM_HOME`，即TVM源码目录 搜索其下 `build` 目录中的运行时依赖。
+    不过，如果是简单使用 TVM 上层应用， `install` 步骤可省略。 **并不需要将编译出来的库路径加入系统环境变量，才能让ffi模块找到这些库**，因为 TVM 上层 ffi 会根据 环境变量`TVM_HOME`，即TVM源码目录(设置环境变量 `TVM_HOME=/path/to/tvm-source-code`) 搜索其下 `build` 目录中的运行时依赖。
 
     
 3. 而为了使用tvm，除了刚才的两个库之外，tvm project还提供了上层的软件包，包括python，rust，go等语言的binding。

@@ -68,6 +68,7 @@ nav:
     - tvm-type:           "mlc/tvm-type.md"
     - dlc-survey:         "mlc/dlc-survey.md"
     # - tvm-relay:          "mlc/tvm-relay.md"
+    - tvm-tensorIR:       "mlc/tvm-tensorIR.md"
     - torch-fx:           "mlc/torch-fx.md"
   - About: "about.md"
 

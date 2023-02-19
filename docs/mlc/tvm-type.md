@@ -1,4 +1,4 @@
-# TVM-type
+# TVM-type system
 
 本文 **基于 tlc-pack/relax dc7072efe290d7e8c69d8e216311510981fc82e1**
 
@@ -10,13 +10,13 @@
 
 ## 1. Object
 
-对于类似 IR 这样的数据结构，天然就对其有 serialize/format/reflection 的需求。在 TVM 中，额外还有 python binding/hash 等需求，于是 TVM 要求**所有这样的数据结构继承自 `Object` 基类**，并注册其内部所有成员
+对于类似 IR 这样的数据结构，天然就对其有 serialize/format/reflection 的需求。在 TVM 中，额外还有 python binding/hash 等需求，于是 TVM 要求**所有这样的数据结构继承自 `Object` 基类**，并注册其内部所有成员； 由 TVM 的类型注册系统和反射系统等为继承自 Object 的子类自动实现序列化，反射，hash等功能。
 
-这种方式避免了为新增的 Class 额外单独实现 serialize/format/reflection/python binding/hash 等功能。
+这种方式避免了为新增的 Class 单独实现 serialize/format/reflection/python binding/hash 等功能， 实现了代码重用。
 
 `include/tvm/runtime/object.h `中定义了 `Object` 和 `ObjectRef` 两个类型， `ObjectRef` 可以视为 `shared_ptr<Object>`
 
-删除部分函数和成员，精简后的定义如下：
+删除部分函数和成员，`Object` 精简后的定义如下：
 
 ```c++
 class TVM_DLL Object {
@@ -89,10 +89,9 @@ class TVM_DLL Object {
     而 `PackedFuncObj`， `ModuleNode` 等类型有预留 `_type_index`；所有预留的10种类型索引在 `TypeIndex` 结构体中可查
 
 - `_type_child_slots` 表示该类型为子类预留的index个数
+- `_type_child_slots_can_overflow` 标识是否可超过 `_type_child_slots` 定义的数量
 - `_type_final` 表示是否没有子类，一般通过 `TVM_DECLARE_FINAL_OBJECT_INFO` 这个宏来设置， 而不是手动重写
-- `_type_child_slots_can_overflow` 标识是不是可以超过_type_child_slots定义的数量
-- `_type_has_method_sequal_reduce` 默认为 false, 
-- `_type_has_method_shash_reduce`  默认为 false, 
+- `_type_has_method_sequal_reduce`, `_type_has_method_shash_reduce` 等标识该类型的 hash 等功能是否实现，在 TODO: 中讨论
 
 并且在 定义过类之后要 在 TVM 的类型系统中使用 `TVM_REGISTER_OBJECT_TYPE` 宏进行注册
 
@@ -202,7 +201,7 @@ static uint32_t _GetOrAllocRuntimeTypeIndex() {
 TODO: 额外的 serialize/format/reflection/python binding/hash 等功能则实现在 `node` 目录下，有兴趣可自行查阅。
 
 ## 2. PackedFunc
-TVM 中另一个与 Object 同样底层的机制称为 FFI (Foreign Function Interface), 这个机制的目标是为了使得任意语言下定义的函数都可以被任意其他语言调用。而这个可以被任意语言调用的函数类型是 `PackedFunc`， 一个示例如下:
+TVM runtime 中另一个与 Object 同样底层的机制称为 FFI (Foreign Function Interface), 这个机制的目标是为了使得任意语言下定义的函数都可以被任意其他语言调用。而这个可以被任意语言调用的函数类型是 `PackedFunc`， 一个示例如下:
 
 ```c++
 #include <tvm/runtime/packed_func.h>
@@ -324,18 +323,20 @@ typedef union {
 ```
 其中的 `DLDataType` 和 `DLDevice` 定义在 `3rdparty/dlpack/include/dlpack/dlpack.h` 中。 [DLPack: Open In Memory Tensor Structure](https://github.com/dmlc/dlpack)
 
-
+## 3. Module
 ## 3. Type and Expr
 
 **将 IR 视为一种相对高级的编程语言，有两个关键的基础概念，类型 (Type) 和表达式 (Expr)**。 `Type` 类主要表示TVM IR中的各种类型，包含bool、int8，float32等基础数据类型，以及张量Tensor和元组Tuple等类型。 `Expr` 包括简单的定义一个字面值，也包括定义一个复杂的函数。
 
+在 TVM 中，有 **Relay**(定义在`include/tvm/relay/`中)， **Relax**(定义在`include/tvm/relax/`中)， **TensorIR**(定义在`include/tvm/tir/`中) 等不同层级的IR，不过这些 IR share 同一套 IR 基础设施(主要定义在 `include/tvm/ir/`中)；实现了工程上的代码重用，划分的相对清晰。不过从代码角度来说，这些IR之间并非完全隔离， 例如 Relay 中就需要重用 tensorIR 中定义的 `Any` 类型。
+
 ### 3.1. Type
 
-> **反应一个IR的抽象层级最明显的标志是IR所处理的 data type**，high-level IR 多用来处理Tensor数据类型， low-level IR 大多用来处理Buffer或指针类型，在TVM `Type`类中可以看到TVM各个层级IR需要的Type。
+> **反应一个IR的抽象层级最明显的标志之一是IR所处理的 data type**，high-level IR 多用来处理Tensor数据类型， low-level IR 大多用来处理Buffer或指针类型，在TVM `Type`类中可以看到TVM各个层级IR需要的Type。
 
 在 `include/tvm/type.h` 中定义了多个基础类型， 所有类型 Node 都继承自 `TypeNode`:
 
-<div class="autocb" style="text-align:center;"><img src="./tvm-type.assets\autocb_1.png" style="zoom: 100%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
+<div class="autocb" style="text-align:center;"><img src="./tvm-type.assets\autocb_1.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
 
 `include/tvm/ir/type.h` 中 `TypeNode` 定义如下：
 
@@ -398,7 +399,8 @@ class TypeNode : public Object {
 
     `TensorType` 是 relay 中最常用到的类型； `TensorType` has **a fixed dimension, data type**
 
-    可以看到 `TensorTypeNode` 中有一个 `shape` field， 这表示shape是 TensorType的一部分；即 
+    `TensorTypeNode` 中有一个 `shape` field， 这表示shape是 TensorType的一部分；
+    即 Tensor[(4, 4)]和Tensor[(Any, 4)]是不同的type (**`Any` 是`PrimExpr`的子类，用于在Relay中表示 dynamic shape**)
     
 - `FunctypeNode` 定义位于 `include/tvm/ir/type.h` **可以看作C++中的 template function**
 
@@ -442,7 +444,7 @@ class TypeNode : public Object {
     };
     ```
 
-    `PrimExprNode` 里的 `DataType` 与前文提到的 `TypeNode` 中的 `runtime::DataType` 是同一个类型，即 一个对于 dlpack 中 `DLDataType` 类型的封装；
+    `PrimExprNode` 里的 `DataType` 与Type一节里 `TypeNode` 中的 `runtime::DataType` 是同一个类型，即 一个对于 dlpack 中 `DLDataType` 类型的封装；
     因此，在 TVM 中， primitive expression 的类型为 POD 类型
 
     其子类包括:
@@ -479,13 +481,11 @@ class TypeNode : public Object {
       // 对于函数类型， 表示函数调用返回值的存储device， 而不是函数本身的存储device
       // VirtualDevice's Target field describes how the body of the function should be compiled
       // 函数调用返回值所在的device 与 函数 body的存储 device 相同
+      // `src/relay/transforms/device_planner.cc` 中有详细内容
       // *type of virtual_device_ needs to be ObjectRef to avoid a circular import* ???
       mutable ObjectRef virtual_device_;
 
       // 如果 `virtual_device_` 未设置， 返回 VirtualDevice::FullyUnconstrained()
-      // 对于函数类型， 返回值是函数调用返回值的存储device， 而不是函数本身的存储device
-      // 函数调用返回值所在的device 与 函数 body的存储 device 相同
-      // `src/relay/transforms/device_planner.cc` 中有详细内容
       VirtualDevice virtual_device() const;
 
       static constexpr const char* _type_key = "RelayExpr";
@@ -496,9 +496,9 @@ class TypeNode : public Object {
 
     <div class="autocb" style="text-align:center;"><img src="./tvm-type.assets\autocb_0.png" style="zoom: 45%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
 
-RelayExpr中的变量值表示分为：全局变量 `GlobalVar` 和局部变量 `Var` ，在IR中使用不同的前缀区分(`@`、`%`)，本地变量Variable一般用作函数的参数或者配合let表达式绑定使用。
+    1. RelayExpr 中有两种变量：全局变量 `GlobalVar` 和局部变量 `Var` ，在 relay IR 的 text-format 中使用不同的前缀表示(`@`、`%`)，局部变量一般用作函数的参数或者配合let表达式绑定使用
 
-Constant表示一种常量张量类型，根据不同张量维度表示不同的常量，比如标量常量、数组常量，TVM中常数使用NDArray表示。
+    2. Constant 表示常量张量类型。根据不同张量维度表示不同的常量，比如标量常量、数组常量，RelayExpr 中常量表达式使用 NDArray 表示； 这里可以对比 tensor IR 中的常量表达式： 在tir 中， 常量表达式有 `FloatImm`, `IntImm` 等不同类型用于表示 scalar， 而在relay 中的常量表达式则是表示 tensor
 
 
 ## Relay
