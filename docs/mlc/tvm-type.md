@@ -328,7 +328,7 @@ typedef union {
 
 **将 IR 视为一种相对高级的编程语言，有两个关键的基础概念，类型 (Type) 和表达式 (Expr)**。 `Type` 类主要表示TVM IR中的各种类型，包含bool、int8，float32等基础数据类型，以及张量Tensor和元组Tuple等类型。 `Expr` 包括简单的定义一个字面值，也包括定义一个复杂的函数。
 
-在 TVM 中，有 **Relay**(定义在`include/tvm/relay/`中)， **Relax**(定义在`include/tvm/relax/`中)， **TensorIR**(定义在`include/tvm/tir/`中) 等不同层级的IR，不过这些 IR share 同一套 IR 基础设施(主要定义在 `include/tvm/ir/`中)；实现了工程上的代码重用，划分的相对清晰。不过从代码角度来说，这些IR之间并非完全隔离， 例如 Relay 中就需要重用 tensorIR 中定义的 `Any` 类型。
+在 TVM 中，有 **Relay**(定义在`include/tvm/relay/`中)， **Relax**(定义在`include/tvm/relax/`中)， **TensorIR**(定义在`include/tvm/tir/`中) 等不同层级的IR。 这些 IR 共享同一套 IR 基础设施(主要定义在 `include/tvm/ir/`中)， 包括`type`和`expr`等；实现了工程上的代码重用，划分的相对清晰（不过从代码角度来说，这些IR之间并非完全隔离， 例如 Relay 中就需要重用 tensorIR 中定义的 `Any` 类型）。
 
 ### 3.1. Type
 
@@ -400,7 +400,7 @@ class TypeNode : public Object {
     `TensorType` 是 relay 中最常用到的类型； `TensorType` has **a fixed dimension, data type**
 
     `TensorTypeNode` 中有一个 `shape` field， 这表示shape是 TensorType的一部分；
-    即 Tensor[(4, 4)]和Tensor[(Any, 4)]是不同的type (**`Any` 是`PrimExpr`的子类，用于在Relay中表示 dynamic shape**)
+    即 Tensor[(4, 4)]和Tensor[(Any, 4)]是不同的type (**`Any` 是`PrimExpr`的子类，用于在Relay中表示 dynamic shape**)； 在relax中引入了一个与之相对的 张量类型 `DynTensorType`(位于`include/tvm/relax/type.h`)， 具体可见  TODO:
     
 - `FunctypeNode` 定义位于 `include/tvm/ir/type.h` **可以看作C++中的 template function**
 
@@ -409,7 +409,6 @@ class TypeNode : public Object {
      public:
       Array<Type> arg_types;    // type of arguments
       Type ret_type;            // type of return value
-
       // The following fields are used in polymorphic(template) functions
       // For normal functions, the following two fields will be empty.
       /* The type parameters of the function */
@@ -426,13 +425,13 @@ class TypeNode : public Object {
 
 ### 3.2. Expr
 
-无论是Relay IR还是Tensor IR都共享TVM IR基础设施，TVM IR 基础设施中除了 Type 系统， 另一个重要的部分就是表达式 expressions 。 表达式主要处理各种类型的数据，以及表示IR语句中控制结构、分支信息，其派生也要比Type类更加复杂一些。在TVM中， 表达式使用 `Expr` 类来表示， 其有两个直接子类： `RelayExpr` 和 `PrimExpr` 。 
+表达式 expression 主要处理各种类型的数据，以及表示IR语句中控制结构、分支信息，其派生也要比Type类更加复杂一些。在TVM中， 表达式使用 `Expr` 类来表示， 其有两个直接子类： `RelayExpr` 和 `PrimExpr` 。 
 
-此外继承自 Object 的 Stmt 在后文会介绍到，也是IR中的元素，与 Expr 的区别在于：Stmt 表示if判断、赋值，不处理Type类型的数据值，相当于陈述语句。
+此外继承自 Object 的 `Stmt` 在后文会介绍到，也是IR中的元素，与 Expr 的区别在于： `Stmt` 表示if判断、赋值，不处理Type类型的数据值，相当于陈述语句。
 
 接下来关注Tensor IR 中对应的 `PrimExpr` 和 Relay IR 中对应的 `RelayExpr`： 
 
-- `PrimExprNode`: 主要在 `tir` 模块中定义，可以相对直接地映射到 low-level code:
+- `PrimExprNode`: 定义在`include/tvm/ir.h`；其派生子类主要在 `tir` 模块中定义，可以相对直接地映射到 low-level code:
 
     ```c++
     class PrimExprNode : public BaseExprNode {
@@ -444,8 +443,9 @@ class TypeNode : public Object {
     };
     ```
 
-    `PrimExprNode` 里的 `DataType` 与Type一节里 `TypeNode` 中的 `runtime::DataType` 是同一个类型，即 一个对于 dlpack 中 `DLDataType` 类型的封装；
-    因此，在 TVM 中， primitive expression 的类型为 POD 类型
+    `PrimExprNode` 里的 `DataType` 与Type一节里 `TypeNode` 中的 `runtime::DataType` 是同一个类型，即 一个对于 dlpack 中 `DLDataType` 类型的封装。
+    
+    因此，primitive expression 的evaluation结果type为 POD 类型——在 `ir.h` 中还为 `PrimExpr` 重载了四则运算，逻辑运算等运算符
 
     其子类包括:
 
@@ -462,32 +462,25 @@ class TypeNode : public Object {
     ```c++
     class RelayExprNode : public BaseExprNode {
      public:
-      // This can be undefined before type inference.
-      // This value is discarded during serialization.
+      // 在type inference之前，该值可为 undefined
+      // 序列化 时该字段将被丢弃
       mutable Type checked_type_ = Type(nullptr); // result of type checking.
-
       // Stores the result of structure information of the
       // expression that encapsulate both static shape and
       // runtime information such as shape.
       mutable Optional<ObjectRef> struct_info_ = Optional<ObjectRef>();
-
       inline const Type& checked_type() const;
-
       template <typename TTypeNode>
-      inline const TTypeNode* type_as() const; // check if `checked_type_` is backed by TTypeNode
-
-      // this describes where the result of evaluating the expression should be stored
-      // first-order values (tuples, references, ADTs) must be stored on the same virtual device
+      inline const TTypeNode* type_as() const;
+      // 该 filed 描述了一个 Expr 的求值结果被存放在哪里
+      // first-order values (tuples, references, ADTs) 各字段必须存在相同的 virtual device 上
       // 对于函数类型， 表示函数调用返回值的存储device， 而不是函数本身的存储device
-      // VirtualDevice's Target field describes how the body of the function should be compiled
+      // VirtualDevice 的 `target` field 描述了函数体该如何被编译
       // 函数调用返回值所在的device 与 函数 body的存储 device 相同
       // `src/relay/transforms/device_planner.cc` 中有详细内容
       // *type of virtual_device_ needs to be ObjectRef to avoid a circular import* ???
       mutable ObjectRef virtual_device_;
-
-      // 如果 `virtual_device_` 未设置， 返回 VirtualDevice::FullyUnconstrained()
       VirtualDevice virtual_device() const;
-
       static constexpr const char* _type_key = "RelayExpr";
       static constexpr const uint32_t _type_child_slots = 22;
       TVM_DECLARE_BASE_OBJECT_INFO(RelayExprNode, BaseExprNode);
@@ -496,10 +489,51 @@ class TypeNode : public Object {
 
     <div class="autocb" style="text-align:center;"><img src="./tvm-type.assets\autocb_0.png" style="zoom: 45%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
 
-    1. RelayExpr 中有两种变量：全局变量 `GlobalVar` 和局部变量 `Var` ，在 relay IR 的 text-format 中使用不同的前缀表示(`@`、`%`)，局部变量一般用作函数的参数或者配合let表达式绑定使用
+    1. RelayExpr 中有两种变量：全局变量 `GlobalVar` 和局部变量 `Var` ，在 relay IR 的 text-format 中使用不同的前缀表示(`@`、`%`)，局部变量一般用作函数的参数或者配合`let`表达式绑定使用
 
     2. Constant 表示常量张量类型。根据不同张量维度表示不同的常量，比如标量常量、数组常量，RelayExpr 中常量表达式使用 NDArray 表示； 这里可以对比 tensor IR 中的常量表达式： 在tir 中， 常量表达式有 `FloatImm`, `IntImm` 等不同类型用于表示 scalar， 而在relay 中的常量表达式则是表示 tensor
 
+#### 3.2.1. Let-Binding
+关于为什么需要 Let-binding， 在这个 RFC 里的例子可能比官网写的更详细一些：
+[TVM-Disc: Basic Block Normal Form](https://discuss.tvm.apache.org/t/basic-block-normal-form/5908)
+
+简单来说就是：
+
+- Graph form 的 IR 对于模式匹配和图重写非常友好，但是 graph-form 存在 **求值顺序不明确**， **无法直接表达scope语义** 的问题。graph-form 通常意味着子图之间的求值顺序可以任意重排；对于没有 effect 的 blocks(即子图) 之间 进行求值顺序重排是ok的，但如果一个 block 有effect（比如说会改变另一个block也用到的一个全局状态等），则该block的计算顺序，or 该block与其它相关 block 之间的依赖关系，应当被明确定义，而 graph-form 会因为缺失表达scope的能力，和缺失定义block之间计算顺序的能力，导致语义模糊(semantic ambiguity)。在[Introduction to Relay IR](https://tvm.apache.org/docs/arch/relay_intro.html) 中有两个例子，下面是RFC中的一个例子：
+
+    <div class="autocb" style="text-align:center;"><img src="./tvm-type.assets\autocb_3.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
+
+- 如果我们使用带有显式 let-binding 的 ANF， 那么我们能明确计算范围，以及需要副作用的值的顺序。但是使用 let-binding 在进行模式匹配的时候会相对困难一些。
+
+TVM 的图级IR Relay 选择同时支持 let-binding 和 DAG 形式，两者之间可以相互转换。
+
+代码如下：
+
+```c++
+class LetNode : public ExprNode {
+ protected:
+  // LetNode uses own deleter to indirectly call non-recursive destructor
+  Object::FDeleter saved_deleter_;
+  static void Deleter_(Object* ptr);
+ public:
+  Var var;    // The variable we bind to
+  Expr value; // The value we bind var to
+  Expr body;  // The body of the let binding
+  static constexpr const char* _type_key = "relay.Let";
+  TVM_DECLARE_FINAL_OBJECT_INFO(LetNode, ExprNode);
+};
+```
+
+```c++
+class LetNode : public PrimExprNode {
+ public:
+  Var var;        // The variable
+  PrimExpr value; // The value to be binded
+  PrimExpr body;  // The result expression
+  static constexpr const char* _type_key = "tir.Let";
+  TVM_DECLARE_FINAL_OBJECT_INFO(LetNode, PrimExprNode);
+};
+```
 
 ## Relay
 
@@ -533,17 +567,17 @@ using TypeReporter = tvm::TypeReporter;
 Relay 通过引入 `Any` 添加了对于 dynamic shape Tensor 的支持
 
 ## Relax
-Relax 种引入了一个新的 动态 tensor 类型 `DynTensorTypeNode`， 对比原本TVM中的 静态 tensor类型 `TensorTypeNode`
+Relax 引入了一个新的 动态 tensor 类型 `DynTensorTypeNode`， 对比原本TVM中的 静态 tensor类型 `TensorTypeNode`
 
 `include/tvm/ir/tensor_type.h`:
 
 ```c++
 class TensorTypeNode : public BaseTensorTypeNode {
  public:
-  static constexpr const char* _type_key = "relay.TensorType";
   Array<PrimExpr> shape;    // shape of the tensor, represented by PrimExpr
   DataType dtype;           // content data type
   TVM_DLL PrimExpr Size() const; // return product of elements in the shape
+  static constexpr const char* _type_key = "relay.TensorType";
   TVM_DECLARE_FINAL_OBJECT_INFO(TensorTypeNode, BaseTensorTypeNode);
 };
 ```
@@ -555,11 +589,8 @@ class DynTensorTypeNode : public BaseTensorTypeNode {
  public:
   int ndim; // number of dim; -1 denote tensor with unknwon number of dim
   DataType dtype; // content data type, use void to denote the dtype is unknown
-
   inline bool IsUnknownNdim() const { return ndim == kUnknownNDim; }
-
   inline bool IsUnknownDtype() const { return dtype.is_void(); }
-
   static constexpr const char* _type_key = "relax.DynTensorType";
   TVM_DECLARE_FINAL_OBJECT_INFO(DynTensorTypeNode, BaseTensorTypeNode);
 };
