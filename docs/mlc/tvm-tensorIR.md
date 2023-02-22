@@ -1,10 +1,14 @@
-# TensorIR: An Abstraction for Automatic Tensorized Program Optimization
+# TVM-TensorIR
 
-## 0. 摘要
-在各种设备上部署深度学习模型已经成为一个重要的话题。 各种张量计算加速器为张量计算带来了一组多样化的加速原语。 这些新的加速原语以及新兴的机器学习模型带来了巨大的工程挑战。 本文介绍 TensorIR，这是一种编译器抽象，用于使用这些张量计算原语优化程序。 TensorIR 概括了现有机器学习编译器中使用的循环嵌套表示，将张量计算作为一等公民。 最后，在抽象之上构建了一个端到端框架，以自动优化给定张量计算原语的深度学习模型。 实验结果表明，TensorIR 编译自动为给定的硬件后端使用张量计算原语，并提供与跨平台的最先进的手动优化系统相媲美的性能。
+## (一)论文 
 
-## 1. Intro
-在机器学习加速目标的驱动下，现代硬件后端（例如，Nvidia Tensor Core [31]，Google TPU [22]）引入了专门的原语来加速张量计算。 领域专家也开始开发微内核原语(micro-kernel primitives)，它精心组织一系列高度优化的指令来执行子计算，以加速特定领域的张量算子库。 这些硬件指令和微内核原语通常在多维张量区域上运行，并有效地执行 多维load、点积 和 矩阵乘法等张量运算（图 1）。 
+**TensorIR: An Abstraction for Automatic Tensorized Program Optimization**
+
+### 0. 摘要
+在各种设备上部署深度学习模型已经成为一个重要的话题。 各种张量计算加速器为张量计算带来了一组多样化的加速原语。 这些新的加速原语以及新兴的机器学习模型带来了巨大的工程挑战。 本文介绍 TensorIR，一种新的编译器抽象，用于使用这些张量计算原语优化程序。 TensorIR 归纳了现有DLC中使用的循环嵌套表示，将张量计算作为一等公民。 工作在抽象之上构建了一个端到端框架，以自动优化给定张量计算原语的深度学习模型。 实验结果表明，TensorIR 对于给定的硬件后端，可以自动应用张量计算原语，并提供与跨平台的最先进的手动优化系统相媲美的性能。
+
+### 1. Intro
+在机器学习加速目标的驱动下，现代硬件后端（例如，Nvidia Tensor Core [31]，Google TPU [22]）引入了专门的原语来加速张量计算。 领域专家也开始开发微内核原语(micro-kernel primitives)，它精心组织一系列高度优化的指令来执行子计算，以加速特定领域的张量算子库。 这些硬件指令和微内核原语通常在多维张量区域上运行，并有效地执行 多维load、点积 和 矩阵乘等张量运算（图 1）。 
 
 **文章将这些张量计算加速器生成的指令称为 *tensorized intrinsics* ； 将利用tensorized intrinsics 对程序做变换的过程称为  *tensorization***。 为了充分利用这些硬件后端，现代机器学习系统需要优化包含 <u>分层循环嵌套</u>、 <u>multi-dimensional loads</u> 和 <u>tensor intrinsics</u> 的程序——文章称这个problem为 *tensorized program optimization problem*
 
@@ -30,34 +34,34 @@
 - 构建了 变换原语 能够生成 丰富的搜索空间
 - 实现了一个 tensorization-aware automatic scheduler
 
-## 7. 总结
+### 7. 总结
 文章提出了 TensorIR，一种自动张量化程序优化的抽象。 
 
-1. 设计了一个称为 block 的关键抽象，它可以隔离张量化计算并为程序优化提供有效的转换原语。
+1. 设计了一个称为 `block` 的关键抽象，它可以隔离张量化计算并为程序优化提供有效的转换原语。
 2. 构建了一个自动调度算法，与其他优化联合执行张量化并生成高性能程序。
 
-## 3. TENSORIR ABSTRACTION
+### 3. TENSORIR ABSTRACTION
 
-### 3.1. Block
+#### 3.1. Block
 TensorIR 中的 一个 block 表示对 多维缓冲区 的一个子区域进行 的一处张量化计算 。 图 5 显示了矩阵乘法 (matmul) 计算的示例。 block 的主体由一组 block 迭代器变量 𝑣𝑦、𝑣𝑥、𝑣𝑘 参数化，代表抽象的张量化计算。 使用这些 block 迭代器变量的不同值组合实例化， 可以得到不同的具体 block 运行实例。 这些迭代器变量可以绑定到包含外部循环迭代器的表达式——这样做隐式地限定了 block 实例的执行顺序。
 
 <div class="autocb" style="text-align:center;"><img src="./tvm-tensorIR.assets\autocb_1.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
 
-<u>*Rationale*</u>:  block 的主要设计思想是隔离张量计算—— **我们希望能够在不查看block体的情况下转换block外的循环嵌套**。 然而，与标量计算不同，我们可能无法从不透明的张量计算体中提取转换所需的依赖信息。 **因此，我们引入了一个block signature**， 其中包含足够的转换依赖信息。 我们在 [§3.2](#32-scheduling-transformations) 中讨论了这些转换。 此外，签名可用于在转换过程中独立验证迭代器绑定的正确性（更多细节见[§3.3](#33-validation)）。
+<u>*Rationale*</u>:  block 的主要设计思想是隔离张量计算—— **我们希望能够在不查看 block body 的情况下转换 block 外的循环嵌套**。 然而，与标量计算不同，我们可能无法从不透明的张量计算体中提取转换所需的依赖信息。 **因此，我们引入了一个 block signature**， 其中包含足够的转换依赖信息。 我们在 [§3.2](#32-scheduling-transformations) 中讨论了这些转换。 此外，签名可用于在转换过程中独立验证迭代器绑定的正确性（更多细节见[§3.3](#33-validation)）。
 
 <u>*Block Iterator Domain*</u>:  虽然可以通过将 block 迭代器绑定到任何循环嵌套来实例化 block 的主体计算，但大多数实例化并不对应于相同的计算。 为了保证转换之间计算的一致性，我们将 **iterator domain information 和 迭代器的约束存** 储在 block 签名中。 对于图 5 中的特定示例，我们知道 𝑣𝑥、𝑣𝑦 和 𝑣𝑘 必须绑定到 iterators in domain domain [0, 16)。 **此外，因为 𝑣𝑘 是归约轴，我们知道我们不能将它绑定到并行循环，除非归约是原子的**。 域约束仍然为外循环转换留下了巨大的空间，因为有多种方法可以构建满足约束的循环。 我们的域签名可以被视为表示整数域集和迭代器关系的特定方式。 我们选择这种特定表示是因为它的实现效率和推理简单性，但也需要指出相同的设计理念适用于整数集和 relation 的其他形式化 domain 表示 [42]。
 
 !!! warning "疑问"
     We choose the particular representation due to its implementation efficiency and simplicity in reasoning, but would also point out that **the same design philosophy applies to other formal domain representations of integer sets and relations [42]**.
 
-    多面体模型？
+    整数集？ 多面体模型？
 
 <u>*Access Region and Dependency*</u>: 为了提供足够的依赖信息，block signature 包含block相对于多维缓冲区的访问区域和读/写依赖关系。 在图5中，该 block:
 
 - 读取𝐴[𝑣𝑦∗ 4：𝑣𝑦∗ 4 + 4，𝑣𝑘∗ 4：𝑣𝑘 ∗ 4 + 4], 𝐵[𝑣𝑘 ∗ 4 : 𝑣𝑘 ∗ 4 + 4, 𝑣𝑥 ∗ 4 : 𝑣𝑥 ∗ 4 + 4]
 - 写入𝐶[𝑣𝑦 ∗ 4 : 𝑣𝑦 ∗ 4 + 4, 𝑣𝑥 ∗ 4 : 𝑣𝑥 ∗ 4 + 4]
 
-这种依赖信息将会在转换过程中被使用。 我们只标记每个block相对于多维缓冲区而不是其他语句（block）的依赖性。 这种间接性使得我们能够支持更广泛的变换， 例如数据布局转换和re-computation， 这在张量程序优化中是必不可少的。
+这种依赖信息将会在转换过程中被使用。 我们只标记每个block相对于多维缓冲区而不是其他语句（block）的依赖性。 这种间接性使得我们能够支持更广泛的变换， 例如数据布局转换和 re-computation ， 这在张量程序优化中是必不可少的。
 
 !!! warning "疑问"
     We only mark each block’s dependency with respect to the multidimensional buffers instead of other statements (blocks). **This indirection enables a broader range of transformations, such as data layout transformation and re-computation which are essential in tensorized program optimization.**
@@ -67,7 +71,7 @@ TensorIR 中的 一个 block 表示对 多维缓冲区 的一个子区域进行 
 
 <u>*Reduction Block and Initialization*</u>:   reduction 计算通常包含初始化步骤和更新步骤。 我们可以自然地将 reduction 计算映射到两个 block 中。 但是，另一方面，共同制定这两个步骤的调度决策（例如 tiling 和 conputation location）通常是有帮助的。 我们为执行 reduction 的 block 引入了一个可选的初始化语句。 在 reduction 的第一次迭代期间执行初始化语句。 这种 reduction  block 表示在转换过程中很有用。 我们提供转换原语以在基于两个 block 的表示和基于初始 block 的表示之间进行转换，因此我们可以为低级代码生成选择最佳表示。
 
-### 3.2. Scheduling Transformations
+#### 3.2. Scheduling Transformations
 对于给定的输入程序，我们需要生成具有等效语义的程序的搜索空间。 我们引入原语将 TensorIR 程序转换为等效的优化程序。 遵循张量程序优化的现有约定 [5、9、35]，我们将此过程称为 Scheduling。
 
 如果一个 block 只包含 loop nests with sub-block as its leaves.，则该 block 是可调度的。 我们可以通过分析子 block 签名及其依赖信息来转换可调度 block 内的循环嵌套和子 block 计算位置。 值得注意的是，可调度 block 可以包含不可调度的子 block （例如，不透明的 Tensor Core 计算）。 不透明 block 还可以包含可调度的子 block 。 基于 block 隔离，我们仍然可以有效地独立探索可调度部分的搜索空间，同时保持相同的不透明 block 。 我们将在本小节的其余部分描述调度原语。
@@ -82,7 +86,7 @@ TensorIR 中的 一个 block 表示对 多维缓冲区 的一个子区域进行 
 
 <u>*Separation of Scheduling and TensorIR*</u>: 许多以前的张量编译器(TVM-TE, Halide) **依赖于声明式调度语言来构建调度树**。 向这些编译器添加新的调度原语需要更改这些编译器中的调度树数据结构和相应的 lowering 规则。 我们采用不同的方法，**将每个调度原语实现为从一个 TensorIR 程序到另一个程序的独立转换**(类似于一个 pass )。 这种设计更易于扩展，因为不同的开发人员可以基于稳定的 TensorIR 抽象同时开发新的原语。 此外，开发人员可以在任何转换阶段打印出程序进行调试，并将自动重写与调度转换相结合。
 
-### 3.3. Validation
+#### 3.3. Validation
 block 和其中记录的 读写关系 可用于验证 循环嵌套的正确性以及线程分配的正确性。
 
 <u>*Loop Nest Validation*</u>: 循环嵌套验证检查循环嵌套提供的迭代器绑定是否匹配 iterator domain 的约束，包括domain 大小 和迭代器独立性信息。 例如，如果两个数据并行块迭代器绑定为 𝑣1 = 𝑖； 𝑣2 = 𝑖 ∗ 2，则对应的程序无效，因为𝑣1和𝑣2不独立。 但是𝑣1 = 𝑖/4； 𝑣2 = 𝑖%4 可以是合法绑定。我们构建 pattern-matchers 以找到从循环迭代器到块迭代器变量的准仿射映射，并使用该模式来验证绑定的 independence 和 domain 。 除了迭代器域验证之外，检查生产者-消费者关系以确保写入缓冲区的生产者块始终覆盖下游消费者的读取区域也很重要。
@@ -100,10 +104,12 @@ block 和其中记录的 读写关系 可用于验证 循环嵌套的正确性�
 
 请注意，loop nest validation and threading validation 用作检查以过滤掉无效的 TensorIR 程序，并且调度原语检查用于确保转换前后 TensorIR 程序的等效性。 当用户错误地手动制作、导入和调度 TensorIR 程序时，他们将收到警告或错误信息。 当用户使用编译器自动生成程序（将在第 4 节中讨论）时，验证可以帮助在搜索空间的探索过程中过滤掉误报案例。 因此，用户程序和编译程序都将受益于验证。
 
-## 4. AUTO-SCHEDULING TENSORIZED PROGRAMS
+### 4. AUTO-SCHEDULING TENSORIZED PROGRAMS
 TODO:
 
-## 6. RELATEDWORKS
+### 6. RELATEDWORKS
+
+- 很多 DL 框架使用vendor optimized libraries (e.g., cuDNN [11], MKLDNN [20], TensorRT [32], ArmComputeLibrary [3]) 对计算进行加速； 计算密集型线性代数算子（矩阵乘， 点乘）的加速 在 HPC领域已经相当成熟； divide-and-conquer 是其中的重要思想
 
 - DLC 对于 张量程序 引入了不同的抽象： 
 
@@ -117,3 +123,17 @@ TODO:
 - 自动向量化是compiler 领域的一个重要话题：
 
     Tensorization can be viewed as a generalization of the vectorization problem to enable tensor intrinsic。 张量化(Tensorization)可以被视为一种 泛化的 向量化(vectorization) 问题， 只不过使用的是 tensor intrinsic 而不是传统的 向量化指令。有 AKG [47]， UNIT [45]， AMOS [49] 等工作关注这个话题。
+
+
+---
+
+## (二)代码
+
+### 0. TVM-Script
+
+### 1. Tensor Expression
+
+### 2. TOPI
+
+虽然可以通过 TensorIR 或张量表达式 (TE) 为每个用例直接构造算子，但这带来很多重复工作。 TOPI (Tensor operator inventory) 提供一组预定义的算子（在 TE 或 TIR 中），由 numpy 定义并在常见的深度学习工作负载中找到。我们还提供了一组通用调度模板，以获得跨不同目标平台的高性能实现。
+
