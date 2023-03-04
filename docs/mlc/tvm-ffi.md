@@ -107,8 +107,8 @@ from .registry import _init_api, get_global_func, get_object_type_index
 
 比方说在使用`from_onnx()`时需要将onnx算子转换成RelayExpr，而构建 RelayExpr的实现在C++代码中: `src/relay/op/nn/nn.cc`，包括`MakeDense`, `MakeMatMul`, `MakeBiasAdd` 等。
 
-   - 这些`Make*`函数 需要加上什么样的标记 or 通过什么阳的方式才能够被python 的`ctypes`模块感知并调用？
-   - 我们每次在python中生成RelayExpr时都要先调用`get_global_func`拿到handle再进行一次调用吗？
+   - 这些`Make*`函数 需要加上什么样的标记 or 通过什么样的方式才能够被python 的`ctypes`模块感知并调用？
+   - 我们每次在python中生成RelayExpr时都要先调用`get_global_func`拿到handle再进行一次调用吗？看 `get_global_func` 源码可知， 他会调用通过c_runtime_api暴露的`_LIB.TVMFuncGetGlobal`， 而这个函数会查找整个注册表，效率是很低的。
 
 看一下tvm是怎么做的。首先回答第二个问题，即python 如何拿到c++ 函数：
 

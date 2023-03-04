@@ -6,11 +6,14 @@
 >
 > - [深度学习编译器 TVM 代码串讲-知乎](https://zhuanlan.zhihu.com/p/446976730)
 > - [TVM编译流程与中间表示分析-知乎](https://zhuanlan.zhihu.com/p/596526031)
-> 
+> - [深入理解TVM：Object家族（二）-Wechat](https://mp.weixin.qq.com/s?__biz=Mzg5MzU4NTU5Nw==&mid=2247484141&idx=1&sn=c139df6c55494d8669f56e237ff513bb&chksm=c02dd33ff75a5a295884adb3147b9dff436ab359765fc64cecf479fbc6899d76009135feac87&scene=178&cur_album_id=1811050680510447621#rd)
+> - [TVM-Doc: Pass Infrastructure](https://tvm.hyper.ai/docs/arch/arch/pass_infra)
 
-## 1. Object
+## 1. Runtime
 
-对于类似 IR 这样的数据结构，天然就对其有 serialize/format/reflection 的需求。在 TVM 中，额外还有 python binding/hash 等需求，于是 TVM 要求**所有这样的数据结构继承自 `Object` 基类**，并注册其内部所有成员； 由 TVM 的类型注册系统和反射系统等为继承自 Object 的子类自动实现序列化，反射，hash等功能。
+### 1.1. Object
+
+> 对于类似 IR 这样的数据结构，天然就对其有 serialize/format/reflection 的需求。在 TVM 中，额外还有 python binding/hash 等需求，于是 TVM 要求**所有这样的数据结构继承自 `Object` 基类**，并注册其内部所有成员； 由 TVM 的类型注册系统和反射系统等为继承自 Object 的子类自动实现序列化，反射，hash等功能。
 
 这种方式避免了为新增的 Class 单独实现 serialize/format/reflection/python binding/hash 等功能， 实现了代码重用。
 
@@ -91,7 +94,7 @@ class TVM_DLL Object {
 - `_type_child_slots` 表示该类型为子类预留的index个数
 - `_type_child_slots_can_overflow` 标识是否可超过 `_type_child_slots` 定义的数量
 - `_type_final` 表示是否没有子类，一般通过 `TVM_DECLARE_FINAL_OBJECT_INFO` 这个宏来设置， 而不是手动重写
-- `_type_has_method_sequal_reduce`, `_type_has_method_shash_reduce` 等标识该类型的 hash 等功能是否实现，在 TODO: 中讨论
+- TODO: `_type_has_method_sequal_reduce`, `_type_has_method_shash_reduce` 等标识该类型的 hash 等功能是否实现，可以参考 ???
 
 并且在 定义过类之后要 在 TVM 的类型系统中使用 `TVM_REGISTER_OBJECT_TYPE` 宏进行注册
 
@@ -196,56 +199,143 @@ static uint32_t _GetOrAllocRuntimeTypeIndex() {
     }
     ```
 
-💡总体来说，通过同样的 type_key 可以将 C++ 与 Python 的类型匹配上，**而设计 type_index 则是为了性能考虑**。具体的两边类型匹配可以在 `python/tvm/_ffi/_cython/object.pxi` 查阅
+💡总体来说，通过同样的 `_type_key` 可以将 C++ 与 Python 的类型匹配上，**而设计 type_index 则是为了性能考虑**。具体的两边类型匹配可以在 `python/tvm/_ffi/_cython/object.pxi` 查阅
 
 TODO: 额外的 serialize/format/reflection/python binding/hash 等功能则实现在 `node` 目录下，有兴趣可自行查阅。
 
-## 2. PackedFunc
-TVM runtime 中另一个与 Object 同样底层的机制称为 FFI (Foreign Function Interface), 这个机制的目标是为了使得任意语言下定义的函数都可以被任意其他语言调用。而这个可以被任意语言调用的函数类型是 `PackedFunc`， 一个示例如下:
+### 1.2. PackedFunc
+> TVM runtime 中另一个与 Object 同样底层的机制称为 FFI (Foreign Function Interface), 这个机制的目标是为了使得任意语言下定义的函数都可以被任意其他语言调用。而这个可以被任意语言调用的函数类型是 `PackedFunc`
+
+一个在C++中构造、调用PackedFunc并注册到全局的示例如下:
 
 ```c++
 #include <tvm/runtime/packed_func.h>
 void MyAdd(TVMArgs args, TVMRetValue* rv) {
-  // 自动将参数转换为所需的类型。
-  int a = args[0];
-  int b = args[1];
-  // 自动赋值返回给 rv
-  *rv = a + b;
+  int a = args[0];  // 自动将参数转换为所需的类型
+  int b = args[1];  // 自动将参数转换为所需的类型
+  *rv = a + b;      // 自动赋值返回给 rv
 }
-// 在C++ 中 调用 PackedFunc
-void CallPacked() {
+void CallPacked() {     // 在C++ 中 调用 PackedFunc
   PackedFunc myadd = PackedFunc(MyAdd);
-  // 返回 3
-  int c = myadd(1, 2);
+  int c = myadd(1, 2);  // 返回 3
 }
-
-// 在 C++ 中注册一个全局 PackedFunc
-TVM_REGISTER_GLOBAL("myadd")
+TVM_REGISTER_GLOBAL("myadd")  // 在 C++ 中注册一个全局 PackedFunc
   .set_body(MyAdd);
 ```
 
-以上代码块中定义了一个 PackedFunc `MyAdd` 。它有两个参数： `args` 代表输入参数， `rv` 代表返回值。该函数是类型擦除的，这意味着函数签名不限制传入或返回的输入类型。调用 PackedFunc 时，它会将输入参数打包到stack上的 TVMArgs，并通过 TVMRetValue 获取结果。
+以上代码块中实例化了一个 PackedFunc `MyAdd` 。它有两个参数： `args` 代表输入参数， `rv` 代表返回值。PackedFunc 是类型擦除的（在后面会解释，其参数只能为一些特定类型），这使得我们可以从动态语言（如 Python）中调用 PackedFunc，而无需为每个创建的新类型函数添加额外的胶水代码。调用 PackedFunc 时，它会将输入参数打包到 stack 上的 `TVMArgs` ，并通过 `TVMRetValue` 获取结果（后面会解释）。由于 C++ 中的模板技巧，我们可以像调用普通函数一样来调用 PackedFunc。
 
-由于 C++ 中的模板技巧，我们可以像调用普通函数一样来调用 PackedFunc。其类型擦除的性质，使得可以从动态语言（如 Python）中调用 PackedFunc，而无需为每个创建的新类型函数添加额外的胶水代码。以下示例在 C++ 中注册 PackedFunc，并在 Python 中调用。
-
+以下示例为 在 Python 中调用 刚才在 C++ 中注册的 PackedFunc：
 
 ```py
 import tvm
-
 myadd = tvm.get_global_func("myadd")
-# 打印 3
-print(myadd(1, 2))
+print(myadd(1, 2))  # => 3
 ```
 
-PackedFunc 的关键在于 TVMArgs 和 TVMRetValue 结构。我们限制了可传递的可能类型列表。以下是常见的类型：
+1. 这里首先通过 `get_global_func` (位于`python/tvm/_ffi/registry.py` 中) 构造了一个 `PackedFunc` 实例； 这个过程实际上是通过 python 端使用 ctypes 模块调用 C++端通过 `c_runtime_api` 暴露的 `TVMFuncGetGlobal` ， 在注册表中查找到名为`my_add`的函数， 拿到handle:
+ 
+    ```python
+    def _get_global_func(name, allow_missing=False):
+        handle = PackedFuncHandle()
+        check_call(_LIB.TVMFuncGetGlobal(c_str(name), ctypes.byref(handle)))
+        if handle.value:
+            return _make_packed_func(handle, False)
+        if allow_missing:
+            return None
+        raise ValueError("Cannot find global function %s" % name)
+    ```
+
+2. 接下来的`myadd(1, 2)` 调用了 `my_add` 实例的 `__call__` 方法， 该方法实现在`PackedFunc` 的父类 `PackedFuncBase` 中(位于 `python/tvm/_ffi/_ctypes/packed_func.py`)
+3. PackedFunc 的 `__call__` 方法事实上是使用 ctypes 模块调用 C++端通过 `c_runtime_api` 暴露的 `TVMFuncCall` ， 将结果通过传入的 `TVMValue` 返回：
+
+    ```python
+    class PackedFuncBase(object):
+    def __init__(self, handle, is_global):
+        self.handle = handle
+        self.is_global = is_global
+    def __call__(self, *args):
+        values, tcodes, num_args = _make_tvm_args(args, [])
+        ret_val, ret_tcode = TVMValue(), ctypes.c_int()
+        if (
+            _LIB.TVMFuncCall( # 调用 C++ 中 通过 c_runtime_api 暴露的 TVMFuncCall
+                self.handle,
+                values,
+                tcodes,
+                ctypes.c_int(num_args),
+                ctypes.byref(ret_val),
+                ctypes.byref(ret_tcode),
+            )
+            != 0
+        ):
+            raise get_last_ffi_error()
+        return RETURN_SWITCH[ret_tcode.value](ret_val)
+    ```
+    ```c++
+    // include/tvm/runtime/c_runtime_api.h
+    TVM_DLL int TVMFuncCall(TVMFunctionHandle func, TVMValue* arg_values, int* type_codes, int num_args,
+                        TVMValue* ret_val, int* ret_type_code);
+    ```
+
+这样就通过 PackedFunc 完成了 FFI， 接下来看一下 PackedFunc 是如何实现类型擦除， 以及具体保存了哪些信息， `PackedFunc` 源码如下(`include/tvm/runtime/packed_func.h`)：
+
+```c++
+class PackedFuncObj : public Object {
+ public:
+  void PackedFuncObj::CallPacked(TVMArgs args, TVMRetValue* rv) const {
+    (*f_call_packed_)(this, args, rv);
+  }
+  static constexpr const char* _type_key = "runtime.PackedFunc";
+  static constexpr const uint32_t _type_index = TypeIndex::kRuntimePackedFunc;
+  TVM_DECLARE_FINAL_OBJECT_INFO(PackedFuncObj, Object);
+ protected:
+  template <class TPackedFuncSubObj>
+  struct Extractor {
+    static void Call(const PackedFuncObj* obj, TVMArgs args, TVMRetValue* rv);
+  };
+  PackedFuncObj() = delete;
+  using FCallPacked = void(const PackedFuncObj*, TVMArgs, TVMRetValue*);
+  explicit PackedFuncObj(FCallPacked* f_call_pack) : f_call_packed_(f_call_pack) {}
+  
+  FCallPacked* f_call_packed_;
+};
+```
+
+其中涉及到的 PackedFunc 的参数类型 `TVMArgs` 简化定义如下（返回值类型 `TVMRetValue` 类似）：
+```c++
+class TVMArgs {
+ public:
+  const TVMValue* values;
+  const int* type_codes;
+  int num_args;
+  inline TVMArgValue operator[](int i) const;
+};
+```
+
+可以看到 `TVMArgs` 就是一个 `TVMValue` 数组； 而 `TVMValue` 是一个union类型， 定义位于 `c_runtime_api.h`：
+
+```c++
+typedef union {
+  int64_t v_int64;
+  double v_float64;
+  void* v_handle;
+  const char* v_str; // 字符串
+  DLDataType v_type; // dlpack 数据类型； 包括整型, 浮点, Bfloat等
+  DLDevice v_device; // CPU CUDA 等
+} TVMValue;
+```
+
+其中的 `DLDataType` 和 `DLDevice` 定义在 `3rdparty/dlpack/include/dlpack/dlpack.h` 中。 [DLPack: Open In Memory Tensor Structure](https://github.com/dmlc/dlpack)
+
+因此我们可以看到，PackedFunc 最终通过 TVMValue 实现了类型擦除，即参数只要是 TVMValue 中的一种类型，即可包装成`TVMArgs`作为参数传入 PackedFunc；常见的参数类型有：
 
 - `int`, `float` and `string`
-- `PackedFunc` 本身
-- `Module` for compiled modules
+- `PackedFunc` 本身(通过 `v_handle` 传递)
+- `Module` for compiled modules((通过 `v_handle` 传递))
 - `DLTensor*`(见dlpack) for tensor object exchange
 - TVM `Object` to represent any object in IR
 
-由于一个 PackedFunc 可以将另一个 PackedFunc 作为参数，因此可以将函数从 Python（作为 PackedFunc）传递给 C++:
+可以看到，一个 PackedFunc 可以将另一个 PackedFunc 作为参数，因此可以将函数从 Python（需要先包装为 `PackedFunc` ）传递给 C++，在C++中回调:
 
 ```c++
 TVM_REGISTER_GLOBAL("callhello")
@@ -256,81 +346,155 @@ TVM_REGISTER_GLOBAL("callhello")
 ```
 
 ```py
-import tvm
-
+@tvm.register_func
 def callback(msg):
     print(msg)
-
-# 转换成 PackedFunc
-f = tvm.convert(callback)
 callhello = tvm.get_global_func("callhello")
-# 打印 hello world
-callhello(f)
+callhello(f) # >>>"hello world"
 ```
 
 - TVM 的所有编译器 pass 函数都以 `PackedFunc` 的类型暴露给前端
 - 编译好的模块还将编译好的函数作为 `PackedFunc` 类型返回
 
-`PackedFunc` 源码如下：
+
+
+### 1.3. Module
+`runtime::Module` 定义在 `include/tvm/module.h` 中， 在 TVM stack中用来表达编译后的结果。 可以简单的视为 `<name, PackedFunc>` 的一个哈希表。 不过 `ModuleNode` 仅仅是一个接口， 在不同的 target 有不同的继承实现。 例如在编译时指定 target 为 llvm， 则生成的 runtime::Module 背后就是一个 `LLVMModuleNode` (定义在 `src/target/llvm/llvm_module.cc`中)，其它`target`也有相应的 `ModuleNode` 的子类。
+
+`ModuleNode` 简化后定义如下：
 
 ```c++
-class PackedFuncObj : public Object {
+class TVM_DLL ModuleNode : public Object {
  public:
-  static constexpr const uint32_t _type_index = TypeIndex::kRuntimePackedFunc;
-  static constexpr const char* _type_key = "runtime.PackedFunc";
-  TVM_ALWAYS_INLINE void PackedFuncObj::CallPacked(TVMArgs args, TVMRetValue* rv) const {
-    (*f_call_packed_)(this, args, rv);
-  }
-  TVM_DECLARE_FINAL_OBJECT_INFO(PackedFuncObj, Object);
+  virtual ~ModuleNode() = default;
+  virtual const char* type_key() const = 0; // LLVMModuleNode: "llvm"； CUDAModuleNode: "cuda"
+  virtual PackedFunc GetFunction(const std::string& name, const ObjectPtr<Object>& sptr_to_self) = 0;
+  virtual void SaveToFile(const std::string& file_name, const std::string& format);
+  
+  PackedFunc GetFunction(const std::string& name, bool query_imports = false);
+  void Import(Module other);
+  const PackedFunc* GetFuncFromEnv(const std::string& name);
+  
+  static constexpr const uint32_t _type_index = TypeIndex::kRuntimeModule;
+  static constexpr const char* _type_key = "runtime.Module";
+  TVM_DECLARE_FINAL_OBJECT_INFO(ModuleNode, Object); // NOTE! can still be sub-classed
  protected:
-  PackedFuncObj() = delete;
-  /*! \brief Internal struct for extracting the callable method from callable type. !*/
-  template <class TPackedFuncSubObj>
-  struct Extractor {
-    static void Call(const PackedFuncObj* obj, TVMArgs args, TVMRetValue* rv);
-  };
-  using FCallPacked = void(const PackedFuncObj*, TVMArgs, TVMRetValue*);
-  explicit PackedFuncObj(FCallPacked* f_call_pack) : f_call_packed_(f_call_pack) {}
-  FCallPacked* f_call_packed_;
+  std::vector<Module> imports_;   // modules this module depend on
+ private:
+  std::unordered_map<std::string, std::shared_ptr<PackedFunc>> import_cache_;
+  std::mutex mutex_;
 };
 ```
 
-其中涉及到的 PackedFunc 的参数类型 `TVMArgs` 定义如下：
-```c++
-class TVMArgs {
- public:
-  const TVMValue* values;
-  const int* type_codes;
-  int num_args;
-  TVMArgs(const TVMValue* values, const int* type_codes, int num_args)
-      : values(values), type_codes(type_codes), num_args(num_args) {}
-  inline int size() const; // size of the arguments
-  inline TVMArgValue operator[](int i) const;
-};
+接下来是它的两个常用子类的例子：
+
+- 子类 `LLVMModuleNode`
+    
+    ```c++
+    class LLVMModuleNode final : public runtime::ModuleNode {
+     public:
+      ~LLVMModuleNode();
+      const char* type_key() const final { return "llvm"; }
+      PackedFunc GetFunction(const std::string& name, const ObjectPtr<Object>& sptr_to_self) final;
+      void SaveToFile(const std::string& file_name, const std::string& format) final;
+      void Init(const IRModule& mod, const Target& target);
+      void LoadIR(const std::string& file_name);
+     private:
+      void LazyInitJIT();
+      bool IsCompatibleWithHost(const llvm::TargetMachine* tm) const;
+      void* GetGlobalAddr(const std::string& name, const LLVMTarget& llvm_target) const;
+      void* GetFunctionAddr(const std::string& name, const LLVMTarget& llvm_target) const;
+      std::unique_ptr<LLVMInstance> llvm_instance_; // 包含 `llvm::LLVMContext` 和 `llvm::Module`
+      std::mutex mutex_;                    // JIT lock
+      llvm::ExecutionEngine* ee_{nullptr};  // execution engine for JIT etc.
+      llvm::Module* module_{nullptr};       // module_owning_ptr_.get()
+      std::unique_ptr<llvm::Module> module_owning_ptr_; // EngineBuilder 会拿走该 Module 的所有权
+      Array<String> function_names_;        // 该 module 内声明的函数名
+    };
+    ```
+
+    注意其中的 `void Init(const IRModule&, const Target&)` ， 该函数是 tir IR 的 IRModule lower 到 LLVM 后端时会被调用的函数
+
+- 子类 `CUDAModuleNode`
+
+    ```c++
+    lass CUDAModuleNode : public runtime::ModuleNode {
+    public:
+      ~CUDAModuleNode();
+      const char* type_key() const final { return "cuda"; }
+      PackedFunc GetFunction(const std::string& name, const ObjectPtr<Object>& sptr_to_self) final;
+      void SaveToFile(const std::string& file_name, const std::string& format) final;
+    private:
+      std::string data_;  // the binary data
+      std::string fmt_; // The format
+      std::unordered_map<std::string, FunctionInfo> fmap_;  // function information table.
+      std::string cuda_source_; // The cuda source.
+      std::array<CUmodule, kMaxNumGPUs> module_;  // Internal modules per GPU
+      std::mutex mutex_;  // internal mutex when updating the module
+    };
+    ```
+
+TODO:
+
+### 1.4. Container
+TVM 中还重新实现了一些常用的 Container，例如`Map`, `Array`, `Optional`, `ADT` 等，定义在 `include/tvm/runtime/container` 中。
+
+在我的理解中， 重新实现这些容器的目的是为了能够通过 FFI 传递这些容器。 因为这些容器派生自 `Object`, 因此能够作为 `TVMArgs` 或者 `TVMRetValue` 通过 PackedFunc 进行传递， 而 STL 中的容器则无法直接通过 PackedFunc 传递。下面是一个例子：
+
+- Relay 中最常用到的类型就是 `TensorType` ， 在 C++ 端 其定义如下：
+    ```c++
+    class TensorTypeNode : public BaseTensorTypeNode {
+    public:
+      Array<PrimExpr> shape;
+      DataType dtype;
+      static constexpr const char* _type_key = "relay.TensorType";
+      TVM_DECLARE_FINAL_OBJECT_INFO(TensorTypeNode, BaseTensorTypeNode);
+    };
+
+    class TensorType : public Type {
+    public:
+      TVM_DLL TensorType(Array<PrimExpr> shape, DataType dtype);
+      TVM_DLL static TensorType Scalar(DataType dtype);
+      TVM_DEFINE_OBJECT_REF_METHODS(TensorType, Type, TensorTypeNode);
+    };
+    ```
+
+    这里可以看到 `TensorType` 的构造函数的两个参数类型分别是 `Array<PrimExpr>` 和 `DataType`
+
+- 而在对应的 python 端， `TensorType` 定义在 `python/tvm/ir/tensor_type.py` 中：
+    ```python
+    @tvm._ffi.register_object("relay.TensorType")
+    class TensorType(Type):
+        def __init__(self, shape, dtype="float32"):
+            self.__init_handle_by_constructor__(_ffi_api.TensorType, shape, dtype)
+        @property
+        def concrete_shape(self):
+            """Get shape of the type as concrete tuple of int. """
+            return tuple(int(x) for x in self.shape)
+        def __str__(self):
+            from tvm.relay import pretty_print  # pylint: disable=import-outside-toplevel
+            return pretty_print(self)
+    ```
+
+因此如果我们需要在python端构造一个 TensorType：
+
+```py
+t1 = relay.TensorType((3, 4), "float32")
 ```
 
-其中的 `TVMValue` 类型定义位于 `c_runtime_api.h`：
+则我们首先需要把 python 端的元组转换成 `tvm.ir.runtime.Array`(具体逻辑位于python端的`_make_tvm_args`)， 再通过 PackedFunc 进行传递， 这个转换过程可以通过调试查看。
 
-```c++
-typedef union {
-  int64_t v_int64;
-  double v_float64;
-  void* v_handle;
-  const char* v_str; // 字符串
-  DLDataType v_type; // 对于 dlpack 数据类型的支持
-  DLDevice v_device;
-} TVMValue;
-```
-其中的 `DLDataType` 和 `DLDevice` 定义在 `3rdparty/dlpack/include/dlpack/dlpack.h` 中。 [DLPack: Open In Memory Tensor Structure](https://github.com/dmlc/dlpack)
+同样的，对于python中传递字典到 PackedFunc 中的情况，也需要先转成 `tvm.ir.runtime.Map` 等等诸如此类。
 
-## 3. Module
-## 3. Type and Expr
+💡综上所述 Container 的实现使得 PackedFunc 可以传递 array，map 等常见的数据结构
 
-**将 IR 视为一种相对高级的编程语言，有两个关键的基础概念，类型 (Type) 和表达式 (Expr)**。 `Type` 类主要表示TVM IR中的各种类型，包含bool、int8，float32等基础数据类型，以及张量Tensor和元组Tuple等类型。 `Expr` 包括简单的定义一个字面值，也包括定义一个复杂的函数。
 
-在 TVM 中，有 **Relay**(定义在`include/tvm/relay/`中)， **Relax**(定义在`include/tvm/relax/`中)， **TensorIR**(定义在`include/tvm/tir/`中) 等不同层级的IR。 这些 IR 共享同一套 IR 基础设施(主要定义在 `include/tvm/ir/`中)， 包括`type`和`expr`等；实现了工程上的代码重用，划分的相对清晰（不过从代码角度来说，这些IR之间并非完全隔离， 例如 Relay 中就需要重用 tensorIR 中定义的 `Any` 类型）。
+## 2. IR
 
-### 3.1. Type
+### 2.1. Type
+**将 IR 视为一种相对高级的编程语言，有两个关键的基础概念，表达式 (Expr) 和 表达式的 类型 (Type)**。 `Type` 类主要表示TVM IR中的各种类型，包含bool、int8，float32等基础数据类型，以及张量Tensor和元组Tuple等类型。 `Expr` 包括简单的定义一个字面值，也包括定义一个复杂的函数。
+
+在 TVM 中，有 **Relay**(定义在`include/tvm/relay/`中)， **Relax**(定义在`include/tvm/relax/`中)， **tir**(定义在`include/tvm/tir/`中) 等不同层级的IR。 这些 IR 共享同一套 IR 基础设施(主要定义在 `include/tvm/ir/`中)， 包括`type`和`expr`等；实现了工程上的代码重用，划分的相对清晰（不过从代码角度来说，这些IR之间并非完全隔离， 例如 Relay 中就需要重用 tir 中定义的 `Any` 类型）。
 
 > **反应一个IR的抽象层级最明显的标志之一是IR所处理的 data type**，high-level IR 多用来处理Tensor数据类型， low-level IR 大多用来处理Buffer或指针类型，在TVM `Type`类中可以看到TVM各个层级IR需要的Type。
 
@@ -390,9 +554,9 @@ class TypeNode : public Object {
     class TensorTypeNode : public BaseTensorTypeNode {
      public:
       static constexpr const char* _type_key = "relay.TensorType";
-      Array<PrimExpr> shape;    // shape of the tensor, represented by PrimExpr
-      DataType dtype;           // content data type
-      TVM_DLL PrimExpr Size() const; // return product of elements in the shape
+      Array<PrimExpr> shape;          // tensor shape, represented by PrimExpr
+      DataType dtype;                 // content data type
+      TVM_DLL PrimExpr Size() const;  // return product of elements in the shape
       TVM_DECLARE_FINAL_OBJECT_INFO(TensorTypeNode, BaseTensorTypeNode);
     };
     ```
@@ -400,7 +564,7 @@ class TypeNode : public Object {
     `TensorType` 是 relay 中最常用到的类型； `TensorType` has **a fixed dimension, data type**
 
     `TensorTypeNode` 中有一个 `shape` field， 这表示shape是 TensorType的一部分；
-    即 Tensor[(4, 4)]和Tensor[(Any, 4)]是不同的type (**`Any` 是`PrimExpr`的子类，用于在Relay中表示 dynamic shape**)； 在relax中引入了一个与之相对的 张量类型 `DynTensorType`(位于`include/tvm/relax/type.h`)， 具体可见  TODO:
+    TODO:即 Tensor[(4, 4)]和Tensor[(Any, 4)]是不同的type (**`Any` 是`PrimExpr`的子类，用于在Relay中表示 dynamic shape**)； 在relax中引入了一个与之相对的 张量类型 `DynTensorType`(位于`include/tvm/relax/type.h`)， 具体可见 TODO:
     
 - `FunctypeNode` 定义位于 `include/tvm/ir/type.h` **可以看作C++中的 template function**
 
@@ -423,13 +587,13 @@ class TypeNode : public Object {
 
 同时Relay中还提供了描述Relay函数的输入和输出类型之间关系的类型关系特性，允许用户扩展类型推断，方便算子的shape推理。
 
-### 3.2. Expr
+### 2.2. Expr
 
 表达式 expression 主要处理各种类型的数据，以及表示IR语句中控制结构、分支信息，其派生也要比Type类更加复杂一些。在TVM中， 表达式使用 `Expr` 类来表示， 其有两个直接子类： `RelayExpr` 和 `PrimExpr` 。 
 
 此外继承自 Object 的 `Stmt` 在后文会介绍到，也是IR中的元素，与 Expr 的区别在于： `Stmt` 表示if判断、赋值，不处理Type类型的数据值，相当于陈述语句。
 
-接下来关注Tensor IR 中对应的 `PrimExpr` 和 Relay IR 中对应的 `RelayExpr`： 
+接下来关注 tir 中对应的 `PrimExpr` 和 Relay IR 中对应的 `RelayExpr`： 
 
 - `PrimExprNode`: 定义在`include/tvm/ir.h`；其派生子类主要在 `tir` 模块中定义，可以相对直接地映射到 low-level code:
 
@@ -491,7 +655,9 @@ class TypeNode : public Object {
 
     1. RelayExpr 中有两种变量：全局变量 `GlobalVar` 和局部变量 `Var` ，在 relay IR 的 text-format 中使用不同的前缀表示(`@`、`%`)，局部变量一般用作函数的参数或者配合`let`表达式绑定使用
 
-    2. Constant 表示常量张量类型。根据不同张量维度表示不同的常量，比如标量常量、数组常量，RelayExpr 中常量表达式使用 NDArray 表示； 这里可以对比 tensor IR 中的常量表达式： 在tir 中， 常量表达式有 `FloatImm`, `IntImm` 等不同类型用于表示 scalar， 而在relay 中的常量表达式则是表示 tensor
+    2. Constant 表示常量张量类型。根据不同张量维度表示不同的常量，比如标量常量、数组常量，RelayExpr 中常量表达式使用 NDArray 表示； 这里可以对比 tir 中的常量表达式： 在tir 中， 常量表达式有 `FloatImm`, `IntImm` 等不同类型用于表示 scalar， 而在relay 中的常量表达式则是表示 tensor
+
+💡<u>**从对于Let， Match， Constructor 等表达式的支持可以看出，Relay相比于传统的数据流图 添加了更多函数式的支持，更具体的信息可以参考 [relayIR](./tvm-relayIR.md)**</u>
 
 #### 3.2.1. Let-Binding
 关于为什么需要 Let-binding， 在这个 RFC 里的例子可能比官网写的更详细一些：
@@ -507,7 +673,10 @@ class TypeNode : public Object {
 
 TVM 的图级IR Relay 选择同时支持 let-binding 和 DAG 形式，两者之间可以相互转换。
 
-代码如下：
+- 在 `test_pass_to_graph_normal_form`， `test_pass_to_a_normal_form`， `test_pass_to_basic_block_normal_form`中有 不同 form 之间的转换 pass 具体应用
+
+
+`Let`的具体实现代码如下：
 
 ```c++
 class LetNode : public ExprNode {
@@ -524,6 +693,8 @@ class LetNode : public ExprNode {
 };
 ```
 
+`tir` 中也支持`Let`:
+
 ```c++
 class LetNode : public PrimExprNode {
  public:
@@ -532,6 +703,249 @@ class LetNode : public PrimExprNode {
   PrimExpr body;  // The result expression
   static constexpr const char* _type_key = "tir.Let";
   TVM_DECLARE_FINAL_OBJECT_INFO(LetNode, PrimExprNode);
+};
+```
+
+- 在 `tests/python/relay/test_ir_parser.py` 中有 `Let` 的具体用例可以参考
+
+### 2.3. IRModule
+定义在 `include/tvm/ir/module.h` 中
+
+```c++
+class IRModuleNode : public Object {
+ public:
+  Map<GlobalVar, BaseFunc> functions;               // global-var => global-function
+  Map<GlobalTypeVar, TypeData> type_definitions;    // global-type-var => ADT-type-data
+  Map<String, GlobalVar> global_var_map_;           // string-name => global-var
+  Map<String, GlobalTypeVar> global_type_var_map_;  // string-name => global-type-var
+  SourceMap source_map; // source map for the module
+  DictAttrs attrs;      // 存储该 module 的元信息
+
+  std::unordered_map<int32_t, Constructor> constructor_tag_map_;  // constructor-tags => constructor
+  std::unordered_set<String> import_set_; // files previously imported
+
+  TVM_DLL void Add(const GlobalVar& var, const BaseFunc& func, bool update = false);
+  TVM_DLL void AddTypeDef(const GlobalTypeVar& var, const TypeData& type, bool update = false);
+  TVM_DLL GlobalVar GetGlobalVar(const String& str) const;
+  TVM_DLL GlobalTypeVar GetGlobalTypeVar(const String& str) const;
+  TVM_DLL BaseFunc Lookup(const GlobalVar& var) const;
+  TVM_DLL TypeData LookupTypeDef(const GlobalTypeVar& var) const;
+  TVM_DLL void Import(const String& path);  // Import Relay code from path.
+  static constexpr const char* _type_key = "IRModule";
+  static constexpr const bool _type_has_method_sequal_reduce = true;
+  static constexpr const bool _type_has_method_shash_reduce = true;
+  TVM_DECLARE_FINAL_OBJECT_INFO(IRModuleNode, Object);
+ private:
+  void RegisterConstructors(const GlobalTypeVar& var, const TypeData& type);
+};
+```
+
+### 2.4. Schedule
+TODO:
+
+### 2.5. Pass
+
+TVM 的Pass 基础设施定义了一个虚基类: `Pass`，以及 实现 Pass 管理的 `PassContext`(类似 LLVM 中的 PassManeger) 等， 它们的定义在 `include/tvm/ir/transform.h` 中
+
+> 该文件实现了一个 pass 管理器。 Pass 管理器管理在给定的 AST 单元 上管理 IRModule -> IRModule 的转换 Passes。 该设计的灵感主要来自 LLVM 的 pass 管理器和执行 张量 -> 张量 转换的现代深度学习框架
+> 
+> 传统编译器pass 管理器的职责通常包括： 
+> 
+> - 组织优化 Pass 的执行顺序，但不一定是最佳顺序         
+> - 收集所需的分析信息并及时更新
+> - 减少为编译器开发人员等实施新 Pass 所需的工作量
+> 
+> 与 LLVM 的 pass 管理器类似，我们将 Relay/Relax pass 管理器设计为以不同的粒度工作，即模块级别、功能级别，甚至 sequential passes that contains a host of passes。
+> 
+> 但是，我们还考虑了深度学习框架（例如 Pytorch 和 Gluon 等）的要求/约定，从而扩展了传统 Pass 管理器的功能。Relay/Relax  Pass 管理器中的每个 Pass 都执行 IRModule -> IRModule 转换。 所有不同类型的传递，包括 sequential-level pass object，本质上都是传递对象。 因此，这种设计有效地为用户提供了一个一致且方便的界面，即 Pass 。 它提供了一种简化 Relay/Relax pass 的开发和测试的方法。 例如，使用 Pass 管理器，外部用户将能够正确安排自定义 Pass ，而无需修改单个手工制作的 Pass 订单。
+> 
+> **将来我们需要描述 Pass 之间的约束。 例如，我们可能希望保留不同 Pass 之间的依赖关系，并在某个 Pass 完成时验证它们**
+> 
+> 我们还需要存储辅助信息并导入错误报告系统
+
+其中 Pass 定义如下：
+
+```c++
+class PassNode : public Object {
+ public:
+  virtual ~PassNode() {}
+  virtual PassInfo Info() const = 0;
+  IRModule operator()(IRModule mod) const {
+    return this->operator()(std::move(mod), PassContext::Current());
+  }
+  virtual IRModule operator()(IRModule mod, const PassContext& pass_ctx) const = 0;
+  static constexpr const char* _type_key = "transform.Pass";
+  TVM_DECLARE_BASE_OBJECT_INFO(PassNode, Object);
+};
+```
+
+从文件描述中可以知道， Pass 主要做一个 IRModule to IRModule 的变换，符合一般意义上的 Pass 概念。我们需要注意两个类型， `PassInfo` 与 `PassContext` 。 这里首先来看 PassInfo， 该类型表示一个 Pass 的 metadata, 每个具体的 Pass 实现都要提供 PassInfo 信息
+
+```c++
+class PassInfoNode : public Object {
+ public:
+  int opt_level;  // 启用该 pass 的最小 opt_level
+  String name;    // pass 名字
+  bool traceable; // 该 pass 是否可被 trace
+  Array<String> required; // 执行当前 pass 所需要的前置 pass
+  PassInfoNode() = default;
+  static constexpr const char* _type_key = "transform.PassInfo";
+  static constexpr bool _type_has_method_sequal_reduce = false;
+  TVM_DECLARE_FINAL_OBJECT_INFO(PassInfoNode, Object);
+};
+```
+
+可以看到，每个 Pass 实现需要使用字符串命名，并设定好依赖的前置 Pass，从而确定多个 Pass 的执行顺序。
+
+再看 PassContext
+
+```c++
+class PassContextNode : public Object {
+ public:
+  int opt_level{2};             // 默认 opt_level
+  Array<String> required_pass;  // 需要的 pass 列表
+  Array<String> disabled_pass;  // 禁用的 pass 列表
+  mutable Optional<DiagnosticContext> diag_ctx; // 诊断信息相关
+  Map<String, ObjectRef> config;  // Pass specific configurations
+  Array<instrument::PassInstrument> instruments;  // pass instrument implementations
+  mutable Array<ObjectRef> trace_stack; // Trace stack for relax pass infra
+  Optional<Map<String, Bool>> make_traceable; // passes to be traced
+  mutable int num_evals{0}; // Number of evaluations conducted in the pass pipeline
+  Optional<ObjectRef> tuning_api_database;  // Database for tuning API
+  
+  PassContextNode() = default;
+  ObjectRef GetCurrentTrace() { return trace_stack.back(); }
+  void SetNumEvals(int _num_evals) { num_evals = _num_evals; }
+  
+  static constexpr const char* _type_key = "transform.PassContext";
+  static constexpr bool _type_has_method_sequal_reduce = false;
+  TVM_DECLARE_FINAL_OBJECT_INFO(PassContextNode, Object);
+};
+```
+
+顾名思义，是多个 Pass 执行过程中的共同上下文， 其中的 `instruments` 是提供给开发者的一个工具，开发者可以实现一些函数运行在每个Pass的运行前后或者其他时机，这些函数打包到一起称为 `PassInstrument` 注册到 `PassContext` 中。
+
+通过 `PassContext::Current()` 可以获得一个 thread local 的当前生效的 `PassContext` ，也可以通过类似 Python `with` 的语法覆盖当前生效的 PassContext, 如下
+
+```c++
+auto new_ctx = PassContext::Create();
+ctx->opt_level = 2;
+With<PassContext> scope(ctx);
+// pass context in effect.
+```
+
+为了方便，TVM 中实现了三个类别的 Pass：
+
+1. Module-Level
+
+    > Module级别 pass 旨在实现全局分析/优化，即过程间优化（IPO）等，类似于 LLVM 中的 module pass。
+    > 
+    > Relay 中一些需要 Module 全局图的典型 pass，如 A-normal form 转换和 lambda 提升等，都属于这个集合。在这个级别，用户甚至可以在 module 中添加和/或删除功能。此级别的 pass 可以完全控制给定的 relay 程序，包括添加和删除函数。
+
+    ```c++
+    class ModulePassNode : public PassNode {
+     public:
+      PassInfo pass_info;
+      // `pass_func` 描绘了真正的优化。 例如: 我们可能需要在 module 级别进行无用代码消除， 那么
+      // 我们可以在 `pass_func` 中实现算法并让它在 module 上运行。它将删除死代码，包括 module 中未使用的函数。
+      runtime::TypedPackedFunc<IRModule(IRModule, PassContext)> pass_func;
+      ModulePassNode() = default;
+      // IRModule => IRModule: 返回更新后的 IRModule.
+      IRModule operator()(IRModule mod, const PassContext& pass_ctx) const final;
+      static constexpr const char* _type_key = "transform.ModulePass";
+      TVM_DECLARE_FINAL_OBJECT_INFO(ModulePassNode, PassNode);
+    };
+    ```
+
+    - Relay 中的 Module-level Pass：`InferType`, `ToBasicBlockNormalForm`, `ToANormalForm`, `ToGraphNormalForm`, `PartitionGraph`, `PartialEval`, `RemoveUnusedFunctions`, `RemoveStandaloneReshapes` 等
+    - tir 中的 Module-level Pass：`VerifySSA`, `SplitHostDevice`, `ExtractPrimFuncConstants`, `MakePackedAPI` 等
+
+
+2. Function-Level
+
+    函数级 pass 用于对给定的 Relay/tir module 进行各种函数内的优化。
+    它每次从 module 的函数列表中获取一个函数进行优化，并产生一个重写的 Relay Function 或 tir PrimFunc。
+    大部分 pass 都可以归为这一类，比如 Relay 中常见的子表达式消除和推理简化，以及 tir 中的向量化和展平存储等。
+
+    这个级别的 Pass 使用 `PrimFuncPassNode`(tir) 和 `FuncPassNode`(relay, relax) 来表示， 
+    其中 relay 的 `FuncPassNode` 实现如下：
+
+    ```c++
+    class FunctionPassNode : public PassNode {
+     public:
+      PassInfo pass_info;
+      // `pass_func` 描绘了真正的优化。 例如: 我们可以实现一个在 Relay 函数级别的 pass 
+      // 作为 `pass_func` 并让它在 module 上运行，相同的 `pass_func` 将应用于 module 中每个函数。
+      runtime::TypedPackedFunc<Function(Function, IRModule, PassContext)> pass_func;
+      FunctionPassNode() = default;
+      IRModule operator()(IRModule mod, const PassContext& pass_ctx) const final;
+      static constexpr const char* _type_key = "relay.FunctionPass";
+      TVM_DECLARE_FINAL_OBJECT_INFO(FunctionPassNode, PassNode);
+    };
+    ```
+
+    - Relay 中的 Function-level Pass：`FuseOps`, `DynamicToStatic`(简单的一个例子), `ConvertLayout`, `DeFuseOps`, `DeadCodeElimination`, `FoldConstant`, `Inline`, `EliminateCommonSubexpr`(ECS), `SimplifyExpr` 等
+    - tir 中的 Function-level Pass：`LowerIntrin`, `InjectPrefetch`, `StorageFlatten`, `StorageRewrite`, `LoopPartition`, `VectorizeLoop`, `UnrollLoop`, `RemoveNoOp`, `CommonSubexprElimTIR`(ECS), `Simplify`等
+
+3. Sequential
+
+    类似 pytorch 里面的 nn.Sequential, 包含了一堆可执行的Pass按照顺序执行。目前在 Relay 中只有少数 pass 被放入该组。
+    
+    例如， relay 的 `FoldScaleAxis` Pass 需要在内部调度 `ForwardFoldScaleAxis` 和 `BackwardFoldScaleAxis` 。 且应当先执行 `BackwardFoldScaleAxis` 。因此，这个 Pass 是 SequentialPass 的理想候选。
+
+
+## 3. Target
+
+已知 TVM 的 编译流程大体图下：
+
+<div class="autocb" style="text-align:center;"><img src="./tvm-type.assets\autocb_4.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
+
+在前面介绍了 runtime 的机制以及 IR 之后， 需要关注的就是 target， target 模块主要功能是 **Target 描述** 以及 **codgen module**，在 TVM 中使用 `Target` 来**描述代码生成的目标设备信息** (声明位于 `include/tvm/target/target.h`)：
+
+```c++
+class TargetNode : public Object {
+ public:
+  TargetKind kind;                  // target device 的种类
+  Optional<ObjectRef> host;         // Target host 信息(必须为 Target 类型)
+  String tag;                       // target 的tag，可以为空
+  Array<String> keys;               // target 的 keys
+  Map<String, ObjectRef> attrs;     // target 的属性合集
+  Map<String, ObjectRef> features;  // Target features
+
+  TVM_DLL Map<String, ObjectRef> Export() const;  // 导出为 JSON-like config
+  static constexpr const char* _type_key = "Target";
+  static constexpr const bool _type_has_method_sequal_reduce = true;
+  static constexpr const bool _type_has_method_shash_reduce = true;
+  TVM_DECLARE_FINAL_OBJECT_INFO(TargetNode, Object);
+ private:
+  mutable std::string str_repr_;  // 内部字符串表示
+};
+```
+
+而 `TargetKind` 定义如下：
+
+```c++
+class TargetKindNode : public Object {
+ public:
+  String name;                    // 目标设备种类 的 字符串名称
+  int default_device_type;        // 目标设备种类 的 device
+  Array<String> default_keys;     // 目标设备种类的默认 keys
+  PackedFunc preprocessor;        // preprocess on target creation
+  FTVMTargetParser target_parser; // parse a JSON target during creation
+  
+  static constexpr const char* _type_key = "TargetKind";
+  TVM_DECLARE_FINAL_OBJECT_INFO(TargetKindNode, Object);
+ private:
+  // 存储目标特定属性所需的 type_key 和 type_index
+  struct ValueTypeInfo {
+    String type_key;
+    uint32_t type_index;
+    std::unique_ptr<ValueTypeInfo> key;
+    std::unique_ptr<ValueTypeInfo> val;
+  };
+  std::unordered_map<String, ValueTypeInfo> key2vtype_; // target-key's attr => type information
+  std::unordered_map<String, ObjectRef> key2default_;   // target-key's attr => default value
+  uint32_t index_;  // 用于属性注册表内部查找的索引
 };
 ```
 
@@ -601,4 +1015,5 @@ class DynTensorTypeNode : public BaseTensorTypeNode {
 > !!! warning "疑问"
       这里的不可分析是什么意思？
 >
+
 
