@@ -307,7 +307,7 @@ DLC 的后端通常包括各种特定于硬件的优化(hardware-specific optimi
 
 特定于硬件的优化，也称为目标相关优化(targetdependent optimizations)，用于获得针对特定硬件的高性能代码。 应用后端优化的一种方法是将低级 IR 转换为 LLVM IR，以利用 LLVM 基础设施生成优化的 CPU/GPU 代码。 另一种方法是使用 DL 领域知识设计定制优化，更有效地利用目标硬件。 由于特定于硬件的优化是为特定硬件量身定制的，因此无法在本文中详尽介绍，因此我们提出了5种在现有编译器中广泛采用的方法。 图 4 显示了这些特定于硬件的优化的概览
 
-<div class="autocb" style="text-align:center;"><img src="./dlc-survey\autocb_1.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
+<div class="autocb" style="text-align:center;"><img src="./dlc-survey.assets\autocb_1.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
 
 详细说明如下：
 
