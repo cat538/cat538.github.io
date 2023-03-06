@@ -53,7 +53,7 @@ nav:
   - Courses:
     - 密码分析学:           "courses/密码分析学复习.md"
     - 密码学引论:           "courses/密码学引论复习.md"
-    - 操作系统:             "courses/操作系统复习.md"
+    # - 操作系统:             "courses/操作系统复习.md"
     - 算法设计与分析:        "courses/algorithm.md"
     - 编译原理:             "courses/编译原理.md"
   - Crypto:
@@ -67,11 +67,15 @@ nav:
     - tvm-install:        "mlc/tvm-install.md"
     - tvm-ffi:            "mlc/tvm-ffi.md"
     - tvm-type:           "mlc/tvm-type.md"
-    # - tvm-relay:          "mlc/tvm-relay.md"
+    # - tvm-relay:          "mlc/tvm-relayIR.md"
+    # - tvm-relax:          "mlc/tvm-relaxIR.md"
     - tvm-tensorIR:       "mlc/tvm-tensorIR.md"
-    - tvm-lowerTir:       "mlc/tvm-lowerTir.md"
-    - MLIR:               "mlc/mlir.md"
+    - tvm-lowering:       "mlc/tvm-lowering.md"
+    - mlir:               "mlc/mlir.md"
     - torch-fx:           "mlc/torch-fx.md"
+    - paper-nimble:       "mlc/paper-nimble.md"
+    - paper-cortex:       "mlc/paper-cortex.md"
+    - paper-dietcode:     "mlc/paper-dietcode.md"
   - About: "about.md"
 
 
