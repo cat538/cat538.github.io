@@ -1,1 +1,10 @@
 .vscode
+.idea
+*.dio
+*.exe
+*.obj
+*.exp
+*.out
+*.o
+*.so
+*.a
