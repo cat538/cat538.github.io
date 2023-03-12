@@ -1,3 +1,5 @@
+# Move
+
 ## Lvalues and Rvalues
 > Ref:
 > 
@@ -13,6 +15,8 @@
 - **glvalue** (mixed) is either an **lvalue** or an **xvalue**.
 - **rvalue** (mixed) is either an **xvalue** or a **prvalue**.
 
+<div class="autocb" style="text-align:center;"><img src="./move.assets\autocb_0.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
+
 ```c++
 auto i = std::string{"value categories"};
 // `i` is an lvalue
@@ -21,14 +25,14 @@ auto i = std::string{"value categories"};
 // `std::string{"value categories"}` is a prvalue (pure rvalue)
 ```
 
-## rvalue reference
+## Rvalue Reference
 顾名思义，**rvalue reference** 是指向**rvalue**的引用。
 
-通过右值引用，我们可以区分左值和右值：因为右值引用只能绑定右值，因此如果一个函数的参数是右值引用，那么传进到该函数的参数一定是右值：
+通过右值引用，我们可以区分左值和右值：因为右值引用只能绑定右值(rvalue)，因此如果一个函数的参数是右值引用，那么传进到该函数的参数一定是右值：
 
 ```cpp
 void foo(string&& ss){
-    bar(std::move(ss));
+  bar(std::move(ss));
 }
 ```
 
@@ -66,7 +70,6 @@ struct MyData {
          return *this;
     }
 };
-
 ```
 
 管理资源的类，如 `std::vector<T>`、`std::string`，通常会在它们的移动构造函数中执行以下操作：不分配新内存，而是从正在构造的 rvalue 中获取已经分配的缓冲区，并留下一些有效的价值来代替它。move assignment 通常会简单地将分配的资源与右值交换，在赋值调用后它们将被移出的右值释放。
@@ -153,7 +156,7 @@ struct Templated {
 更详细的内容见[Perfect forwarding](#perfect-forwarding)
 
 
-## Move Semantic
+## Move 的设计
 
 一个有趣的问题是，object 被 move 之后，处于什么状态？
 
@@ -173,7 +176,128 @@ vec.emplace_back(std::move(s));
 
 在Rust中 TODO:
 
-## Perfect forwarding
-Perfect forwarding 完美转发
+## Forwarding Reference
+如果一个类型占位符 P 需要被类型推导，那么`P&&` 将成为C++ 中 除了 左值引用和右值引用 之外的另一种引用： 转发引用 forwarding reference
 
-TODO: 
+例如，在模板函数中，`T&&` 是 forwarding reference 而不是右值引用； 类似地， auto&& 始终是一个 forwarding reference。
+
+转发引用**保留它们初始化时使用的表达式的值类别**，并且可以在传递给其他函数时保留，这意味着，如果被绑定的 value 是一个 右值/右值引用， 则`T&&`成为一个右值引用，如果被绑定的value是一个左值/左值引用，则`T&&` 会成为一个左值引用（加上const 同理）。
+
+引用折叠和 template argument deduction rules 构成了转发引用的语法规则：
+
+### 引用折叠(Reference collapsing)
+
+对右值引用的右值引用折叠为右值引用，所有其他组合形成左值引用：
+
+```c++
+typedef int&  lref;
+typedef int&& rref;
+int n;
+ 
+lref&  r1 = n; // type of r1 is int&
+lref&& r2 = n; // type of r2 is int&
+rref&  r3 = n; // type of r3 is int&
+rref&& r4 = 1; // type of r4 is int&&
+```
+
+因此对于以下代码：
+
+```c++
+auto s          = "123"s;
+auto& sr        = s;
+const auto& scr = s;
+
+auto&& r1 = s;               string&
+auto&& r2 = sr;              string&
+auto&& r3 = scr;             const string&
+auto&& r4 = "123"s;          string&&
+auto&& r5 = std::move(s);    string&&
+
+// T&& 与 auto&& 都是 "转发引用"
+template<typename T>
+foo(T&& arg){
+  static_assert(std::same_as_v<std::string, decltype(arg)>);
+}
+// T&& 与 auto&& 同理， C++20 之后可以更广泛使用auto代替模板参数， 即 "bar" 与 "foo" 等价
+bar(auto&& arg){
+  static_assert(std::same_as_v<std::string, decltype(arg)>);
+}
+```
+
+### std::forawrd()
+Forwarding Reference 的应用场景**仅在泛型编程中**：
+
+在泛型编程中与参数列表绑定的可能是左值也可能是右值，那么这时候我们需要有一种方式能够保持参数的值语义转发
+给其他的函数调用：
+
+```c++
+class BigObj {
+ public:
+  BigObj() = default;
+  BigObj(unique_ptr<int[]> data, int len) : data_(std::move(data)), len_(len) {
+    cout << "Create from raw\n";
+  };
+  BigObj(const BigObj& rhs) {
+    cout << "Copy constructor: const BigObj&\n";
+    len_  = rhs.len_;
+    data_ = make_unique<int[]>(len_);
+    memcpy(data_.get(), rhs.data_.get(), len_);
+  };
+  BigObj(BigObj&& rhs) noexcept {
+    cout << "Move constructor: BigObj&&\n";
+    len_ = rhs.len_;
+    data_.swap(rhs.data_);
+  };
+  BigObj& operator=(const BigObj& rhs) {
+    cout << "Copy assignment: const BigObj&\n";
+    len_  = rhs.len_;
+    data_ = make_unique<int[]>(len_);
+    memcpy(data_.get(), rhs.data_.get(), len_);
+    return *this;
+  };
+  BigObj& operator=(BigObj&& rhs) noexcept {
+    cout << "Move assignment: BigObj&&\n";
+    len_ = rhs.len_;
+    data_.swap(rhs.data_);
+    return *this;
+  }
+
+ private:
+  unique_ptr<int[]> data_;
+  int len_;
+};
+
+template <typename T, typename U>
+concept same_rcv = same_as<remove_cvref_t<T>, U>;
+
+class A {
+ public:
+  template <typename T, typename U, typename V>
+    requires same_rcv<T, BigObj> && same_as<remove_cvref_t<U>, BigObj> &&
+             same_as<remove_cvref_t<V>, BigObj>
+  A(T&& v1, U&& v2, V&& v3) {
+    v1_ = std::forward<T>(v1); // 使用std::forward 根据入参的value category 调用BigObj 的move or copy 构造
+    v2_ = std::forward<U>(v2); // 使用std::forward 根据入参的value category 调用BigObj 的move or copy 构造
+    v3_ = std::forward<V>(v3); // 使用std::forward 根据入参的value category 调用BigObj 的move or copy 构造
+  }
+
+ private:
+  BigObj v1_;
+  BigObj v2_;
+  BigObj v3_;
+};
+
+int main() {
+  auto len    = 1024;
+  auto buffer = make_unique_for_overwrite<int[]>(len);
+
+  auto obj1    = BigObj(std::move(buffer), len);  // Create from raw
+  auto obj2    = obj1;  // Copy constructor! Not copy assignment operator!
+  auto obj3    = obj1;  // copy constructor too
+  auto obj4    = obj1;  // copy constructor too
+  BigObj&& tmp = std::move(obj4);
+  auto obj5 = tmp;  // Copy constructor !!!!! (具名右值引用是左值)
+
+  auto a = A(obj1, std::move(obj2), obj3); // [copy, move, copy] constructor
+}
+```
