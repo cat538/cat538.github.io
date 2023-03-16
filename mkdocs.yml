@@ -72,7 +72,7 @@ nav:
     - tvm-tensorIR:       "mlc/tvm-tensorIR.md"
     - tvm-lowering:       "mlc/tvm-lowering.md"
     - mlir:               "mlc/mlir.md"
-    - torch-fx:           "mlc/torch-fx.md"
+    - paper-torch.fx:     "mlc/paper-torch.fx.md"
     - paper-nimble:       "mlc/paper-nimble.md"
     - paper-cortex:       "mlc/paper-cortex.md"
     - paper-dietcode:     "mlc/paper-dietcode.md"
