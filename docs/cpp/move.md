@@ -207,11 +207,11 @@ auto s          = "123"s;
 auto& sr        = s;
 const auto& scr = s;
 
-auto&& r1 = s;               string&
-auto&& r2 = sr;              string&
-auto&& r3 = scr;             const string&
-auto&& r4 = "123"s;          string&&
-auto&& r5 = std::move(s);    string&&
+auto&& r1 = s;               // string&
+auto&& r2 = sr;              // string&
+auto&& r3 = scr;             // const string&
+auto&& r4 = "123"s;          // string&&
+auto&& r5 = std::move(s);    // string&&
 
 // T&& 与 auto&& 都是 "转发引用"
 template<typename T>
