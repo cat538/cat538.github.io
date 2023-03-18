@@ -1,5 +1,7 @@
+# Profiler
+
 性能分析工具用于定位程序性能的消耗点，方便做出细致的优化。
-常见的profile工具有Perf、gprof和Valgrind等。
+常见的 profile 工具有  Perf、 gprof 和 Valgrind 等。
 
 ## gprof
 `gprof`是一个用于Unix系统下 user-space code的性能分析工具。`gprof`适合于查找用户级程序的性能瓶颈，对于很多时间都在内核态执行的程序，`gprof` 不适合（syscalls, waiting for CPU or I/O waiting等不会被监控到）
@@ -46,11 +48,11 @@ build得到可执行文件`bin-proj`，使用`gprof`分析采样结果得到文�
 gprof bin-proj gmon.out > res
 ```
 
-<img src="profile.assets/image-20221118222210859.png" alt="image-20221118222210859" style="zoom: 50%;" />
+<img src="profiler.assets/image-20221118222210859.png" alt="image-20221118222210859" style="zoom: 50%;" />
 
 得到报告，其中的callgraph部分如下图所示：
 
-<img src="profile.assets/image-20221119000629794.png" alt="image-20221119000629794" style="zoom: 50%;" />
+<img src="profiler.assets/image-20221119000629794.png" alt="image-20221119000629794" style="zoom: 50%;" />
 
 ## gperftools
 
