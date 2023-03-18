@@ -8,7 +8,7 @@
 
 这篇主要介绍 TVM 中 python 前端和 C/C++后端 交互的方法。
 
-## import tvm 做了什么?
+## 1. `import tvm` 做了什么?
 首先考虑一个问题：
 ```python
 import tvm
@@ -97,7 +97,7 @@ from .registry import _init_api, get_global_func, get_object_type_index
 
     这个过程告诉我们，如果想要C++的函数被 python 前端的`get_global_func`感知，需要实现将函数注册到一个表里，使得`tvm::runtime::Registry::Get`方法能从这张表中获取到。接下来我们关注 在c++中注册函数的整个过程。
 
-## Registry
+## 2. Registry
 上面我们说到 tvm 可以通过 `get_global_func`之类 的方法获取到 c++ 中注册的函数，or 进行其它交互。这里有几个问题：
 
 1. 具体来说怎么在c++中注册一个函数使其对于 py 前端可见？
@@ -258,4 +258,117 @@ struct Registry::Manager {
 
 关于 `PackedFunc` 类型，可以参考 [tvm-type](./tvm-type.md) 这篇文章。
 
-## 向 TVM 中添加注册自定义函数
+## 3. 一个实践: 在TVM中使用FFI
+
+这一节是一个例子，利用上面的 ffi 机制， 在c++ 注册一个 `CallNodeCounter`, 然后在python 端使用它。 
+
+为了充分演示 TVM 的 FFI， 这里我在 visit 计算图时会调用 python 注册的 `DmPythonPrint` 函数作为 callback， 在 visit 过程中， 调用 python 端函数在python 端打印一些信息。
+
+💡**首先这不是一个好的代码， expr 的访问顺序也有问题。正常的 只读 visitor 不应该在c++里费周折这样写，只是为了演示 FFI**
+
+c++ 端代码：
+
+```c++
+#include <tvm/relay/expr.h>
+#include <tvm/relay/expr_functor.h>
+
+namespace tvm {
+namespace relay {
+namespace backend {
+
+class CallNodeCounter : private ExprVisitor {
+ public:
+  static int64_t GetCallNodeCount(const Expr& expr) {
+    CallNodeCounter counter;
+    counter.call_node_callback_ = const_cast<PackedFunc*>(runtime::Registry::Get("DmPythonPrint"));
+    
+
+    TVMValue call_node_name;
+    auto type_code = 11;
+    auto ret = runtime::TVMRetValue{};
+
+    counter.call_node_callback_->operator()("Begin of visit...\n");
+    
+    counter(expr);
+
+    counter.call_node_callback_->operator()("End of visit...\n");
+    return counter.count_;
+  }
+
+
+  void VisitExpr_(const CallNode* call) final {
+    if (call->op->IsInstance<OpNode>()) {
+      TVMValue call_node_name;
+      call_node_callback_->operator()((std::string{"Find Call Node:"} + call->op.as<OpNode>()->name).c_str());
+      ++count_;
+    }
+    ExprVisitor::VisitExpr_(call);
+  }
+
+  int64_t count_{};
+  PackedFunc* call_node_callback_{nullptr};
+};
+
+int64_t DmCounter(const Expr& expr) { return CallNodeCounter::GetCallNodeCount(expr); }
+
+TVM_REGISTER_GLOBAL("relay.backend.DmCounter").set_body_typed(DmCounter);
+
+}  // namespace backend
+}  // namespace relay
+}  // namespace tvm
+```
+
+python 端：
+
+```python
+import numpy as np
+import tvm
+from tvm import relay
+
+
+# python 注册 函数 `DmPythonPrint`
+if tvm.get_global_func("DmPythonPrint", allow_missing=True) is None:
+    @tvm.register_func
+    def DmPythonPrint(msg):
+        print(f"{msg}")
+
+
+data = relay.var("data", shape=(1,784),dtype="float32")
+weight1 = relay.var("weight1",shape=(128,784),dtype="float32")
+bias1 = relay.var("bias1",shape=(128,),dtype="float32")
+weight2 = relay.var("weight2",shape=(10,128),dtype="float32")
+bias2 = relay.var("bias2",shape=(10,),dtype="float32")
+
+dense1 = relay.nn.dense(data,weight1)
+bias_add1 = relay.nn.bias_add(dense1, bias1)
+relu1 = relay.nn.relu(bias_add1)
+dense2 = relay.nn.dense(relu1,weight2)
+bias_add2 = relay.nn.bias_add(dense2, bias2)
+relu2 = relay.nn.relu(bias_add2)
+
+func:relay.Function = relay.Function([data,weight1,bias1,weight2,bias2],relu2)
+
+ir_mod: tvm.IRModule = tvm.IRModule.from_expr(func)
+
+# 拿到 C++ 注册的 函数 `Dmcounter`
+print_call_node = relay.backend._backend.DmCounter
+res = print_call_node(func)
+print(f"Total nums of `CallNode`: {res}")
+
+```
+
+输出结果如下： 
+
+```text
+Begin of visit...
+
+Find Call Node:nn.relu
+Find Call Node:nn.bias_add
+Find Call Node:nn.dense
+Find Call Node:nn.relu
+Find Call Node:nn.bias_add
+Find Call Node:nn.dense
+End of visit...
+
+Total nums of `CallNode`: 6
+```

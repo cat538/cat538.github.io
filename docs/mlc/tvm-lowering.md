@@ -594,7 +594,7 @@ inline tvm::te::Tensor matmul(const tvm::te::Tensor& A, const tvm::te::Tensor& B
 > 简单来说，当一个算子地调度方式稳定之后，会被放在C++部分， 正在dev地放在python实现；而对于一些简单的算子，就保留了在 C++ 和 py 两部分的实现
 
 
-### 3.2. Relay
+### 3.2. Relay-GraphExecutor
 本节使用如下例子：
 
 ```py
@@ -629,6 +629,16 @@ ir_mod = tvm.IRModule.from_expr(func)
 with tvm.transform.PassContext(opt_level=2):
   rt_lib = relay.build(ir_mod=ir_mod,target="llvm")
 
+# 6. 使用 graph_executor 加载 build 好的计算图并执行
+dev = tvm.cpu()
+dtype = "float32"
+graph_module = graph_executor.GraphModule(rt_lib["default"](dev))
+# Set inputs: 这里只设置一部分参数，因为params 的内存已经在 relay.build 阶段 分配好内存包含在 graphmodule 中， 因此这里的代码也能跑通
+
+# Execute && Get outputs
+graph_module.run()
+graph_exec_output = graph_module.get_output(0)
+print(graph_exec_output)
 ```
 
 这里以 `dense` 算子为例， 首先关注 `dense1 = relay.nn.dense(data,weight1)` ：
@@ -748,48 +758,30 @@ def build(ir_mod,target=None, target_host=None,
     # 这里只看 graph_executor 去掉了aot 相关
     if executor.name == "graph":
       executor_factory = _executor_factory.GraphExecutorFactoryModule(
-        ir_mod, raw_targets,
-        executor, graph_json, runtime_mod,
-        mod_name, params, func_metadata,
+        ir_mod, raw_targets, # 原始(Relay)IRModule; build target
+        executor, graph_json, runtime_mod,  # executor-config; graph信息; build后的 runtime module
+        mod_name, params, func_metadata,  # runtime.module name; 模型参数; 函数信息
       )
     return executor_factory
 ```
 
-函数返回一个 `tvm.relay.backend.executor_factory.ExecutorFactoryModule` ， 是relay的 graph executor factory（目前有 graph 和 aot 两种）
+函数最终返回一个 `relay.backend.executor_factory.ExecutorFactoryModule` ， 是relay的 graph executor factory（ `ExecutorFactoryModule` 目前有 graph 和 aot 两种， 在本例子中为 `graph_executor`）
 
-1. TopHub:
+整个构建流程如下：
+
+1. TopHub 寻找历史优化信息:
 
     > 首先 Relay 会寻找是否有 AutoTVM 预先 Fintune 的记录，如果没有那么就使用autotvm.FallbackContext这个环境上下文信息，如果有那么接下来的所有操作都在 tophub_context 的 scope 之下 (with tophub_context:)。值得一提的是 Relay 考虑了异构情景下的代码生成，用户可以指定多个生成代码的目标 (target)。
 
+    TODO:
 
-2. 在 `tophub_context`中，创建了一个 `BuildModule` ，然后调用了 `build` 函数生成一个硬件可执行的更底层的 IR，以及包含各种必需运行时库的tvm.Module和优化后的计算图的参数。这里还有一个_graph_executor_factory.GraphExecutorFactoryModule函数，它的功能就是将上面的 IR，运行时库以及参数打包成一个tvm.Module，这样用户只需要把这个tvm.Module存下来，下次就可以省去编译过程直接在硬件上执行了。
+
+2. 在 `tophub_context`中，创建了一个 `BuildModule` ，调用 `build` 。 `bld_mod.build` 在 python 端的返回值有三个: `executor_config, mod, params`； 其中 `executor_config` 是一个 json-like form 的config， 用于给后续生成给 graph_executor 提供信息； `mod` 是包含各种必需运行时库的 `runtime.module`； `params` 是优化后的计算图的参数。
 
 3. `BuildModule()` 对应在 C++ 中的 `src/relay/backend/build_module.cc` 中:
 
     ```c++
     class RelayBuildModule : public runtime::ModuleNode {
-     public:
-      RelayBuildModule() = default;
-
-      PackedFunc GetFunction(const std::string& name, const ObjectPtr<Object>& sptr_to_self) final {
-        if (name == "get_graph_json") {
-          return PackedFunc(
-              [sptr_to_self, this](TVMArgs args, TVMRetValue* rv) { *rv = this->GetGraphJSON(); });
-        } else if (name == "build") {
-          return PackedFunc([sptr_to_self, this](TVMArgs args, TVMRetValue* rv) {
-            this->Build(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
-          });
-        } else if (name == "get_irmodule") {
-          return PackedFunc([sptr_to_self, this](TVMArgs args, TVMRetValue* rv) {
-            *rv = this->executor_codegen_->GetIRModule();
-          });
-        } else if (name == "optimize") {
-          return PackedFunc([sptr_to_self, this](TVMArgs args, TVMRetValue* rv) {
-            *rv = this->Optimize(args[0], args[1]);
-          });
-        }
-      }
-
      protected:
       // return The updated Relay IR module after optimization.
       IRModule Optimize(IRModule relay_module, const Array<Target>& raw_targets);
@@ -809,5 +801,412 @@ def build(ir_mod,target=None, target_host=None,
     };
     ```
 
+    `bld_mod.build` 直接对应上述 `Build` 函数，该函简单地把函数参数如 runtime， executor， config 等赋值给对应的fileds， 接着调用上述代码中的 `BuildRelay` 函数，这是整个 build 中的关键部分
+
+4. `BuildRelay` 函数主要逻辑如下：
+
+    ```c++
+    void BuildRelay(IRModule relay_module, const String& mod_name) {
+      // 1. Relay IRModule -> IRModule 优化 (TODO: 展开)
+      relay_module = OptimizeImpl(std::move(relay_module));
+
+      Function func = Downcast<Function>(relay_module->Lookup("main"));
+      LOG(DEBUG)<<"After `OptimizeImpl`: relay_module->Lookup('main')" << PrettyPrint(func); // my print
+
+      IRModule func_module = WithAttrs(IRModule::FromExpr(func),{/*executor 等 attrs...*/});
+      
+      // 2. 为优化后的函数执行 codegen
+      // 2.1. 如果是 graph_executor 创建一个 `GraphCodegen` 对象
+      executor_codegen_ = MakeExecutorCodegen(executor_->name);
+      executor_codegen_->Init(nullptr, config_->primitive_targets);
+      // 这里的codegen 对应 GraphExecutorCodegen::Codegen
+      //  a) 设置 memory_plan_
+      //  b) LowerTE, lower 之后的 IR 在 tir level 
+      executor_codegen_->Codegen(func_module, func, mod_name);
+      // 为 ret_ 设置 graph_json
+      executor_codegen_->UpdateOutput(&ret_);
+      // ret_ 包括: 1) graph_json 字符串; 2) runtime.mod; 3)[string: NDArray] params 字典;
+      // 这里设置 executor_codegen_ 在 codegen 阶段构造的 params 
+      ret_.params = executor_codegen_->GetParams();
+
+      // 2.2. 拿到 lowerd_funcs （此时Relay函数已经下降为 PrimFunc）
+      auto lowered_funcs = executor_codegen_->GetIRModule();
+
+      const Target& host_target = config_->host_virtual_device->target;
+      const runtime::PackedFunc* pf = runtime::Registry::Get("codegen.LLVMModuleCreate");
+      // 2.3. 如果由于优化等原因， lowered_funcs 集合为空时，返回空 module
+      if (lowered_funcs.size() == 0) {/* 省略...*/} 
+      // 3. 否则执行 TIRToRuntime， 可以参考 tir 下降一节中的步骤
+      else {ret_.mod = tvm::TIRToRuntime(lowered_funcs, host_target);}
+
+      // 4. 接下来是对 external module 的处理
+      ...
+    }
+    ```
+
+    `BuildRelay` 包含了 Optimize ， Codegen 两个过程：
+    
+    1. 在 `Build` 之前： Relay 阶段的 IRModule：
+
+        ```py
+        def @main(%data: Tensor[(1, 784), float32], %weight1: Tensor[(128, 784), float32], %bias1: Tensor[(128), float32], %weight2: Tensor[(10, 128), float32], %bias2: Tensor[(10), float32]) {
+          %0 = nn.dense(%data, %weight1, units=None);
+          %1 = nn.bias_add(%0, %bias1);
+          %2 = nn.relu(%1);
+          %3 = nn.dense(%2, %weight2, units=None);
+          %4 = nn.bias_add(%3, %bias2);
+          nn.relu(%4)
+        }
+        ```
+
+    2. 在 `Optmize` 之后， 于打印出这时的 IR 发现是以 Tensor 为操作单位，即转为了 TE的表示，并且在TE层级进行了算子融合，可以看到，在Relay中的 `nn.dense` Op, 以及 `nn.bias_add` Op, `nn.relu` Op 在这里的 IR 中都被转为TE表示，并且三个算子被包裹到了一个函数中，在接下来的 codegen 中， 三个TE函数将会被融合成一个计算过程：
+
+        ```c++
+        fn (
+          %data: Tensor[(1, 784), float32], 
+          %weight1: Tensor[(128, 784), float32], 
+          %bias1: Tensor[(128), float32], 
+          %weight2: Tensor[(10, 128), float32], 
+          %bias2: Tensor[(10), float32], 
+          dst_layout="NC5n", executor=meta[Executor][0], runtime=meta[Runtime][0], hash="e88b28184aebb4db", 
+          src_layout="NC", virtual_device=VirtualDevice(device_type=1, virtual_device_id=0, target=Target(id=1d4d3b79920, kind='llvm', keys={'cpu'}, host=Target(id=1d4d3b79a00, kind='llvm', keys={'cpu'})))
+        ) -> Tensor[(1, 10), float32] {
+
+          // 数据 layout 转换
+          %6 = fn (%p02: Tensor[(128, 784), float32],Primitive=1, hash="e9662aa5b8e67b96", src_layout="NC", dst_layout="NC8n"
+          ) -> Tensor[(16, 784, 8), float32] {
+            layout_transform(%p02, src_layout="NC", dst_layout="NC8n")
+          }  
+          %7 = %6(%weight1);
+          
+          // 对应 Relay function IR 中的
+          // %0 = nn.dense(%data, %weight1, units=None);
+          // %1 = nn.bias_add(%0, %bias1);
+          // %2 = nn.relu(%1);
+          %8 = fn (%p01: Tensor[(1, 784), float32], %p11: Tensor[(16, 784, 8), float32], %p21: Tensor[(128), float32], Primitive=1, hash="f360b4c42be956c4", weight_layout="NC8n"
+          ) -> Tensor[(1, 128), float32] {
+            %3 = nn.contrib_dense_pack(%p01, %p11, units=None, out_dtype="float32", weight_layout="NC8n");
+            %4 = expand_dims(%p21, axis=0);
+            %5 = add(%3, %4);
+            nn.relu(%5)
+          } 
+
+          // 数据 Layout 转换
+          %9 = fn (%p03: Tensor[(10, 128), float32], Primitive=1, hash="86451ec737a6a453", src_layout="NC", dst_layout="NC5n"
+          ) -> Tensor[(2, 128, 5), float32] {
+            layout_transform(%p03, src_layout="NC", dst_layout="NC5n")
+          } /* ty=fn (Tensor[(10, 128), float32]) -> Tensor[(2, 128, 5), float32] */;
+          %10 = %8(%data, %7, %bias1);
+          %11 = %9(%weight2);
+
+          // 对应 Relay function IR 中的
+          // %3 = nn.dense(%2, %weight2, units=None);
+          // %4 = nn.bias_add(%3, %bias2);
+          // nn.relu(%4)
+          %12 = fn (%p0: Tensor[(1, 128), float32], %p1: Tensor[(2, 128, 5), float32], %p2: Tensor[(10), float32], Primitive=1, hash="32a532a5919d3a8b", weight_layout="NC5n"
+          ) -> Tensor[(1, 10), float32] {
+            %0 = nn.contrib_dense_pack(%p0, %p1, units=None, out_dtype="float32", weight_layout="NC5n");
+            %1 = expand_dims(%p2, axis=0);
+            %2 = add(%0, %1);
+            nn.relu(%2)
+          } 
+          %12(%10, %11, %bias2)
+        } 
+        ```
+
+    3. 接着是 `CodeGen` (`GraphExecutorCodegen` 的方法)中对 TE 的 lower， 对应到 `tec::LowerTE` 函数的调用:
+    
+        ```c++
+        // In GraphExecutorCodegen:
+        // relay::backend::LoweredOutput Codegen(tvm::IRModule mod, relay::Function func,tvm::runtime::String mod_name)
+        
+        ...
+
+        IRModule lowered_mod = tec::LowerTE(mod_name_, config_, [this](BaseFunc func) {
+          if (func->GetAttr<String>(attr::kCompiler).defined()) {
+            UpdateConstants(func, &params_);
+          }
+          tec::UpdateFunctionMetadata(func, this->function_metadata_);
+        })(mod);
+        LOG(DEBUG) << "after complile TE:" << std::endl << PrettyPrint(lowered_mod); // dmhj
+
+        ...
+        ```
+
+        TE 被 lower 之后的 IR 由 tir Stmt 组成， TE 函数被转换成 PrimFunc(元张量函数)， 在 下面的 IR 中 可以看到出现了 `Pointer`, `Buffer`, `AllocateNode` 等 Stmt 节点，这是在 TE 和 Relay 层级不会出现的抽象
+
+        ```c++
+        def @main(
+          %data: Tensor[(1, 784), float32] , 
+          %weight1: Tensor[(128, 784), float32] , 
+          %bias1: Tensor[(128), float32] , 
+          %weight2: Tensor[(10, 128), float32] , 
+          %bias2: Tensor[(10), float32] , 
+          
+          dst_layout="NC5n", executor=meta[Executor][0], runtime=meta[Runtime][0], hash="e88b28184aebb4db", src_layout="NC", 
+          virtual_device=VirtualDevice(device_type=1, virtual_device_id=0, target=Target(id=1d233c937a0, kind='llvm', keys={'cpu'}, host=Target(id=1d233c94220, kind='llvm', keys={'cpu'})))
+        ) -> Tensor[(1, 10), float32] {
+          %0 = (%weight1,) ;
+          %1 = call_lowered(@tvmgen_default_fused_layout_transform, %0, metadata={"relay_attrs"={__dict__={"Primitive"=1, "hash"="e9662aa5b8e67b96", "src_layout"="NC", "dst_layout"="NC8n"}}, "all_prim_fn_vars"=['tvmgen_default_fused_layout_transform']}) ;
+          %2 = (%data, %1, %bias1) ;
+          %3 = (%weight2,) ;
+          %4 = call_lowered(@tvmgen_default_fused_nn_contrib_dense_pack_expand_dims_add_nn_relu, %2, metadata={"relay_attrs"={__dict__={"Primitive"=1, "hash"="f360b4c42be956c4", "weight_layout"="NC8n"}}, "all_prim_fn_vars"=['tvmgen_default_fused_nn_contrib_dense_pack_expand_dims_add_nn_relu']}) ;
+          %5 = call_lowered(@tvmgen_default_fused_layout_transform_1, %3, metadata={"relay_attrs"={__dict__={"Primitive"=1, "hash"="86451ec737a6a453", "src_layout"="NC", "dst_layout"="NC5n"}}, "all_prim_fn_vars"=['tvmgen_default_fused_layout_transform_1']}) ;
+          %6 = (%4, %5, %bias2) ;
+          call_lowered(@tvmgen_default_fused_nn_contrib_dense_pack_expand_dims_add_nn_relu_1, %6, metadata={"relay_attrs"={__dict__={"Primitive"=1, "hash"="32a532a5919d3a8b", "weight_layout"="NC5n"}}, "all_prim_fn_vars"=['tvmgen_default_fused_nn_contrib_dense_pack_expand_dims_add_nn_relu_1']}) 
+        }
+
+        @tvmgen_default_fused_layout_transform = primfn(p0_1: handle, T_layout_trans_1: handle) -> ()
+          buffers = {
+            p0: Buffer(p0_2: Pointer(float32), float32, [128, 784], []),
+            T_layout_trans: Buffer(T_layout_trans_2: Pointer(float32), float32, [16, 784, 8], [])
+          }
+          buffer_map = {p0_1: p0, T_layout_trans_1: T_layout_trans} {
+          for (ax0.ax1.fused: int32, 0, 12544) "parallel" {
+            T_layout_trans_3: Buffer(T_layout_trans_2, float32, [100352], [])[ramp((ax0.ax1.fused*8), 1, 8)] = 
+              p0_3: Buffer(p0_2, float32, [100352], [])[
+                ramp(((floordiv(ax0.ax1.fused, 784)*6272) + floormod(ax0.ax1.fused, 784)), 784, 8)
+              ]
+          }
+        }
+
+        @tvmgen_default_fused_layout_transform_1 = primfn(p0_5: handle, T_layout_trans_5: handle) -> ()
+          buffers = {
+            p0_4: Buffer(p0_6: Pointer(float32), float32, [10, 128], []),
+            T_layout_trans_4: Buffer(T_layout_trans_6: Pointer(float32), float32, [2, 128, 5], [])
+          }
+          buffer_map = {p0_5: p0_4, T_layout_trans_5: T_layout_trans_4} {
+          for (ax0.ax1.fused_1: int32, 0, 256) "parallel" {
+            T_layout_trans_7: Buffer(T_layout_trans_6, float32, [1280], [])[ramp((ax0.ax1.fused_1*5), 1, 5)] = 
+              p0_7: Buffer(p0_6, float32, [1280], [])[
+                ramp(((floordiv(ax0.ax1.fused_1, 128)*640) + floormod(ax0.ax1.fused_1, 128)), 128, 5)
+              ]
+          }
+        }
+
+        @tvmgen_default_fused_nn_contrib_dense_pack_expand_dims_add_nn_relu = primfn(p0_9: handle, p1_1: handle, p2_1: handle, T_relu_1: handle) -> ()
+          attr = {"from_legacy_te_schedule": True, "target": Target(id=1d233c937a0, kind='llvm', keys={'cpu'}, host=Target(id=1d233c94220, kind='llvm', keys={'cpu'})), "tir.noalias": True, "hash": "f360b4c42be956c4", "global_symbol": "tvmgen_default_fused_nn_contrib_dense_pack_expand_dims_add_nn_relu"}
+          buffers = {
+            p0_8: Buffer(p0_10: Pointer(float32), float32, [1, 784], []),
+            p1: Buffer(p1_2: Pointer(float32), float32, [16, 784, 8], []),
+            p2: Buffer(p2_2: Pointer(float32), float32, [128], []),
+            T_relu: Buffer(T_relu_2: Pointer(float32), float32, [1, 128], [])
+          }
+          buffer_map = {p0_9: p0_8, p1_1: p1, p2_1: p2, T_relu_1: T_relu} {
+          for (ax1.outer.ax0.outer.fused: int32, 0, 4) "parallel" {
+            allocate(compute: Pointer(global float32x8), float32x8, [4]), storage_scope = global;
+            allocate(compute.global: Pointer(global float32x8), float32x8, [1]), storage_scope = global {
+              for (y.inner.outer.x.inner.outer.fused: int32, 0, 4) {
+                compute.global_1: Buffer(compute.global, float32x8, [1], [], align=32)[0] = broadcast(0f32, 8)
+                for (k.outer: int32, 0, 784) {
+                  compute.global_1[0] = (compute.global_1[0] + (broadcast(p0_11: Buffer(p0_10, float32, [784], [])[k.outer], 8)*p1_3: Buffer(p1_2, float32, [100352], [])[ramp((((ax1.outer.ax0.outer.fused*25088) + (y.inner.outer.x.inner.outer.fused*6272)) + (k.outer*8)), 1, 8)]))
+                }
+                compute_1: Buffer(compute, float32x8, [4], [])[y.inner.outer.x.inner.outer.fused] = compute.global_1[0]
+              }
+              for (ax1.inner.outer: int32, 0, 4) {
+                let cse_var_1: int32 = ((ax1.outer.ax0.outer.fused*32) + (ax1.inner.outer*8))
+                T_relu_3: Buffer(T_relu_2, float32, [128], [])[ramp(cse_var_1, 1, 8)] = max((compute_1[ax1.inner.outer] + p2_3: Buffer(p2_2, float32, [128], [])[ramp(cse_var_1, 1, 8)]), broadcast(0f32, 8))
+              }
+            }
+          }
+        }
+
+        @tvmgen_default_fused_nn_contrib_dense_pack_expand_dims_add_nn_relu_1 = primfn(
+          p0_13: handle, p1_5: handle, p2_5: handle, T_relu_5: handle
+        ) -> ()
+          buffers = {
+            p0_12: Buffer(p0_14: Pointer(float32), float32, [1, 128], []),
+            p1_4: Buffer(p1_6: Pointer(float32), float32, [2, 128, 5], []),
+            p2_4: Buffer(p2_6: Pointer(float32), float32, [10], []),
+            T_relu_4: Buffer(T_relu_6: Pointer(float32), float32, [1, 10], [])
+          }
+          buffer_map = {p0_13: p0_12, p1_5: p1_4, p2_5: p2_4, T_relu_5: T_relu_4} {
+          for (ax1.outer.ax0.outer.fused_1: int32, 0, 2) "parallel" {
+            let cse_var_1_1: int32 = (ax1.outer.ax0.outer.fused_1*5)
+            allocate(compute.global_2: Pointer(global float32x5), float32x5, [1]), storage_scope = global {
+              compute.global_3: Buffer(compute.global_2, float32x5, [1], [], align=16)[0] = broadcast(0f32, 5)
+              for (k.outer_1: int32, 0, 128) {
+                compute.global_3[0] = (compute.global_3[0] + (broadcast(p0_15: Buffer(p0_14, float32, [128], [])[k.outer_1], 5)*p1_7: Buffer(p1_6, float32, [1280], [])[ramp(((ax1.outer.ax0.outer.fused_1*640) + (k.outer_1*5)), 1, 5)]))
+              }
+              T_relu_7: Buffer(T_relu_6, float32, [10], [])[ramp(cse_var_1_1, 1, 5)] = max((compute.global_4: Buffer(compute.global_2, float32x5, [1], [], align=16)[0] + p2_7: Buffer(p2_6, float32, [10], [])[ramp(cse_var_1_1, 1, 5)]), broadcast(0f32, 5))
+            }
+          }
+        }
+        ```
+
+        图中 的 IR 省略了 attributes 以及 shape 信息等
+
+    4. 接下来通过 Visitor 的方式DFS遍历刚才得到的 IR ， 将 IR 中的 CallNode, VarNode 和 ConstantNode 等按照相应的规则转换成对应的 GraphNode; **这里值得注意的是 Relay GraphExecutor 是不支持控制流的，因此如果 Relay IR 中含有 If, Match 等， 在这里会构建失败**：
+
+    ```c++
+    std::vector<GraphNodeRef> VisitExpr_(const VarNode* op) override {
+      Expr expr = GetRef<Expr>(op);
+      return var_map_[expr.get()];
+    }
+
+    std::vector<GraphNodeRef> VisitExpr_(const IfNode* op) override {
+      LOG(FATAL) << "Graph executor does not support control flow (found IfNode)";
+    }
+
+    std::vector<GraphNodeRef> VisitExpr_(const ConstructorNode* op) override {
+      LOG(FATAL) << "Graph executor does not support ADTs (found ConstructorNode)";
+    }
+
+    std::vector<GraphNodeRef> VisitExpr_(const GlobalVarNode* op) override {
+      LOG(FATAL) << "All GlobalVarNodes should be removed before graph executor's Codegen is called";
+    }
+    ```
+    
+    接下来， GraphNode 会被组织在 `GraphExecutorCodegen` 的 `std::vector<GraphObjectPtr> nodes_` 中。 这个图最终被写入 graph_json 中:
+
+        ```json
+        {
+          "nodes": [
+            {
+              "op": "null",
+              "name": "data",
+              "inputs": []
+            },
+            {
+              "op": "null",
+              "name": "weight1",
+              "inputs": []
+            },
+            {
+              "op": "null",
+              "name": "bias1",
+              "inputs": []
+            },
+            {
+              "op": "null",
+              "name": "weight2",
+              "inputs": []
+            },
+            {
+              "op": "null",
+              "name": "bias2",
+              "inputs": []
+            },
+            {
+              "op": "tvm_op",
+              "name": "tvmgen_default_fused_layout_transform",
+              "attrs": {
+                "hash": "e9662aa5b8e67b96",
+                "num_inputs": "1",
+                "src_layout": "NC",
+                "dst_layout": "NC8n",
+                "func_name": "tvmgen_default_fused_layout_transform",
+                "flatten_data": "0",
+                "num_outputs": "1"
+              },
+              "inputs": [
+                [1,0,0]
+              ]
+            },
+            {
+              "op": "tvm_op",
+              "name": "tvmgen_default_fused_nn_contrib_dense_pack_expand_dims_add_nn_relu",
+              "attrs": {
+                "hash": "f360b4c42be956c4",
+                "num_inputs": "3",
+                "weight_layout": "NC8n",
+                "func_name": "tvmgen_default_fused_nn_contrib_dense_pack_expand_dims_add_nn_relu",
+                "flatten_data": "0",
+                "num_outputs": "1"
+              },
+              "inputs": [
+                [0,0,0],
+                [5,0,0],
+                [2,0,0]
+              ]
+            },
+            {
+              "op": "tvm_op",
+              "name": "tvmgen_default_fused_layout_transform_1",
+              "attrs": {
+                "hash": "86451ec737a6a453",
+                "num_inputs": "1",
+                "src_layout": "NC",
+                "dst_layout": "NC5n",
+                "func_name": "tvmgen_default_fused_layout_transform_1",
+                "flatten_data": "0",
+                "num_outputs": "1"
+              },
+              "inputs": [
+                [3,0,0]
+              ]
+            },
+            {
+              "op": "tvm_op",
+              "name": "tvmgen_default_fused_nn_contrib_dense_pack_expand_dims_add_nn_relu_1",
+              "attrs": {
+                "hash": "32a532a5919d3a8b",
+                "num_inputs": "3",
+                "weight_layout": "NC5n",
+                "func_name": "tvmgen_default_fused_nn_contrib_dense_pack_expand_dims_add_nn_relu_1",
+                "flatten_data": "0",
+                "num_outputs": "1"
+              },
+              "inputs": [
+                [6,0,0],
+                [7,0,0],
+                [4,0,0]
+              ]
+            }
+          ],
+          "arg_nodes": [0,1,2,3,4],
+          "heads": [
+            [8,0,0]
+          ],
+          "attrs": {
+            "storage_id": [
+              "list_int",
+              [0,1,2,3,4,5,6,7,8]
+            ],
+            "shape": [
+              "list_shape",
+              [
+                [1,784],
+                [128,784],
+                [128],
+                [10,128],
+                [10],
+                [16,784,8],
+                [1,28],
+                [2,128,5],
+                [1,10]
+              ]
+            ],
+            "device_index": [
+              "list_int",
+              [1,1,1,1,1,1,1,1,1]
+            ],
+            "dltype": [
+              "list_str",
+              ["float32","float32","float32","float32","float32","float32","float32","float32","float32"]
+            ]
+          },
+          "node_row_ptr": [0,1,2,3,4,5,6,7,8,9]
+        }
+        ```
+
+
+5. 最终 `executor_factory = _executor_factory.GraphExecutorFactoryModule()` 会将
+    
+    1. 输入的 Relay IR
+    2. json表示的 计算执行图
+    3. 对应的执行器
+    4. TIRToRuntime build 出的 runtime.module
+    5. 代码生成的 target
+    6. 优化后的计算图的输入参数
+    7. mod_name, func_metadata 
+
+    打包成一个module， 可以根据该module中的信息构建一个 graph_executor， 并 利用 graph_executor 加载执行 graph
+
+💡<u>**总结一下**</u>: 
+
+1. c++ 端的 `BuildRelay` 函数是通用接口 `relay.build` 的核心， 在上面过程中， 我们打出了 Relay, TE, TIR, graph_json 等几种不同的中间表示， 从 Relay 到 TE， 从TE 到 TIR， 再从 TIR 中的元张量函数被翻译成机器码， 每一步都会执行相应部分的优化。 至于具体做了哪些优化， TODO:
+
+2. 但是需要注意的是通过这条路径，我们只能编译 静态模型， 无论是控制流还是 动态 shape， 支持的都不是很好； Relay 的后续工作 nimble 在这一方面做出了改进，可以参考: [nimble](./paper-nimble.md)。 简单来讲，我们不再依赖这个简单地 graph_executor, 而是构建了一个虚拟机进行运行时的分析、内存分配、算子派发等，在 Relax 中也是这样做的，因此接下来的一节以 Relax 为例， 看一下 TVM 如何支持动态shape， 动态控制流， 如何使用 VM 进行相应支持。
 
 ## 4. Lower Relax
