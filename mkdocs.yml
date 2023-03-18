@@ -30,6 +30,11 @@ nav:
     - align:              "cpp/align.md"
     - ranges:             "cpp/ranges.md"
     - benchmark:          "cpp/benchmark.md"
+    - profiler:           "cpp/profiler.md"
+    - IO-multiplexing:    "cpp/IO-multiplexing.md"
+    - epoll:              "cpp/epoll.md"
+    - signal:             "cpp/signal.md"
+    - fork-safe:          "cpp/fork-safe.md"
   - Rust: 
     - rust-toolchain:     "rust/rust-toolchain.md"
     - rust-study:         "rust/rust-study.md"
@@ -47,7 +52,6 @@ nav:
     - git:                "tools/git.md"
     # - matplotlib:         "tools/matplotlib.md"
     - powershell:         "tools/powershell.md"
-    - profile:            "tools/profile.md"
     - regex:              "tools/regex.md"
     - mkdocs:             "tools/mkdocs.md"
   - Courses:
@@ -60,7 +64,7 @@ nav:
     - ecdsa-pk-recovery:  "crypto/ecdsa-pk-recovery.md"
     - algo-rsa:           "crypto/algo-rsa.md"
     - algo-fft&ntt:       "crypto/algo-fft&ntt.md"
-    - algo-montgomery:    "crypto/algo-montgomery.md"
+    - algo-reduction:     "crypto/algo-reduction.md"
     # - seal-ckks:          "crypto/seal-ckks.md"
   - Mlc:
     - dlc-survey:         "mlc/dlc-survey.md"
