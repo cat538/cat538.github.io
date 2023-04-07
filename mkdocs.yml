@@ -76,10 +76,13 @@ nav:
     - tvm-tensorIR:       "mlc/tvm-tensorIR.md"
     - tvm-lowering:       "mlc/tvm-lowering.md"
     - mlir:               "mlc/mlir.md"
+    - mlir-toy:           "mlc/mlir-toy.md"
+    - mlir-iree:          "mlc/mlir-iree.md"
     - paper-torch.fx:     "mlc/paper-torch.fx.md"
     - paper-nimble:       "mlc/paper-nimble.md"
     - paper-cortex:       "mlc/paper-cortex.md"
     - paper-dietcode:     "mlc/paper-dietcode.md"
+    - paper-freetensor:   "mlc/paper-freetensor.md"
   - About: "about.md"
 
 

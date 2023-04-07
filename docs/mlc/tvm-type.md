@@ -761,65 +761,32 @@ class OpNode : public RelayExprNode {
 };
 ```
 
-这里以 Relay 定义的 `bias_add` Op 的例子来理解，位于`src/relay/op/nn/nn.cc` 中:
+TVM 在 C++ 端使用 `RELAY_REGISTER_OP` 机制统一管理 Relay Op，这里以 Relay 定义的 `dense` Op 的例子来理解，位于`src/relay/op/nn/nn.cc` 中:
 
 ```c++
-// relay.nn.bias_add
-TVM_REGISTER_NODE_TYPE(BiasAddAttrs);
-
-bool BiasAddRel(const Array<Type>& types, int num_inputs, const Attrs& attrs,
-                const TypeReporter& reporter) {
-  ICHECK_EQ(types.size(), 3);
-  const auto* data = types[0].as<TensorTypeNode>();
-  if (data == nullptr) return false;
-
-  const BiasAddAttrs* param = attrs.as<BiasAddAttrs>();
-  ICHECK(param != nullptr);
-  int axis = param->axis;
-  if (axis < 0) {
-    axis = data->shape.size() + axis;
-  }
-  if (axis >= static_cast<int>(data->shape.size()) || axis < 0) {
-    reporter->GetDiagCtx().EmitFatal(Diagnostic::Error(reporter->GetSpan())
-                                     << "The axis in bias_add must be in range for the shape; "
-                                     << "attempted to access index " << param->axis << " of "
-                                     << PrettyPrint(data->shape));
-    return false;
-  }
-
-  // assign output type
-  reporter->Assign(types[1], TensorType({data->shape[axis]}, data->dtype));
-  reporter->Assign(types[2], types[0]);
-  return true;
+Expr MakeDense(Expr data, Expr weight, IndexExpr units, DataType out_dtype) {
+  auto attrs = make_object<DenseAttrs>();
+  attrs->units = units;
+  attrs->out_dtype = out_dtype;
+  static const Op& op = Op::Get("nn.dense");
+  return Call(op, {data, weight}, Attrs(attrs), {});
 }
 
-// Positional relay function to create dense operator used by frontend FFI.
-Expr MakeBiasAdd(Expr data, Expr bias, int axis) {
-  auto attrs = make_object<BiasAddAttrs>();
-  attrs->axis = axis;
-  static const Op& op = Op::Get("nn.bias_add");
-  return Call(op, {data, bias}, Attrs(attrs), {});
-}
+TVM_REGISTER_GLOBAL("relay.op.nn._make.dense").set_body_typed(MakeDense);
 
-TVM_REGISTER_GLOBAL("relay.op.nn._make.bias_add").set_body_typed(MakeBiasAdd);
-
-RELAY_REGISTER_OP("nn.bias_add")
-    .describe(R"code(Add bias to an axis of the input.
-
-)code" TVM_ADD_FILELINE)
-    .set_attrs_type<BiasAddAttrs>()
+RELAY_REGISTER_OP("nn.dense")
+    .describe(/*省略*/)
+    .set_attrs_type<DenseAttrs>()
     .set_num_inputs(2)
     .add_argument("data", "nD Tensor", "Input data.")
-    .add_argument("bias", "1D Tensor", "Bias.")
+    .add_argument("weight", "2D Tensor", "Weight matrix.")
     .set_support_level(1)
-    .add_type_rel("BiasAdd", BiasAddRel)
-    .set_attr<TOpPattern>("TOpPattern", kBroadcast)
-    .set_attr<FTVMCompute>("FTVMCompute", [](const Attrs& attrs, const Array<te::Tensor>& inputs,
-                                             const Type& out_type) {
-      const auto* param = attrs.as<BiasAddAttrs>();
-      return tvm::Array<tvm::te::Tensor>{topi::nn::bias_add(inputs[0], inputs[1], param->axis)};
-    });
+    .set_attr<FInferCorrectLayout>("FInferCorrectLayout", DenseInferCorrectLayout)
+    .add_type_rel("Dense", MatmulRel<DenseAttrs>)
+    .set_attr<TOpPattern>("TOpPattern", kOutEWiseFusable);
 ```
+
+可以看到最终返回的就是一个 `CallNode`， Op 是 `dense`。
 
 
 ### 2.4. IRModule
@@ -854,7 +821,6 @@ TODO:
 TODO:
 
 ### 2.6. Pass
-
 TVM 的Pass 基础设施定义了一个虚基类: `Pass`，以及 实现 Pass 管理的 `PassContext`(类似 LLVM 中的 PassManeger) 等， 它们的定义在 `include/tvm/ir/transform.h` 中
 
 > 该文件实现了一个 pass 管理器。 Pass 管理器管理在给定的 AST 单元 上管理 IRModule -> IRModule 的转换 Passes。 该设计的灵感主要来自 LLVM 的 pass 管理器和执行 张量 -> 张量 转换的现代深度学习框架
@@ -865,9 +831,9 @@ TVM 的Pass 基础设施定义了一个虚基类: `Pass`，以及 实现 Pass �
 > - 收集所需的分析信息并及时更新
 > - 减少为编译器开发人员等实施新 Pass 所需的工作量
 > 
-> 与 LLVM 的 pass 管理器类似，我们将 Relay/Relax pass 管理器设计为以不同的粒度工作，即模块级别、功能级别，甚至 sequential passes that contains a host of passes。
+> 与 LLVM 的 pass 管理器类似，我们将 Relay/Relax pass 管理器设计为以不同的粒度工作，即模块级别、函数级别，以及 sequential passes that contains a host of passes。
 > 
-> 但是，我们还考虑了深度学习框架（例如 Pytorch 和 Gluon 等）的要求/约定，从而扩展了传统 Pass 管理器的功能。Relay/Relax  Pass 管理器中的每个 Pass 都执行 IRModule -> IRModule 转换。 所有不同类型的传递，包括 sequential-level pass object，本质上都是传递对象。 因此，这种设计有效地为用户提供了一个一致且方便的界面，即 Pass 。 它提供了一种简化 Relay/Relax pass 的开发和测试的方法。 例如，使用 Pass 管理器，外部用户将能够正确安排自定义 Pass ，而无需修改单个手工制作的 Pass 订单。
+> 但我们还考虑了深度学习框架（例如 Pytorch 和 Gluon 等）的要求/约定，从而扩展了传统 Pass 管理器的功能。 Relay/Relax  Pass 管理器中的每个 Pass 都执行 IRModule -> IRModule 转换。 所有不同类型的传递，包括 sequential-level pass object，本质上都是传递对象。 它提供了一种简化 Relay/Relax pass 的开发和测试的方法。 例如，使用 Pass 管理器，外部用户将能够正确安排自定义 Pass ，而无需修改单个手工制作的 Pass 订单。
 > 
 > **将来我们需要描述 Pass 之间的约束。 例如，我们可能希望保留不同 Pass 之间的依赖关系，并在某个 Pass 完成时验证它们**
 > 
@@ -898,7 +864,7 @@ class PassInfoNode : public Object {
   String name;    // pass 名字
   bool traceable; // 该 pass 是否可被 trace
   Array<String> required; // 执行当前 pass 所需要的前置 pass
-  PassInfoNode() = default;
+
   static constexpr const char* _type_key = "transform.PassInfo";
   static constexpr bool _type_has_method_sequal_reduce = false;
   TVM_DECLARE_FINAL_OBJECT_INFO(PassInfoNode, Object);
@@ -918,8 +884,8 @@ class PassContextNode : public Object {
   mutable Optional<DiagnosticContext> diag_ctx; // 诊断信息相关
   Map<String, ObjectRef> config;  // Pass specific configurations
   Array<instrument::PassInstrument> instruments;  // pass instrument implementations
-  mutable Array<ObjectRef> trace_stack; // Trace stack for relax pass infra
-  Optional<Map<String, Bool>> make_traceable; // passes to be traced
+  mutable Array<ObjectRef> trace_stack; // relax的Trace stack
+  Optional<Map<String, Bool>> make_traceable; // 待追踪的 passes
   mutable int num_evals{0}; // Number of evaluations conducted in the pass pipeline
   Optional<ObjectRef> tuning_api_database;  // Database for tuning API
   
@@ -934,28 +900,34 @@ class PassContextNode : public Object {
 
 ```c++
 auto new_ctx = PassContext::Create();
-ctx->opt_level = 2;
+ctx->opt_level = 3;
 With<PassContext> scope(ctx);
 // pass context in effect.
 ```
+这对应了在 python 中我们经常使用 `relay.build` 时相应的代码：
 
-为了方便，TVM 中实现了三个类别的 Pass：
+```py
+with tvm.transform.PassContext(opt_level=3):
+  rt_lib = relay.build(ir_mod=ir_mod, target="llvm")
+```
+
+TVM 中实现了三个层级的 Pass（实际上在relax中又引入了 `DataflowBlockPass` 这中类型的pass），在 PassNode 的这三个子类中通过 `pass_func` 成员来描述一个 pass 具体怎样对一个 IRModule、Function等做转换
 
 1. Module-Level
 
     > Module级别 pass 旨在实现全局分析/优化，即过程间优化（IPO）等，类似于 LLVM 中的 module pass。
     > 
-    > Relay 中一些需要 Module 全局图的典型 pass，如 A-normal form 转换和 lambda 提升等，都属于这个集合。在这个级别，用户甚至可以在 module 中添加和/或删除功能。此级别的 pass 可以完全控制给定的 relay 程序，包括添加和删除函数。
+    > Relay 中一些需要 Module 全局图的典型 pass，如 A-normal form 转换和 lambda 提升等，都属于这个集合。此级别的 pass 可以完全控制给定的 relay 程序，包括添加和删除函数。
 
     ```c++
     class ModulePassNode : public PassNode {
      public:
       PassInfo pass_info;
-      // `pass_func` 描绘了真正的优化。 例如: 我们可能需要在 module 级别进行无用代码消除， 那么
-      // 我们可以在 `pass_func` 中实现算法并让它在 module 上运行。它将删除死代码，包括 module 中未使用的函数。
+      // `pass_func` 描绘了真正的优化。 例如: 在`pass_func` 中实现死代码消除算法
+      // 并让它在 module 上运行。它将删除死代码，包括 module 中未使用的函数。
       runtime::TypedPackedFunc<IRModule(IRModule, PassContext)> pass_func;
-      ModulePassNode() = default;
-      // IRModule => IRModule: 返回更新后的 IRModule.
+
+      // Apply a pass, IRModule => IRModule: 返回更新后的 IRModule.
       IRModule operator()(IRModule mod, const PassContext& pass_ctx) const final;
       static constexpr const char* _type_key = "transform.ModulePass";
       TVM_DECLARE_FINAL_OBJECT_INFO(ModulePassNode, PassNode);
@@ -970,7 +942,7 @@ With<PassContext> scope(ctx);
 
     函数级 pass 用于对给定的 Relay/tir module 进行各种函数内的优化。
     它每次从 module 的函数列表中获取一个函数进行优化，并产生一个重写的 Relay Function 或 tir PrimFunc。
-    大部分 pass 都可以归为这一类，比如 Relay 中常见的子表达式消除和推理简化，以及 tir 中的向量化和展平存储等。
+    大部分 pass 都可以归为这一类，比如 Relay 中常见的子表达式消除和推理简化，以及 tir 中的向量化和 flattening storage 等。
 
     这个级别的 Pass 使用 `PrimFuncPassNode`(tir) 和 `FuncPassNode`(relay, relax) 来表示， 
     其中 relay 的 `FuncPassNode` 实现如下：
@@ -979,8 +951,7 @@ With<PassContext> scope(ctx);
     class FunctionPassNode : public PassNode {
      public:
       PassInfo pass_info;
-      // `pass_func` 描绘了真正的优化。 例如: 我们可以实现一个在 Relay 函数级别的 pass 
-      // 作为 `pass_func` 并让它在 module 上运行，相同的 `pass_func` 将应用于 module 中每个函数。
+      // `pass_func` 描述真正的优化，相同的 `pass_func` 应用于 module 中每个函数
       runtime::TypedPackedFunc<Function(Function, IRModule, PassContext)> pass_func;
       FunctionPassNode() = default;
       IRModule operator()(IRModule mod, const PassContext& pass_ctx) const final;
@@ -996,8 +967,220 @@ With<PassContext> scope(ctx);
 
     类似 pytorch 里面的 nn.Sequential, 包含了一堆可执行的Pass按照顺序执行。目前在 Relay 中只有少数 pass 被放入该组。
     
+    ```C++
+    class SequentialPassNode : PassNode {
+      PassInfo pass_info;
+      // Passes need to be executed.
+      Array<Pass> passes;
+      bool PassEnabled(const PassInfo& info) const;
+      Module operator()(const Module& mod, const PassContext& pass_ctx) const final;
+    };
+    ```
+
     例如， relay 的 `FoldScaleAxis` Pass 需要在内部调度 `ForwardFoldScaleAxis` 和 `BackwardFoldScaleAxis` 。 且应当先执行 `BackwardFoldScaleAxis` 。因此，这个 Pass 是 SequentialPass 的理想候选。
 
+
+接下来我们以 Relay 中的 `FoldConstant` pass 为例来看一下 relay 中的 pass 的管理和使用，实验代码如下：
+
+```py
+import numpy as np
+import tvm
+from tvm import relay
+
+cons1 = relay.const(np.ones((3,3)))
+cons2 = relay.const(np.ones((3,3)))
+
+right = relay.var("right")
+left = relay.var("left")
+let = relay.Let(right, cons1*cons2, relay.Let(left, cons1* cons2 + cons1* cons2, left + right))
+# 即 (cons1 * cons2) * 3
+main = relay.Function([], let)
+
+print(relay.transform.FoldConstant())
+
+seq = tvm.transform.Sequential(
+    [
+        relay.transform.FoldConstant(),
+    ]
+)
+
+mod = tvm.IRModule({"main":main})
+print(mod)
+print(f"{'='*20}After FoldConstant{'='*20}")
+with tvm.transform.PassContext(opt_level=3):
+  opt_mod = seq(mod)
+print(opt_mod)
+```
+
+程序输出如下：
+
+```py
+Run Function pass: FoldConstant at the optimization level 2
+def @main() {
+  let %right = multiply(meta[relay.Constant][0], meta[relay.Constant][1]);
+  %0 = multiply(meta[relay.Constant][0], meta[relay.Constant][1]);
+  %1 = multiply(meta[relay.Constant][0], meta[relay.Constant][1]);
+  let %left = add(%0, %1);
+  add(%left, %right)
+}
+
+
+====================After FoldConstant====================
+
+def @main() -> Tensor[(3, 3), float32] {
+  meta[relay.Constant][0] /* ty=Tensor[(3, 3), float32] */
+}
+```
+
+1. 首先关注程序中的 `relay.transform.FoldConstant()`，这里的调用将构造一个`FunctionPass` 对象， 调用对应在c++中的 `src/relay/transform/fold_constant.cc`：
+
+    ```c++
+    Pass FoldConstant(bool fold_qnn) {
+      runtime::TypedPackedFunc<Function(Function, IRModule, PassContext)> pass_func =
+          [=](Function f, IRModule m, PassContext) {
+            return Downcast<Function>(
+              ConstantFolder(m, fold_qnn).VisitExpr(f));
+          };
+      return CreateFunctionPass(pass_func, 2, "FoldConstant", {});
+    }
+
+    TVM_REGISTER_GLOBAL("relay._transform.FoldConstant").set_body_typed(FoldConstant);
+    ```
+
+    前面说到， pass 的核心逻辑在于 `pass_func`， 而对于 relay 的 `FoldConstant` 这个 pass 来说， 其实现逻辑在于 `ConstantFolder`的 `VisitExpr` 方法：
+
+2. 因此接下来关注 `ConstantFolder`：
+    ```c++
+    class ConstantFolder : public MixedModeMutator {
+     public:
+      explicit ConstantFolder(IRModule module, bool fold_qnn);
+
+     private:
+      using ExprMutator::VisitExpr_;
+
+      Expr VisitExpr_(const LetNode* let_node) final;
+      Expr VisitExpr_(const FunctionNode* function_node) final;
+      Expr VisitExpr_(const IfNode* if_node) final;
+
+      Expr Rewrite_(const CallNode* pre_call_node, const Expr& post) final;
+      Expr Rewrite_(const TupleGetItemNode* tuple_get_item_node,
+                    const Expr& post_tuple_get_item) final;
+
+      // Constant evaluate an expression.
+      Expr ConstEvaluate(const Expr& expr);
+
+      Optional<Expr> EvaluateShapeOf(const Call& call);
+      Optional<Expr> EvaluateNdarraySize(const Call& call);
+
+      Expr CastValue(const Expr& value, DataType dtype);
+
+      Optional<tvm::Array<IndexExpr>> GetConstantShape(const Expr& input);
+
+      // Module
+      IRModule module_;
+      // Whether to fold constants for QNN operations.
+      bool fold_qnn_;
+      // The kDLCPU device assumed to be available to the compiler. Used only when evaluating
+      // sub-expressions.
+      Device eval_cpu_dev_{kDLCPU, /*device_id=*/0};
+      // The target for the above device assumed to be available to the compiler. Used only when
+      // evaluating sub-expressions.
+      Target eval_cpu_target_{"llvm"};
+      // Cache the following ops for equivalence checking in this pass.
+      const Op& device_copy_op_;
+      const Op& shape_of_op_;
+      const Op& vm_shape_of_op_;
+      const Op& cast_op_;
+      const Op& ndarray_size_op_;
+      // True if currently within a "primitive" Relay Function.
+      bool inside_primitive_ = false;
+    };
+    ```
+
+    在我们的例子中，整个函数只有一个 `Let` Node，因此例子中进行常量折叠最核心的逻辑在于 `Expr VisitExpr_(const LetNode* let_node)`：
+
+    ```c++
+    // 重写了 ExprMutator 中的方法
+    Expr VisitExpr_(const LetNode* let_node) final {
+      auto pre_visit = [this](const LetNode* op) {
+        // Rely on the Memoizer to cache pre-visit values
+        Expr new_value = Mutate(op->value);
+        if (IsSimpleConstant(new_value)) {
+          // Inline new value (along with any on_device annotation wrapping it) at all occurrences of
+          // the variable.
+          //
+          // We need to retain any "on_device" annotation so that downstream 'device aware'
+          // passes can still retrieve the virtual device for the constant in its new position(s). Eg:
+          //   def @f(..., result_virtual_device=D) {
+          //     let %x = on_device(... something we eval to a constant..., virtual_device=E)
+          //     @f(..., %x, ...)
+          //   }
+          // Here the default virtual device is D, whereas the argument %x to @f is on E (and @f
+          // expects that). No on_device annotation is required in the call according to the
+          // convention used by the device-aware visitors.
+          //
+          // However once we've inlined the constant we need to insert an on_device, again to
+          // respect the convention used by the device-aware visitors.
+          //   def @f(..., result_virtual_device=D) {
+          //     @f(..., on_device(...the constant..., virtual_device=E), ...)
+          //   }
+          VLOG(1) << "Replacing let-binding for " << op->var->name_hint()
+                  << " with constant:" << std::endl
+                  << PrettyPrint(new_value);
+          memo_[op->var] = new_value;
+        } else {
+          this->Mutate(op->var);
+        }
+      };
+      auto post_visit = [this](const LetNode* op) {
+        Expr expr = GetRef<Expr>(op);
+        // Rely on the Memoizer to cache pre-visit values
+        Expr new_value = this->Mutate(op->value);
+        if (IsSimpleConstant(new_value)) {
+          // The let-bound value has been inlined, drop the let-binding itself.
+          this->memo_[expr] = Mutate(op->body);
+        } else {
+          Var new_var = Downcast<Var>(this->Mutate(op->var));
+          Expr new_body = this->Mutate(op->body);
+          if (new_var.same_as(op->var) && new_value.same_as(op->value) &&
+              new_body.same_as(op->body)) {
+            this->memo_[expr] = expr;
+          } else {
+            this->memo_[expr] = Let(new_var, new_value, new_body, op->span);
+          }
+        }
+      };
+      ExpandANormalForm(let_node, pre_visit, post_visit);
+      return memo_[GetRef<Expr>(let_node)];
+    }
+    ```
+3. 代码中的 `opt_mod = seq(mod)` 将会调用 Pass 类的 `operator()` 方法：
+
+    ```c++
+    TVM_REGISTER_GLOBAL("transform.RunPass").set_body_typed([](Pass pass, IRModule mod) {
+      return pass(std::move(mod));
+    });
+    ```
+
+    而 `IRModule Pass::operator()(IRModule mod) const` 实现如下：
+
+    ```c++
+    IRModule Pass::operator()(IRModule mod) const {
+      return this->operator()(std::move(mod), PassContext::Current());
+    }
+
+    IRModule Pass::operator()(IRModule mod, const PassContext& pass_ctx) const {
+      const PassNode* node = operator->();
+      const PassInfo& pass_info = node->Info();
+
+      IRModule ret;
+      ret = node->operator()(std::move(mod), pass_ctx);
+
+      return std::move(ret);
+    }
+    ```
+
+    对于我们执行的 FoldConstant pass 而言， 这里的 node 就是
 
 ## 3. Target
 
