@@ -75,6 +75,8 @@ nav:
     # - tvm-relax:          "mlc/tvm-relaxIR.md"
     - tvm-tensorIR:       "mlc/tvm-tensorIR.md"
     - tvm-lowering:       "mlc/tvm-lowering.md"
+    - tvm-autotvm:        "mlc/tvm-autotvm.md"
+    - tvm-ansor:          "mlc/tvm-ansor.md"
     - mlir:               "mlc/mlir.md"
     - mlir-toy:           "mlc/mlir-toy.md"
     - mlir-iree:          "mlc/mlir-iree.md"
