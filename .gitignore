@@ -10,4 +10,4 @@
 *.o
 *.so
 *.a
-docs/mlc/script.md
+*pscript.md

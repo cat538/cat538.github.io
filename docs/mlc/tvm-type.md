@@ -681,7 +681,7 @@ class TypeNode : public Object {
 
     2. Constant 表示常量张量类型。根据不同张量维度表示不同的常量，比如标量常量、数组常量，RelayExpr 中常量表达式使用 NDArray 表示； 这里可以对比 tir 中的常量表达式： 在tir 中， 常量表达式有 `FloatImm`, `IntImm` 等不同类型用于表示 scalar， 而在relay 中的常量表达式则是表示 tensor
 
-💡<u>**从对于Let， Match， Constructor 等表达式的支持可以看出，Relay相比于传统的数据流图 添加了更多函数式的支持，更具体的信息可以参考 [relayIR](./tvm-relayIR.md)**</u>
+💡<u>**从对于Let， Match， Constructor 等表达式的支持可以看出，Relay相比于传统的数据流图 添加了更多函数式的支持，更具体的信息可以参考 [relayIR](./tvm-relay.md)**</u>
 
 #### 2.2.1. Let-Binding
 关于为什么需要 Let-binding， 在这个 RFC 里的例子可能比官网写的更详细一些：
