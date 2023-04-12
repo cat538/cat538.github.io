@@ -82,9 +82,12 @@ nav:
     - mlir-iree:          "mlc/mlir-iree.md"
     - paper-torch.fx:     "mlc/paper-torch.fx.md"
     - paper-nimble:       "mlc/paper-nimble.md"
+    - paper-disc:         "mlc/paper-disc.md"
     - paper-cortex:       "mlc/paper-cortex.md"
-    - paper-dietcode:     "mlc/paper-dietcode.md"
+    - paper-cora:         "mlc/paper-cora.md"
+    # - paper-dietcode:     "mlc/paper-dietcode.md"
     - paper-freetensor:   "mlc/paper-freetensor.md"
+    # - paper-roller:       "mlc/paper-roller.md"
   - About: "about.md"
 
 
