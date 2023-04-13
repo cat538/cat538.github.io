@@ -12,15 +12,15 @@
 ```py
 # RUN: toyc-ch1 %s -emit=ast 2>&1 | FileCheck %s
 
-# User defined function that operates 操作未知形状的参数
+# User defined function that 操作 **任意** 形状的参数（类比 function template）
 def multiply_transpose(a, b) {
   return transpose(a) * transpose(b);
 }
 
 def main() {
-  # `a` has shape <2, 3>; 其 shape 从字面量推断而来
+  # `a` shape <2, 3>; 其 shape 从字面量推断而来
   var a = [[1, 2, 3], [4, 5, 6]];
-  # b 与 a 完全相同, literal array is implicitly reshaped
+  # b 与 a 完全相同, literal array is **implicitly reshaped**
   var b<2, 3> = [1, 2, 3, 4, 5, 6];
 
   # This call will specialize `multiply_transpose` with <2, 3> for both
@@ -91,7 +91,7 @@ Function
 上面提到 MLIR 被设计为可扩展的基础设施，没有封闭的属性集，类型集，操作集； MLIR 通过 方言 Dialects 的概念来支持这种可扩展性。 **一个 Dialect 就是用户(或者MLIR预定义)在一个命名空间下提供的一组抽象**， 通过 Dialect 来统一不同级别的IR。
 
 
-接下来回到代码中， 执行以下 chapter2 的程序`./bin/toyc-ch2 ../mlir/test/Examples/Toy/Ch2/codegen.toy -emit=mlir -mlir-print-debuginfo` 得到MLIR 如下（下面的代码删除掉了 debug-info ）
+首先看一个 Dialect 的例子： 执行 chapter2 的程序: `./bin/toyc-ch2 ../mlir/test/Examples/Toy/Ch2/codegen.toy -emit=mlir -mlir-print-debuginfo` 得到第一章中程序示例的 **Toy Dialect 表示**如下（下面的代码删除掉了 debug-info ）
 
 ```c++
 module {
@@ -121,7 +121,7 @@ module {
 }
 ```
 
-在 MLIR 中， `Operations` 是抽象和计算的核心， MLIR 中的 instructions, functions, modules 都是使用 Operation 来表示。 以 上面 MLIR toy dialect 中的 `transpose` 操作为例，来看看 MLIR 表达式是由什么组成的： `transpose(a)` 的 MLIR 表达式由操作结果名称、Dialect命名空间、操作名、参数列表、输入参数类型、输出类型和操作在源文件中的位置组成。
+在 MLIR 中， `Operations` 是抽象和计算的核心， MLIR 中的 instructions, functions, modules 都使用 `Operation` 来表示。 以上面 MLIR toy dialect 中的 `transpose` 操作为例，来看看 MLIR 表达式是由什么组成的： `transpose(a)` 的 MLIR 表达式由操作结果名称、Dialect命名空间、操作名、参数列表、输入参数类型、输出类型和操作在源文件中的位置组成。
 
 ```py
 %t_tensor = "toy.transpose"(%tensor) {inplace = true} : (tensor<2x3xf64>) -> tensor<3x2xf64> loc("example/file/path":12:1)
@@ -137,11 +137,30 @@ module {
 > In MLIR, every operation has a mandatory source location associated with it. Contrary to LLVM, where debug info locations are metadata and can be dropped, in MLIR, the location is a core requirement, and APIs depend on and manipulate it. Dropping a location is thus an explicit choice which cannot happen by mistake.
 > 
 
-💡<u>**那我们的 `codegen.toy` 自定义的语言是如何转换成上面这个 MLIR 表示的呢**</u>：
+💡<u>**那我们的 `codegen.toy` 中的toy语言源码是怎么样转换成上面这个 Toy Dialect 的呢**</u>：
 
 <div class="autocb" style="text-align:center;"><img src="./mlir-toy.assets\autocb_0.png" style="zoom: 45%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
 
 简单来说，我们遍历 toy 语言的 AST， 将对应的表达式 Expr 转换成 Toy dialect 中的 operation。就具体实现来说，从toy 语言的 AST(即 `toy::ModuleAST`) 到 MLIR 表达式(即`mlir::ModuleOp`) 的生成过程在函数 `dumpMLIR` 中实现。
+
+> 💡在继续接下来的内容之前， 先来看一下 MLIR Toy Example 的代码结构，以第二章为例：
+>
+> - <u>**include**</u>
+>     - **toy**
+>         - `Dialect.h`:  Toy Dialect 的定义， 以及 Toy Dialect 上的 Operation 的定义；实际上该文件只是简单的包含 由 tablegen 生成的代码
+>         - `MLIRGen.h`:  声明了 **从 Toy AST 生成 Toy Dialect 的接口 `mlirGen`**
+>         - `Ops.td`:     **整个 Example 中最核心的部分**， 声明了 Toy Dialect， 以及 Toy Dialect 上的 Operation； 将由 mlir-tablegen 生成c++ 代码
+>         - `AST.h`:      Toy 语言的 AST 定义， 来自 <u>Kaleidoscope</u>， 不需要关心
+>         - `Lexer.h`:    一个 Tokenizer 的实现，来自 <u>Kaleidoscope</u>， 不需要关心
+>         - `Parser.h`:   一个递归下降 Parser，来自 <u>Kaleidoscope</u>， 不需要关心
+> 
+> - <u>**mlir**</u>
+>     - `Dialect.cpp`:  **从 Toy AST 生成 Toy Dialect 的具体实现**， 主要在 `MLIRGenImpl` class 中实现， 这个类暴露一个 `mlir::ModuleOp mlirGen(ModuleAST &moduleAST)` ；内部实现对每一种 Toy AST(如 ExprAST, FunctionAST 等) 的转换
+>     - `MLIRGen.cpp`:  主要是 Toy Dialect 上的 Operation 的具体实现， 目前不是特别懂TODO； 还实现了每种 Operation 的 print 具体实现， 用于dump
+> - <u>**parser**</u>
+>     - `AST.cpp`:  Toy 语言的 AST 定义， 来自 <u>Kaleidoscope</u>， 不需要关心
+> - `toyc.cpp`: toy 语言编译器的 cli， 实现了 `emit-MLIR` 和 `emit-AST` 等
+> 
 
 1. dumpMLIR 实现在 `examples/toy/Ch2/toys.cpp` 中：
 
@@ -222,7 +241,7 @@ module {
     }
     ```
 
-    最终的生成结果会按顺序被 insert 到 `mlir::OpBuilder::block` 中。 最终遍历生成的 MLIR Operation， 执行打印，就得到了上面打出来的 MLIR 表达式。 这里的问题是 `AddOp` `ConstantOp` 等 Op 是 toy dialect 中的内容， 因此我们需要实现定义这些数据结构， 那么具体该如何利用 MLIR 这个框架，去定义我们自己的 dialect 呢？
+    过程中生成的 Operation 会按顺序被 insert 到 `mlir::OpBuilder::block` 中。 最终遍历生成的 MLIR Operation， 执行打印，就得到了上面打出来的 MLIR 表达式。 这里的问题是 `AddOp` `ConstantOp` 等 Op 是 toy dialect 中的内容， 因此我们需要实现定义这些数据结构， 那么具体该如何利用 MLIR 这个框架，去定义我们自己的 dialect 呢？
 
 
 ### 2.1. 定义一个 Toy Dialect
@@ -329,10 +348,10 @@ def Toy_Dialect : Dialect {
   let emitAccessorPrefix = kEmitAccessorPrefix_Prefixed;
 }
 
-// Base class for toy dialect operations. inherits from the base `Op` class in `OpBase.td`
+// Inherits from the base `Op` class in `OpBase.td`
 // And provides:
-//   * The operation 的 parent dialect.
-//   * The operation 的 mnemonic(助记词)， or the name without the dialect prefix.
+//   * Toy operation 的 parent dialect(即 toy dialect).
+//   * Toy operation 的 mnemonic(助记词)， or the name without the dialect prefix.
 //   * A list of traits for the operation.
 class Toy_Op<string mnemonic, list<Trait> traits = []> :
     Op<Toy_Dialect, mnemonic, traits>;
@@ -390,7 +409,7 @@ def ConstantOp : Toy_Op<"constant", [NoSideEffect]> {
 
 1. `mlir-tblgen -gen-dialect-decls ../mlir/example/toy/Ch2/include/toy/Ops.td -I ../mlir/include`
 
-    生成代码如下：
+    生成了`ToyDialect` 的c++代码定义：
 
     ```c++
     /*===- TableGen'erated file -------------------------------------*- C++ -*-===*\
@@ -419,6 +438,8 @@ def ConstantOp : Toy_Op<"constant", [NoSideEffect]> {
     } // namespace mlir
     MLIR_DECLARE_EXPLICIT_TYPE_ID(::mlir::toy::ToyDialect)
     ```
+
+    这些代码在 `Dialect.cpp` 中 被包含进去: `#include "toy/Dialect.cpp.inc"`
 
 2. `mlir-tblgen -gen-op-defs ../mlir/example/toy/Ch2/include/toy/Ops.td -I ../mlir/include`
 
@@ -686,44 +707,57 @@ module {
 
 💡注意到这里 `multiply_transpose` 的签名输入输出类型 都是 `tensor<*xf64>` 即**动态形状**， 或者叫 generic tensor
 
-Toy IR 目前操作 generic tensors， 这意味着除了使用常量初始化的 tensor， 我们不知道其它 tensor 的形状。这使 优化 和 代码生成 变得复杂。我们可以通过简单地形状推理在 IR 中传播编译时已知的静态形状 来缓解这个问题。形状传播的难题在于如何处理 user-defined 函数调用（即上面例子中的 `multiply_transpose`）：每个调用点都可以推断出不同的形状。一种可能是根据参数类型**执行符号推理**，但随着引入更多控制流，符号推理将很难泛化。另一种方法是函数特化，其中每个具有新参数形状的调用点都内联被调用函数并对其进行特化。我们对 Toy 采取的方法是内联所有函数调用，然后**执行过程内形状传播**。
+在这一节的优化之后(`./bin/toyc-ch4 ../mlir/test/Examples/Toy/Ch4/codegen.toy -emit=mlir -opt`)， 生成的 IR 将会变为：
 
-我们可以编写专为 Toy Dialect 设计的内联算法，但这可能会变得相当复杂。撇开成本建模不谈，从头开始实施 结构化转换 已经很复杂了。值得庆幸的是，MLIR 提供了 **Dialect 可以 接入 的通用内联算法**。在 Toy 中，我们需要做的就是为内联器提供 [Interfaces](https://mlir.llvm.org/docs/Interfaces/)。
+```go
+module {
+  toy.func @main() {
+    %0 = toy.constant dense<[[1.000000e+00, 2.000000e+00, 3.000000e+00], [4.000000e+00, 5.000000e+00, 6.000000e+00]]> : tensor<2x3xf64>
+    %1 = toy.transpose(%0 : tensor<2x3xf64>) to tensor<3x2xf64>
+    %2 = toy.mul %1, %1 : tensor<3x2xf64>
+    toy.print %2 : tensor<3x2xf64>
+    toy.return
+  }
+}
+```
 
-1. 我们需要做的第一件事是在 Toy Dialect 中定义对内联操作的约束。此信息通过 [dialect interface](https://mlir.llvm.org/docs/Interfaces/#dialect-interfaces) 提供。这本质上是一个包含一组 virtual hooks 的类，方言通过重写这些方法提供具体实现。在这个例子中，用到的 Interface 是 `DialectInlinerInterface`
+💡先是利用到了上一节中的优化消除掉了冗余的 `reshape`；并且此时 `multiply_transpose` 被内联（原定义被删除）； 最重要的是**所有的 tensor 形状都变成了 static， IR 中 不再具有动态形状**； 并且 `%4` and `%5` 相同， 因此只被计算了一次；
+
+
+Toy IR 目前操作 generic tensors， 这意味着除了使用常量初始化的 tensor， 我们不知道其它 tensor 的形状。这使 优化 和 代码生成 变得复杂。我们可以通过在 IR 中传播编译时已知的静态形状 来缓解这个问题。形状传播的难题在于如何处理 user-defined 函数调用参数和返回值都没有给出形状信息（即上面例子中的 `multiply_transpose`）：每个调用点都可以推断出不同的形状。一种可能是根据参数类型**执行符号推理**，但随着引入更多控制流，符号推理将很难泛化。另一种方法是函数特化，其中每个具有新参数形状的调用点都内联被调用函数并对其进行特化。我们对 Toy 采取的方法是内联所有函数调用，然后**执行过程内形状传播**。
+
+我们可以编写专为 Toy Dialect 设计的内联算法，但这可能会变得相当复杂。撇开成本建模不谈，从头开始写固定模式的代码就已经很复杂了。MLIR 提供了 **Dialect 可以 接入 的通用内联算法**。在 Toy 中，我们需要做的就是为内联器提供 [Interfaces](https://mlir.llvm.org/docs/Interfaces/)。
+
+1. 第一步是在 Toy Dialect 中定义对内联操作的约束。此信息通过 [dialect interface](https://mlir.llvm.org/docs/Interfaces/#dialect-interfaces) 提供。 dialect interface 本质上是包含一组 virtual hooks 的类，方言通过重写这些方法提供具体实现。在这个内联例子中， 我们用到的 Interface 是 `DialectInlinerInterface`
 
     ```c++
     /// 这个类定义了用于 Toy Dialect 执行 inline 操作的接口
-    /// 简化了继承，并且只重写了必要的方法
+    /// 这里的实现做了简化，并且只重写了必要的方法
     struct ToyInlinerInterface : public DialectInlinerInterface {
       using DialectInlinerInterface::DialectInlinerInterface;
 
       /// 在我们的例子中 simply return true, 因为 Toy `Call` operation 总是可内联的
-      bool isLegalToInline(Operation *call, Operation *callable,
-                          bool wouldBeCloned) const final {
+      bool isLegalToInline(Operation *call, Operation *callable, bool wouldBeCloned) const final {
         return true;
       }
 
       /// 在我们的例子中 simply return true, 因为 Toy operation 总是可内联的
-      bool isLegalToInline(Operation *, Region *, bool,
-                          IRMapping &) const final {
+      bool isLegalToInline(Operation *, Region *, bool, IRMapping &) const final {
         return true;
       }
 
       /// 同上
-      bool isLegalToInline(Region *dest, Region *src, bool wouldBeCloned,
-                          IRMapping &valueMapping) const final {
+      bool isLegalToInline(Region *dest, Region *src, bool wouldBeCloned, IRMapping &valueMapping) const final {
         return true;
       }
 
-      /// 当一个 terminator operation 被 inline 后执行此 hook. 
+      /// 当一个 terminator operation 被 inline 后执行此 hook， 保证控制流的正确性（不会提前返回）
       /// Toy 中唯一的 terminator Operation是 `toy.return`
-      void handleTerminator(Operation *op,
-                            ArrayRef<Value> valuesToRepl) const final {
-        // 只有 "toy.return" 需要被处理
+      void handleTerminator(Operation *op, ArrayRef<Value> valuesToRepl) const final {
+        // 处理 "toy.return"
         auto returnOp = cast<ReturnOp>(op);
 
-        // 简单的吧 return 语句替换成 return 语句的 operands
+        // 简单的将 return 语句替换成 return 语句的 operands
         assert(returnOp.getNumOperands() == valuesToRepl.size());
         for (const auto &it : llvm::enumerate(returnOp.getOperands()))
           valuesToRepl[it.index()].replaceAllUsesWith(it.value());
@@ -731,16 +765,14 @@ Toy IR 目前操作 generic tensors， 这意味着除了使用常量初始化�
     };
     ```
 
-    此外，内联器只会丢弃私有可见的未使用函数定义。我们还必须在 MLIR 生成器中设置函数（主函数除外）的可见性。
+    此外，内联器只会 删除 私有可见的未使用函数定义。因此还需要在 `mlirGen` 中设置函数（`main`除外）为 private
 
     ```c++
     mlir::toy::FuncOp mlirGen(FunctionAST &funcAST) {
       ...
-      // 如果不是 `main`, then set the visibility to private.
       if (funcAST.getProto()->getName() != "main")
         function.setPrivate();
-
-      return function;
+      ...
     }
     ```
 
@@ -758,8 +790,8 @@ Toy IR 目前操作 generic tensors， 这意味着除了使用常量初始化�
 
     这里的 `addInterfaces<ToyInlinerInterface>()` 就是注册内联 Pass 的过程，其中`ToyInlinerInterface` 就是我们定义的表达式变形规则。
 
-3. 接下来，我们需要提供一种方法让内联器知道 `toy.generic_call` 代表一个调用， `toy.func` 代表一个函数。 MLIR 提供了 [operation interface](https://mlir.llvm.org/docs/Interfaces/#attributeoperationtype-interfaces)， 可用于将 operation 标记为 `call-like` 或 `callable-like` 。 与 dialect interface 不同， operation interface 提供更细粒度的信息。 我们将在此处添加的接口是 `CallOpInterface` 和 `CallableOpInterface` 
-
+3. 接下来，我们需要提供一种方法让内联器知道 `toy.generic_call` 代表一个调用， `toy.func` 代表一个函数。 MLIR 提供了 [operation interface](https://mlir.llvm.org/docs/Interfaces/#attributeoperationtype-interfaces)， 可用于将 operation 标记为 `call-like` 或 `callable-like` (与 dialect interface 不同， operation interface 提供更细粒度的信息)， 这里为 GenericCallOp 添加 `CallOpInterface` ， 为 FuncOp `CallableOpInterface` 
+  
     要添加此接口，我们只需将定义 include 到我们的 operation 描述文件 (`Ops.td`) 中：
 
     ```py
@@ -778,23 +810,16 @@ Toy IR 目前操作 generic tensors， 这意味着除了使用常量初始化�
     }
     ```
 
-4. 下面需要在 Dialect 定义中添加 cast 操作并设置调用的接口。为什么需要添加 cast 操作呢？这是因为在函数调用时，输入张量的类型是确定的。但在函数定义的时候，输入张量的类型是不确定的（泛化类型，这一点可以从上面的原始版本 MLIR 表达式中看出来）。因此在调用的时候就需要一个隐藏的数据类型转换，否则无法进行内联操作，因此这里引入了一个 cast。cast 操作可以将确定的数据类型转换为函数期望的数据类型。下面在 `mlir/examples/toy/Ch5/include/toy/Ops.td` 中添加 cast 操作：
+4. 还需要在 Dialect 定义中添加 cast 操作并设置调用的接口。为什么需要添加 cast 操作呢？这是因为在函数调用时，输入张量的类型是确定的。但在函数定义的时候，输入张量的类型是 generic 的。即我们需要`tensor<2x3xf64> -> tensor<*xf64>` 。下面在 `mlir/examples/toy/Ch5/include/toy/Ops.td` 中添加 cast 操作：
 
     ```rust
     def CastOp : Toy_Op<"cast", [
         DeclareOpInterfaceMethods<CastOpInterface>,
-        DeclareOpInterfaceMethods<ShapeInferenceOpInterface>,
         NoSideEffect,
         SameOperandsAndResultShape
       ]> {
       let summary = "shape cast operation";
-      let description = [{
-        The "cast" operation converts a tensor from one type to an equivalent type
-        without changing any data elements. The source and destination types must
-        both be tensor types with the same element type. If both are ranked, then
-        shape is required to match. The operation is invalid if converting to a
-        mismatching constant dimension.
-      }];
+      let description = [{ ... }];
 
       let arguments = (ins F64Tensor:$input);
       let results = (outs F64Tensor:$output);
@@ -808,9 +833,6 @@ Toy IR 目前操作 generic tensors， 这意味着除了使用常量初始化�
     接下来还需要重写 cast op 的 `areCastCompatible` 方法（在 `mlir/examples/toy/Ch5/mlir/Dialect.cpp`中）：
 
     ```c++
-    /// Returns true if the given set of input and result types are compatible with
-    /// this cast operation. This is required by the `CastOpInterface` to verify
-    /// this operation and provide other additional utilities.
     bool CastOp::areCastCompatible(TypeRange inputs, TypeRange outputs) {
       if (inputs.size() != 1 || outputs.size() != 1)
         return false;
@@ -825,16 +847,12 @@ Toy IR 目前操作 generic tensors， 这意味着除了使用常量初始化�
     ```
     这个方法用来判断是否需要进行类型转换，如果 inputs 和 outputs 的类型是兼容返回真，否则需要进行类型转换（cast）返回假。
 
-    另外我们还需要重写 `ToyInlinerInterface` 上的钩子，即 `materializeCallConversion` 函数：
+    另外我们还需要重写 `ToyInlinerInterface` 上的 hook ， 即 `materializeCallConversion` 函数：
 
     ```c++
     struct ToyInlinerInterface : public DialectInlinerInterface {
       ....
-      /// Attempts to materialize a conversion for a type mismatch between a call
-      /// from this dialect, and a callable region. This method should generate an
-      /// operation that takes 'input' as the only operand, and produces a single
-      /// result of 'resultType'. If a conversion can not be generated, nullptr
-      /// should be returned.
+      /// 尝试在函数调用的地方插入 cast 节点. 如果不能转换 返回 nullptr
       Operation *materializeCallConversion(OpBuilder &builder, Value input,
                                           Type resultType,
                                           Location conversionLoc) const final {
@@ -844,7 +862,7 @@ Toy IR 目前操作 generic tensors， 这意味着除了使用常量初始化�
     ```
     这个函数是内联 Pass 的入口。
 
-5. 将内联 Pass 添加到优化 pipline 中，在 `mlir/examples/toy/Ch5/toyc.cpp` 中：
+5. 将 Inline Pass 添加到优化 pipline 中，在 `mlir/examples/toy/Ch5/toyc.cpp` 中：
 
     ```c++
     if (enableOpt) {
@@ -852,15 +870,13 @@ Toy IR 目前操作 generic tensors， 这意味着除了使用常量初始化�
         // Apply any generic pass manager command line options and run the pipeline.
         applyPassManagerCLOptions(pm);
 
-        // Inline all functions into main and then delete them.
+        // 将所有的 call 插入 main 并且删除之
         pm.addPass(mlir::createInlinerPass());
     ...
     }
     ```
 
-经过 `pm.addPass(mlir::createInlinerPass());` 这一行，优化 pipline 里面就有了内联 Pass 了。
-
-我们看一下经过内联优化 Pass 过后原始的 MLIR 表达式变成什么样子了：
+此时得到的 toy dialect 如下：
 
 ```go
 func @main() {
@@ -877,3 +893,115 @@ func @main() {
 ```
 
 现在 MLIR 表达式只有一个主函数，之前的 `transpose` 函数被内联了，并且可以看到 `toy.cast` 实现的功能。
+
+### 4.2. 形状传播 pass
+现在我们已经内联了所有函数，剩下的是一个包含静态和动态形状操作混合的主函数。我们现在可以编写一个简单的形状推理过程在单个函数内播形状。我们可以将其写成针对 Toy Dialect pass，然而经验法则告诉我们，最好尽可能通用地表达转换，以便将来可以扩展到其他方言。
+
+与 Operation 类似，我们也可以使用 ODS 框架来定义 Operation Interfaces
+
+1. 使用 ODS 框架定义 Shape 推断 Operation Interface， 代码在 `mlir/examples/toy/Ch5/include/toy/ShapeInferenceInterface.td`
+
+    ```rust
+    def ShapeInferenceOpInterface : OpInterface<"ShapeInference"> {
+      let description = [{
+        Interface to access a registered method to infer the return types for an
+        operation that can be used during type inference.
+      }];
+
+      let methods = [
+        InterfaceMethod<"Infer and set the output shape for the current operation.",
+                        "void", "inferShapes">
+      ];
+    }
+    ```
+
+    其中的 `method` 表示需要为该接口提供的方法 ， 三个字段分别表示 desc， return type， method name
+2. 将 定义的 `ShapeInferenceOpInterface` 添加到必要的 Toy Operation 定义中
+
+    这里我们给 `AddOp`, `MulOp`, `CastOp` 和 `TranposeOp` 加上 ShapeInferenceOpInterface：
+
+    ```Rust
+    def CastOp : Toy_Op<"cast", [
+        DeclareOpInterfaceMethods<CastOpInterface>,
+        // 这里添加 ShapeInferenceOpInterface
+        DeclareOpInterfaceMethods<ShapeInferenceOpInterface>, 
+        NoSideEffect,
+        SameOperandsAndResultShape
+      ]> {...}
+    ```
+
+    所有添加了 `ShapeInferenceOpInterface` 的 Op 都需要实现接口`method`字段中定义的的 `inferShapes` 方法：
+
+    ```c++
+    // cast op 的形状推断函数
+    void CastOp::inferShapes() { getResult().setType(getOperand().getType()); }
+
+    // transpose op 的 形状推断函数
+    void TransposeOp::inferShapes() {
+      auto arrayTy = getOperand().getType().cast<RankedTensorType>();
+      SmallVector<int64_t, 2> dims(llvm::reverse(arrayTy.getShape()));
+      getResult().setType(RankedTensorType::get(dims, arrayTy.getElementType()));
+    }
+    ```
+
+
+3. 实现形状推导（即形状传播） Pass
+
+    `ShapeInferencePass` 将对函数进行操作：它将在每个函数上独立运行。 MLIR 还支持在任何 单独的 Operation 上运行的通用 `OperationPass`，但这里我们的 module仅包含函数，因此无需泛化到所有操作。
+
+    ```c++
+    struct ShapeInferencePass 
+     : public mlir::PassWrapper<ShapeInferencePass, OperationPass<toy::FuncOp>> {
+      MLIR_DEFINE_EXPLICIT_INTERNAL_INLINE_TYPE_ID(ShapeInferencePass)
+    
+    void runOnOperation() override {
+      auto f = getOperation();
+
+      // 0. 将所有需要 形状推导 的Op(返回 dynamic shape 的 Op) 加入 worklist
+      llvm::SmallPtrSet<mlir::Operation *, 16> opWorklist;
+      f.walk([&](mlir::Operation *op) {
+        if (returnsDynamicShape(op))
+          opWorklist.insert(op);
+      });
+
+      // 在 worklist 上迭代， 直到所有的 operations 都被推导（worklist 为空）
+      while (!opWorklist.empty()) {
+        // 1. 找到下一个需要推导的 operation —— 这个 operation 的所有参数形状应该都已经被推导
+        auto nextop = llvm::find_if(opWorklist, allOperandsInferred);
+
+        // 2. 没有找到说明已经收敛， 结束算法
+        if (nextop == opWorklist.end()) break;
+
+        // 3. 从 worklist 中删除 该 op， 并调用该 op 的 inferShapes 方法 推导形状
+        Operation *op = *nextop;
+        opWorklist.erase(op);
+        
+        // 3.1. op 实现了 `ShapeInference` 接口上的方法 `inferShapes` 在这里被调用
+        if (auto shapeOp = dyn_cast<ShapeInference>(op)) {
+          shapeOp.inferShapes();
+        } else {
+          op->emitError("operation doesnt have shape inference interface");
+          return signalPassFailure();
+        }
+      }
+      
+      // 4. 跳出循环后， 如果 operation worklist 不为空, 意味着算法失败.
+      if (!opWorklist.empty()) {
+        f.emitError("Shape inference failed, ")
+            << opWorklist.size() << " operations couldn't be inferred\n";
+        signalPassFailure();
+      }
+    }
+    }
+    ```
+
+4. 把形状推导 Pass 加到优化 pipline
+
+    同样的，我们在最后把 shapeinference pass 添加到我们的 passmanager 中：
+
+    ```c++
+    optPM.addPass(mlir::toy::createShapeInferencePass());
+    ``` 
+
+    MLIR 代码中还添加了一个 CSE pass， 这样就得到了本章开始的最终结果。
+
