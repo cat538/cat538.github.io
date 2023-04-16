@@ -1005,3 +1005,390 @@ func @main() {
 
     MLIR 代码中还添加了一个 CSE pass， 这样就得到了本章开始的最终结果。
 
+## 5. Chapter 5: 部分 Lowering 到 Lower-Level Dialects 做优化
+接下来展示 MLIR 的特色， 即通过在同一函数中共存的方言混合来执行渐进式降低。 
+
+在本章中，我们将 Toy Dialect 的部分 Operation Lowering 到 Affine Dialect 。Affine Dialect 是为 计算密集型 程序量身定制的：它不支持表示我们的 `toy.print`。 我们可以针对 Toy 的 计算密集型 部分使用 Affine，并在下一章中直接针对 LLVM IR 方言来降低 `toy.print`。 作为此 Lowering 的一部分，我们将从 Toy 操作的 `TensorType` 降低到通过仿射循环嵌套索引的 `MemRefType` 。 张量表示抽象值类型的数据序列，这意味着它们不存在于任何内存中， 而 `MemRefs` 表示较低级别的缓冲区访问，因为它们是对内存区域的具体引用。
+
+MLIR 有众多的 Dialect，所以 MLIR 提供了一个统一的 `DialectConversion` 框架来支持这些 Dialect 互转。 `DialectConversion` 框架 允许将一组 `illegal` 操作转换为一组 `legal` 操作。要使用这个框架，我们需要提供两件事（以及可选的第三件事）：
+
+1. **转换目标（Conversation Target）** 明确哪些 Dialect 操作是需要合法转换的，不合法的操作需要重写模式 (rewrite patterns) 来进行合法化。
+2. **一组重写模式（Rewrite Pattern）** 这是用于将非法操作转换为零个或多个合法操作的一组模式。
+3. **类型转换器 （Type Converter）（可选）** 这一节将不需要此转换。
+
+接下来依次来看
+
+1. **转换目标(Conversation Target)**
+
+    我们希望将计算密集型 Toy Operation 转换为 `Affine` 、 `Arith` 、 `Func` 和 `MemRef` 方言的 Operation 组合，以进一步优化。为了开始降低，我们首先定义我们的转换目标（这段代码位于 `mlir/examples/toy/Ch5/mlir/LowerToAffineLoops.cpp` ）：
+
+    ```c++
+    void ToyToAffineLoweringPass::runOnOperation() {
+      // 指定 转换目标（Conversation Target）
+      mlir::ConversionTarget target(getContext());
+
+      // 指定在这次 lowering 中 `Affine`, `Arith`, `Func`, 和 `MemRef` 方言是合法的
+      target.addLegalDialect<AffineDialect, arith::ArithDialect,
+                            func::FuncDialect, memref::MemRefDialect>();
+
+      // 将 Toy Dialect 标记为非法， 从而如果有 Toy Dialect 中的 Operation 没有被转换，就会报错
+      // 将 `toy.print` 标记为合法 ， 不过这里需要改变 该操作的 操作数为 `MemRefType`
+      // 由于 MLIR 中单个操作的定义始终优于 Dialect 的定义，因此上面代码中定义合法
+      target.addIllegalDialect<ToyDialect>();
+      target.addDynamicallyLegalOp<toy::PrintOp>([](toy::PrintOp op) {
+        return llvm::none_of(op->getOperandTypes(),
+                            [](Type type) { return type.isa<TensorType>(); });
+      });
+      ...
+    }
+    ```
+
+2. **转换模式(Conversion Patterns)**
+
+    在定义了转换目标之后，我们可以定义如何将非法操作转换为合法操作。 与第 3 章介绍的ODS框架类似， `DialectConversion` 框架也使用 RewritePatterns 来执行转换逻辑。 这些模式可能是之前看到的 RewritePatterns 或特定于转换框架 `ConversionPattern` 的新模式。 `ConversionPatterns` 与传统的 RewritePatterns 不同，因为它们接受一个额外的操作数参数，其中包含已重新映射 / 替换的 operands。 官方文档中给出了 Lowering Toy Dialect 中 transpose 操作的例子，代码如下。
+
+    ```c++
+    /// 将 `toy.transpose` operation 降低为 an affine loop nest.
+    struct TransposeOpLowering : public mlir::ConversionPattern {
+      TransposeOpLowering(mlir::MLIRContext *ctx)
+          : mlir::ConversionPattern(TransposeOp::getOperationName(), 1, ctx) {}
+
+      /// 匹配重写 `toy.transpose` operation, with the given
+      /// operands that have been remapped from `tensor<...>` to `memref<...>`.
+      mlir::LogicalResult
+      matchAndRewrite(mlir::Operation *op, ArrayRef<mlir::Value> operands,
+                      mlir::ConversionPatternRewriter &rewriter) const final {
+        auto loc = op->getLoc();
+
+        // 调用辅助函数，将当前操作降低到 一组仿射循环
+        // 我们提供了一个对重新映射的 操作数进行操作的仿函数，以及最内层 循环体的循环归纳变量。
+        lowerOpToLoops(
+            op, operands, rewriter,
+            [loc](mlir::PatternRewriter &rewriter,
+                  ArrayRef<mlir::Value> memRefOperands,
+                  ArrayRef<mlir::Value> loopIvs) {
+
+              TransposeOpAdaptor transposeAdaptor(memRefOperands);
+              mlir::Value input = transposeAdaptor.input();
+
+              // Transpose the elements by generating a load from the reverse indices.
+              SmallVector<mlir::Value, 2> reverseIvs(llvm::reverse(loopIvs));
+              return rewriter.create<mlir::AffineLoadOp>(loc, input, reverseIvs);
+            });
+        return success();
+      }
+    };
+    ```
+
+    我们把这个转换，包括其它Op到Affine的转换也添加到  `ToyToAffineLoweringPass` 中：
+
+    ```c++
+    void ToyToAffineLoweringPass::runOnOperation() {
+      ...
+
+      // 把 Conversion Patterns 添加到  `ToyToAffineLoweringPass`
+      RewritePatternSet patterns(&getContext());
+      patterns.add<AddOpLowering, ConstantOpLowering, FuncOpLowering, MulOpLowering,
+                  PrintOpLowering, ReturnOpLowering, TransposeOpLowering>(&getContext());
+
+      if (failed(...)) signalPassFailure();
+    }
+    ```
+
+3. 最终在 该Pass 中调用 MLIR 提供的 `applyPartialConversion`：
+
+
+    ```c++
+    void ToyToAffineLoweringPass::runOnOperation() {
+      // 1. 定义转换目标(Conversation Target)
+      ConversionTarget target(getContext());
+      ...
+      // 2. 添加转换模式(Conversion Patterns)
+      RewritePatternSet patterns(&getContext());
+      ...
+      // 3. applyPartialConversion
+      if (failed(applyPartialConversion(getOperation(), target, std::move(patterns))))
+        signalPassFailure();
+    }
+    ```
+
+    最后将这个 Pass 添加到 PassManager 中即可， 类似前面几节中 添加 Inline Pass：
+
+    ```C++
+      if (isLoweringToAffine) {
+        // Partially lower the toy dialect.
+        pm.addPass(mlir::toy::createLowerToAffinePass());
+
+        // Add a few cleanups post lowering.
+        mlir::OpPassManager &optPM = pm.nest<mlir::func::FuncOp>();
+        optPM.addPass(mlir::createCanonicalizerPass());
+        optPM.addPass(mlir::createCSEPass());
+
+        // Add optimizations if enabled.
+        if (enableOpt) {
+          optPM.addPass(mlir::createLoopFusionPass());
+          optPM.addPass(mlir::createAffineScalarReplacementPass());
+        }
+      }
+    ```
+
+本节的例子使用 `mlir/test/Examples/Toy/Ch5/affine-lowering.mlir`
+
+```c++
+toy.func @main() {
+  // %0 = [[1, 2, 3], [4, 5, 6]]  // -> (2*3)
+  // %2 = transpose(%0)           // -> (3*2)
+  // %3 = %2 * %2                 // -> (3*2) element-wise mul
+  %0 = toy.constant dense<[[1.000000e+00, 2.000000e+00, 3.000000e+00], [4.000000e+00, 5.000000e+00, 6.000000e+00]]> : tensor<2x3xf64>
+  %2 = toy.transpose(%0 : tensor<2x3xf64>) to tensor<3x2xf64>
+  %3 = toy.mul %2, %2 : tensor<3x2xf64>
+  toy.print %3 : tensor<3x2xf64>
+  toy.return
+}
+
+```
+
+执行 `./bin/toyc-ch5 ../mlir/test/Examples/Toy/Ch5/affine-lowering.mlir -emit=mlir-affine` 之后就可以查看应用了本节的部分 Lowering 之后混合了多种方言的 MLIR 表达式了
+
+```go
+module {
+  func.func @main() {
+    %cst = arith.constant 6.000000e+00 : f64
+    %cst_0 = arith.constant 5.000000e+00 : f64
+    %cst_1 = arith.constant 4.000000e+00 : f64
+    %cst_2 = arith.constant 3.000000e+00 : f64
+    %cst_3 = arith.constant 2.000000e+00 : f64
+    %cst_4 = arith.constant 1.000000e+00 : f64
+    %0 = memref.alloc() : memref<3x2xf64>
+    %1 = memref.alloc() : memref<3x2xf64>
+    %2 = memref.alloc() : memref<2x3xf64>
+
+    // %2 = [[1, 2, 3], [4, 5, 6]]
+    affine.store %cst_4, %2[0, 0] : memref<2x3xf64>
+    affine.store %cst_3, %2[0, 1] : memref<2x3xf64>
+    affine.store %cst_2, %2[0, 2] : memref<2x3xf64>
+    affine.store %cst_1, %2[1, 0] : memref<2x3xf64>
+    affine.store %cst_0, %2[1, 1] : memref<2x3xf64>
+    affine.store %cst, %2[1, 2] : memref<2x3xf64>
+    
+    // %1 = transpose(%2)
+    affine.for %arg0 = 0 to 3 {
+      affine.for %arg1 = 0 to 2 {
+        %3 = affine.load %2[%arg1, %arg0] : memref<2x3xf64>
+        affine.store %3, %1[%arg0, %arg1] : memref<3x2xf64>
+      }
+    }
+    // %0 = %1 * %1
+    affine.for %arg0 = 0 to 3 {
+      affine.for %arg1 = 0 to 2 {
+        %3 = affine.load %1[%arg0, %arg1] : memref<3x2xf64>
+        %4 = arith.mulf %3, %3 : f64
+        affine.store %4, %0[%arg0, %arg1] : memref<3x2xf64>
+      }
+    }
+    
+    toy.print %0 : memref<3x2xf64>
+    memref.dealloc %2 : memref<2x3xf64>
+    memref.dealloc %1 : memref<3x2xf64>
+    memref.dealloc %0 : memref<3x2xf64>
+    return
+  }
+}
+```
+
+> 首先有 6 个 `f64` 数据类型的常量，使用 `%cst` 开头的变量来表示。 然后为输入和输出分配缓冲区，如 `%0 = memref.alloc() : memref<3x2xf64>` 申请一个类型为 `memref<3x2xf64>` 的缓冲区。然后 `affine.store` 将之前声明的 6 个数据依次存入上述分配的缓冲区中。
+> 
+> 之后，第一个循环，将加载的输入数据（数据加载操作 `affine.load` ），保存到另一个数据容器中，最终实现转置操作。接着，第二个循环，加载之前定义在两个数据容器中的数据，相乘并存放到输出的数据容器中。最终使用 `toy.print` 打印结果，并释放缓冲区。
+
+使用了 Affine Dialect 之后，我们可以将 Operation 更底层的逻辑展示出来，将代码中的冗余更轻易的暴露出来。这里可以优化的地方为两个循环嵌套的循环边界相同，可以进行循环融合， 融合后， 中间变量`%1 = transpose(%2)` 是冗余的可以去掉。
+
+在 `mlir/examples/toy/Ch5/toyc.cpp` 中添加了 `createLoopFusionPass` 和 `createAffineScalarReplacementPass` ，这两种 MLIR 自带的 Pass 分别完成了相同循环边界融合优化以及对于 MemRef 的数据流优化功能。我们只需要在上面那个生成部分 Lowering 的 Affine Dialect 命令中额外加一个 `-opt` 就可以生成加入了这两个优化 Pass 的 Affine Dialect 了。命令如下：`./bin/toyc-ch5 ../mlir/test/Examples/Toy/Ch5/affine-lowering.mlir -emit=mlir-affine -opt` 。生成的 MLIR 表达式为：
+
+
+```go
+module {
+  func.func @main() {
+    %cst = arith.constant 6.000000e+00 : f64
+    %cst_0 = arith.constant 5.000000e+00 : f64
+    %cst_1 = arith.constant 4.000000e+00 : f64
+    %cst_2 = arith.constant 3.000000e+00 : f64
+    %cst_3 = arith.constant 2.000000e+00 : f64
+    %cst_4 = arith.constant 1.000000e+00 : f64
+    %0 = memref.alloc() : memref<3x2xf64>
+    %1 = memref.alloc() : memref<2x3xf64>
+
+    affine.store %cst_4, %1[0, 0] : memref<2x3xf64>
+    affine.store %cst_3, %1[0, 1] : memref<2x3xf64>
+    affine.store %cst_2, %1[0, 2] : memref<2x3xf64>
+    affine.store %cst_1, %1[1, 0] : memref<2x3xf64>
+    affine.store %cst_0, %1[1, 1] : memref<2x3xf64>
+    affine.store %cst, %1[1, 2] : memref<2x3xf64>
+
+    affine.for %arg0 = 0 to 3 {
+      affine.for %arg1 = 0 to 2 {
+        %2 = affine.load %1[%arg1, %arg0] : memref<2x3xf64>
+        %3 = arith.mulf %2, %2 : f64
+        affine.store %3, %0[%arg0, %arg1] : memref<3x2xf64>
+      }
+    }
+    toy.print %0 : memref<3x2xf64>
+    memref.dealloc %1 : memref<2x3xf64>
+    memref.dealloc %0 : memref<3x2xf64>
+    return
+  }
+}
+```
+
+可以看到，这里删除了多余的数据缓冲区的分配，两个循环嵌套被融合在一起，另外去除了一些不必要的数据加载操作。
+
+所以我们通过部分 Lowering 确实寻求到了更多的优化机会，使得 MLIR 表达式的运行效率更高。
+
+## 6. Chapter 6: Lowering to LLVM and CodeGeneration
+上一节中，我们将 Toy Dialect 的部分 Operation Lowering 到 Affine Dialect， MemRef Dialect 和 Standard Dialect，而 `toy.print` 操作保持不变。这一节，我们将在上一节得到的混合型 MLIR 表达式完全 Lowering 到 LLVM Dialect 上，然后生成 LLVM IR，并且我们可以使用 MLIR 的 JIT 编译引擎来运行最终的 MLIR 表达式并输出计算结果。
+
+### 6.1. Lowering toy.print
+
+接下来我们尝试把 `toy.print` Operation 降低到 SCF (structured control flow) Dialect。 即， 我们将把 `toy.print` Operation 降低到一个非仿射循环嵌套，它为每个元素调用 `printf` 。请注意，因为方言转换框架支持 [Transitive lowering](https://mlir.llvm.org/getting_started/Glossary/#transitive-lowering) ，我们不需要直接在 LLVM Dialect 中发出操作。 Transitive lowering 的思想是转换框架可以应用多种模式来完全合法化操作。 在此示例中，我们生成 SCF 而不是 LLVM Dialect 中的分支形式。只要我们从循环操作降低到 LLVM， 降低仍然会成功。
+
+```c++
+class PrintOpLowering : public ConversionPattern {
+
+  /// 匹配 `toy::PrintOp` Operation， 重写为对 operands (memRefType) 逐元素 调用 `printf`
+  LogicalResult matchAndRewrite(Operation *op, ArrayRef<Value> operands,
+    ConversionPatternRewriter &rewriter) const override {...}
+
+  ...
+
+  /// 返回对 `printf` 的符号引用, inserting it into the module if necessary.
+  static FlatSymbolRefAttr getOrInsertPrintf(PatternRewriter &rewriter,
+                                            ModuleOp module,
+                                            LLVM::LLVMDialect *llvmDialect) {
+    auto *context = module.getContext();
+    if (module.lookupSymbol<LLVM::LLVMFuncOp>("printf"))
+      return SymbolRefAttr::get("printf", context);
+
+    // 声明 `printf`, the signature is:
+    //   * `i32 (i8*, ...)`
+    auto llvmI32Ty = IntegerType::get(context, 32);
+    auto llvmI8PtrTy =
+        LLVM::LLVMPointerType::get(IntegerType::get(context, 8));
+    auto llvmFnType = LLVM::LLVMFunctionType::get(llvmI32Ty, llvmI8PtrTy,
+                                                  /*isVarArg=*/true);
+
+    // Insert the `printf` function into the body of the parent module.
+    PatternRewriter::InsertionGuard insertGuard(rewriter);
+    rewriter.setInsertionPointToStart(module.getBody());
+    rewriter.create<LLVM::LLVMFuncOp>(module.getLoc(), "printf", llvmFnType);
+    return SymbolRefAttr::get("printf", context);
+  }
+
+}
+```
+
+接下来与 `ToyToAffineLoweringPass` 类似， 我们在 `ToyToLLVMLoweringPass` 中依次执行：
+1. 定义转换目标(Conversion Target)
+2. 添加转换模式(Conversion Patterns)
+3. apply Conversion ； 这里与 `ToyToAffineLoweringPass` 不同， 这里执行 `applyFullConversion` 而不是 部分降低
+
+添加 类型转换 和 对于 `toy.print` 的转换：
+
+```c++
+void ToyToLLVMLoweringPass::runOnOperation() {
+  // 1. 定义 conversion target， 这里 target 就是 LLVM dialect
+  LLVMConversionTarget target(getContext());
+  target.addLegalOp<ModuleOp>();
+
+  // 定义 TypeConverter 将 MemRef 转换为 representation in LLVM
+  LLVMTypeConverter typeConverter(&getContext());
+
+  // 2. 添加 Conversion Patterns, 这里可以利用 MLIR 中已经存在的 模式匹配-转换
+  // 
+  // 当前我们的 MLIR 表示 由多种 Dialect 构成， 包括 `toy`, `affine` 等
+  // affine、arith 和 std 方言已经提供了将它们转换为 LLVM 方言所需的一组模式
+  RewritePatternSet patterns(&getContext());
+  populateAffineToStdConversionPatterns(patterns);
+  populateSCFToControlFlowConversionPatterns(patterns);
+  mlir::arith::populateArithmeticToLLVMConversionPatterns(typeConverter, patterns);
+  populateMemRefToLLVMConversionPatterns(typeConverter, patterns);
+  cf::populateControlFlowToLLVMConversionPatterns(typeConverter, patterns);
+  populateFuncToLLVMConversionPatterns(typeConverter, patterns);
+
+  // 添加对于 `toy.PrintOp` 的匹配重写
+  patterns.add<PrintOpLowering>(&getContext());
+
+  // 3. `FullConversion`. 可以保证在 conversion 之后只有 legal operations
+  auto module = getOperation();
+  if (failed(applyFullConversion(module, target, std::move(patterns))))
+    signalPassFailure();
+}
+```
+
+类似的， 我们还需要将这个 pass 加入我们的 pass pipeline， 并在前端加上相应代码， 接着就可以生成 LLVM Dialect 了 `./bin/toyc-ch6 ../mlir/test/Examples/Toy/Ch6/llvm-lowering.mlir -emit=mlir-llvm`：
+
+
+### 6.2. 生成LLVM IR 并 JIT
+接下来将 LLVM Dialect 转换成 LLVM IR， 并设置 JIT 来运行它。
+
+
+```c++
+int runJit(mlir::ModuleOp module) {
+  // Initialize LLVM targets.
+  llvm::InitializeNativeTarget();
+  llvm::InitializeNativeTargetAsmPrinter();
+
+  // 将 LLVM Dialect 翻译成 LLVM IR， JIT 时缓存， 下次执行时不会重复执行各种 MLIR 表达式变换
+  mlir::registerLLVMDialectTranslation(*module->getContext());
+
+  // An optimization pipeline to use within the execution engine.
+  auto optPipeline = mlir::makeOptimizingTransformer(
+      /*optLevel=*/enableOpt ? 3 : 0, /*sizeLevel=*/0,
+      /*targetMachine=*/nullptr);
+
+  // 创建一个 MLIR 执行引擎. 执行引擎 eagerly JIT-compiles the module.
+  mlir::ExecutionEngineOptions engineOptions;
+  engineOptions.transformer = optPipeline;
+  auto maybeEngine = mlir::ExecutionEngine::create(module, engineOptions);
+  assert(maybeEngine && "failed to construct an execution engine");
+  auto &engine = maybeEngine.get();
+
+  // Invoke the JIT-compiled function.
+  auto invocationResult = engine->invokePacked("main");
+  if (invocationResult) {
+    llvm::errs() << "JIT invocation failed\n";
+    return -1;
+  }
+
+  return 0;
+}
+```
+执行`./bin/toyc-ch6 ../mlir/test/Examples/Toy/Ch6/llvm-lowering.mlir -emit=llvm -opt` 得到结果：
+
+```llvm
+; Function Attrs: nounwind
+define void @main() local_unnamed_addr #1 !dbg !3 {
+.preheader3:
+  %0 = tail call i32 (ptr, ...) @printf(ptr nonnull @frmt_spec, double 1.000000e+00), !dbg !7
+  %1 = tail call i32 (ptr, ...) @printf(ptr nonnull @frmt_spec, double 1.600000e+01), !dbg !7
+  %putchar = tail call i32 @putchar(i32 10), !dbg !7
+  %2 = tail call i32 (ptr, ...) @printf(ptr nonnull @frmt_spec, double 4.000000e+00), !dbg !7
+  %3 = tail call i32 (ptr, ...) @printf(ptr nonnull @frmt_spec, double 2.500000e+01), !dbg !7
+  %putchar.1 = tail call i32 @putchar(i32 10), !dbg !7
+  %4 = tail call i32 (ptr, ...) @printf(ptr nonnull @frmt_spec, double 9.000000e+00), !dbg !7
+  %5 = tail call i32 (ptr, ...) @printf(ptr nonnull @frmt_spec, double 3.600000e+01), !dbg !7
+  %putchar.2 = tail call i32 @putchar(i32 10), !dbg !7
+  ret void, !dbg !9
+}
+```
+
+执行 `./bin/toyc-ch6 ../mlir/test/Examples/Toy/Ch6/llvm-lowering.mlir -emit=jit -opt` 得到结果：
+
+
+```plaintext
+1.000000 16.000000 
+4.000000 25.000000 
+9.000000 36.000000
+```
+
+## 7. Chapter 7: 为 Toy 添加复合类型
+在上一章中，我们演示了从 Toy 前端到 LLVM IR 的端到端编译流程。在本章中，我们将扩展 Toy 语言以支持新的复合结构类型。
+
