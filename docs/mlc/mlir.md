@@ -1,13 +1,11 @@
-# MLIR
+# MLIR: Scaling Compiler Infrastructure for Domain Specific Computation
 
-## (一) 原论文
-
-### 0. 摘要
+## 0. 摘要
 本文提出了MLIR，这是一种**构建可重用、可扩展编译器基础结构**的新方法。MLIR旨在解决软件碎片化，改进异构硬件的编译过程，大大**降低了构建领域特定编译器的成本**，并有助于**将现有的编译器连接在一起**。MLIR还有助于在不同抽象级别、不同跨应用程序域、不同硬件目标和执行环境，改善代码生成器、翻译器和优化器的设计和实现。本文的贡献包括（1）讨论MLIR作为本文研究成果可能的扩展和进化，并指出这个新设计方法在设计、语义、优化规范、系统和工程等方面带来的挑战和机遇。（2）评估MLIR作为可减少构建编译器成本的通用架构，通过描述各种用例，显示本文研究成果在未来编程语言、编译器、执行环境和计算机体系结构方面的研究和教学机会。本文还介绍了MLIR设计基本原理、结构和语义。
 
-### 1. Intro
+## 1. Intro
 
-编译器设计是一个成熟的领域，包括许多广为人知的算法，可用于代码生成、静态分析、程序转换等。编译器设计领域已发展出许多成熟技术平台，这些平台现在已经在整个编译器社区大规模应用，包括LLVM [25]、JVM [26] 等系统。这些流行系统的一个共同特征是它们的“one size fits all”方法，即系统接口只有一套抽象，例如LLVM IR 大致是“带有向量的C（C with vectors）”，而JVM提供了“具有垃圾收集器的面向对象类型系统（object-oriented type system with a garbage collector）”抽象。这种“one size fits all”的方法非常有价值，因为从源语言（C/C++和Java）到这些抽象领域的映射非常直接。
+编译器设计是一个成熟的领域，包括许多广为人知的算法，可用于代码生成、静态分析、程序转换等。编译器设计领域已发展出许多成熟技术平台，这些平台现在已经在整个编译器社区大规模应用，包括LLVM [25]、JVM [26] 等系统。这些流行系统的一个共同特征是它们的“one size fits all”方法，即系统接口只有一套抽象，例如LLVM IR 可被视为 C with vectors，而 JVM 提供了“有 gc 的面向对象类型系统（object-oriented type system with a garbage collector）”抽象。这种“one size fits all”的方法非常有价值，因为从源语言（C/C++和Java）到这些抽象领域的映射非常直接。
 
 同时应该指出，许多问题在较高或较低级别的抽象层级建模会更好。例如在LLVM IR上，对 C++ 代码进行源代码级分析非常困难。我们注意到，许多语言（例如Swift，Rust，Julia，Fortran）都开发了自己的 IR，以解决这些语言领域特定的问题，例如语言/库相关的优化、流敏感（ flow-sensitive）类型检查（例如线性类型）和改善降级（lowering）流程的实现。类似地，机器学习系统通常将“ML图”(ML graph)用作领域特定的抽象。
 
@@ -17,7 +15,7 @@ MLIR项目的目的就是要应对这些编程语言设计和实现方面的挑�
 
 本文探讨了MLIR系统的各个设计要点，将我们的经验应用于不同的问题，并讨论了这项工作可能对编程语言设计和教学产生的影响。
 
-#### 1.1. 主要贡献
+### 1.1. 主要贡献
 尽管 MLIR 系统的大部分基于已知的编译器算法，但是它提供许多有趣的研究的机会，这依然是足够创新的。这篇文章的贡献包括
 
 - 对一个在工业界和研究中有广泛应用的编译器基础架构的描述
@@ -25,7 +23,7 @@ MLIR项目的目的就是要应对这些编程语言设计和实现方面的挑�
 - 探索了几个 MLIR 在多个领域的应用，并对这些系统的共性进行说明
 - 分享基于MLIR 基础架构构建系统的经验
 
-#### 1.2. Where did MLIR come from?
+### 1.2. Where did MLIR come from?
 MLIR 起源于我们意识到：机器学习框架由许多不同的 编译器、图技术 和 运行时系统 组成（参见 图1 ）， 但他们并没有共享公共的基础架构和 design point， 也并不是每一个都遵循编译器设计的最佳实践。这在很多用户可见的方面十分明显，包括糟糕的错误信息，边界条件下的错误，难以预测的性能以及将当前 stack 泛化到新硬件的难度。
 
 <div class="autocb" style="text-align:center;"><img src="./mlir.assets\autocb_7.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
@@ -39,7 +37,7 @@ MLIR 起源于我们意识到：机器学习框架由许多不同的 编译器�
 
 现在，我们在构建和部署基 于MLIR 的系统方面积累了大量经验，可以回顾一下 MLIR 基础架构的原理和设计，并讨论为什么要朝这个方向发展。
 
-### 8. 结论与展望
+## 8. 结论与展望
 文章介绍了**MLIR——一种用作构造编译器的灵活且可扩展的基础结构**。本文描述了 MLIR 的具体设计，展示了其在一系列领域中的适用性，并描述了许多原创研究和工程意义。
 
 展望未来，我们期待看到一有的编译器社区(如 clang )和领域专家能够从这种高级的语言相关的 IR 中受益。期待看到由这个基础设施催生或者加速的全新的研究领域。
@@ -58,7 +56,7 @@ MLIR 起源于我们意识到：机器学习框架由许多不同的 编译器�
 
 除了调试和测试之外，IR的文本形式对于教学也很有用。**通过工具展示高性能编译中优化过程的交互信息有助于新生手了解编译器**。 IR设计是开发新的编译器或优化框架不可或缺的部分，但是许多本科生的编译器课程并未涵盖IR设计。 MLIR为此类课程提供了新的探索方法。
 
-### 2. 设计原则
+## 2. 设计原则
 
 本节探讨了指导 MLIR 设计的一些需求
 
@@ -119,7 +117,7 @@ MLIR 起源于我们意识到：机器学习框架由许多不同的 编译器�
 
     操作的来源（包括其原始位置和应用的 pass ）应易于在系统中追溯。这是为了解决在复杂编译系统中常见的缺乏透明性问题，在复杂编译系统中，很难了解最终表示是如何从原始表示中构造出来的完整过程。在编译安全性至关重要的敏感应用程序时，这是一个突出的问题，在这类程序中，跟踪降级和优化步骤是软件认证程序的重要组成部分[43]。**当使用安全代码（例如加密协议，或对隐私敏感的数据进行操作的算法）进行操作时，编译器常会碰到看似冗余或繁琐的计算，这些计算会嵌入未被源程序的功能语义完全捕获的安全性或私有属性，而安全代码可以防止旁路暴露或加强代码以防止网络攻击或故障攻击。优化可能会改变或使此类保护完全失效[56]**；这种缺乏透明性在安全编译中称为WYSINWYX[6]。准确地将高层次信息传播到较低层的一个间接目标就是帮助实现安全且可追溯的编译过程。
 
-### 3. IR 设计细节
+## 3. IR 设计细节
 本节根据 第2节 中阐述的设计原则，介绍 MLIR 中 IR 的设计细节。
 
 1. <u>**Operations**</u>
@@ -192,11 +190,11 @@ MLIR 起源于我们意识到：机器学习框架由许多不同的 编译器�
 
     A function is an Op with a single region，其参数对应于函数参数。 它定义了一个符号，可以通过名字来引用。 使用函数调用 Op 将控制流转移到函数中。 一旦进入，控制流将遵循该区域中块的 CFG。 "return" 终止符没有successors，终止区域执行，将控制流转移回函数的调用点。 "return" Op 操作数是函数的返回值。
 
-### 4. IR 基础设施
+## 4. IR 基础设施
 
 除了 IR 本身，MLIR 还提供用于定义 IR 元素的基础设施，例如 dialects、Ops、pattern rewrites、verification 和 reusable passes。 MLIR 的基础设施方面对于在定义新抽象和使用 MLIR 作为优化工具包时提供可扩展性和易用性至关重要。
 
-#### 4.1. Operation 描述
+### 4.1. Operation 描述
 
 MLIR 使用 TableGen[47] 规范定义操作描述（Operation Descriptions, ODS），以声明的方式定义 Op 的结构及其验证程序组件。 TableGen 是一种在 LLVM 中广泛使用的数据建模工具，目的是帮助定义和维护 domain-specific 信息的记录。选择 TableGen 因为它是一个业界标准选择。 ODS 可以看作是 一种嵌入到 TableGen 的、用于声明 MLIR Op 定义的 EDSL。因此 ODS 语法由 TableGen 规定，但 MLIR 特定的语义由 ODS 规定。 ODS 定义最终会转换为C++代码，这些代码可以与编译系统的其余部分互操作。
 
@@ -218,7 +216,7 @@ ODS中的 trait 可以由定义 trait 行为的 C++ 类支持。 MLIR 没有固�
 类型约束会检查 arguments/results 类型的属性， 并且可由用户/dialect扩展。 MLIR 基础结构还提供了许多预定义的类型约束，例如 "any type" 、"tensor with element satisfying the given constraint"、 "vector of given rank" 等。 **ODS有限地支持了使用 traits 的限制自动推断操作数的结果类型**。更多信息参见 [4.2](#42-declarative-rewrites)
 
 
-#### 4.2. Declarative rewrites
+### 4.2. Declarative rewrites
 
 许多 MLIR 转换涉及 Op 操作，尽管某些转换需要对 IR 进行复杂的修改，但许多其它转换可以表示为对 DAG defined by SSA use-def relations 的简单重写。 MLIR提供了一个 graph 重写框架，并辅以声明性重写规则（Declarative Rewrite Rule, DRR）系统，使模式表达变得简单。
 
@@ -228,7 +226,7 @@ ODS中的 trait 可以由定义 trait 行为的 C++ 类支持。 MLIR 没有固�
 
 DRR 被转换为 C++ 代码，可以使用通用图重写框架将其与直接在 C++ 中定义的更复杂的模式混合。通过这项功能， MLIR 可以使常见用例保持简洁，且不会限制框架的通用性。
 
-#### 4.3. Pass manager
+### 4.3. Pass manager
 
 MLIR pass 管理器以各种粒度组织并处理IR pass序列，保证pass的高效执行。现有编译系统中的 pass 管理通常是按照固定的粒度（例如，模块、函数或循环 pass 管理器）定义的。但在MLIR中，module 和 function 并无特殊，只是具有区域的 Op ， 并且有多种变体。因此，MLIR pass 管理器也不专门针对固定的 Op 集合，而是针对任意嵌套级别的任意 Op 。
 
@@ -244,7 +242,7 @@ MLIR 的一个重要需求是利用多核加快编译。pass 管理器支持并�
 
 这个需求也是 MLIR 不具有整个 module use-def 链的原因（这与 LLVM 相反）。全局对象通过符号表条目进行引用， 而常量则由具有关联属性的操作实现。
 
-#### 4.4. Round-trippable textual IR form
+### 4.4. Round-trippable textual IR form
 
 MLIR 中的 IR 和 Op 具有文本表示形式，可以完全反映内存中的 IR 表示，这对于调试、理解转换期间的 IR 以及编写测试用例至关重要。 图4 所示的原始 IR 表示冗长且难以理解，因此 MLIR 允许用户为 Op 定义定制的打印和解析格式，这使得示例可以如 图8 所示进行打印和解析，这更容易使用。
 
@@ -252,25 +250,25 @@ MLIR 中的 IR 和 Op 具有文本表示形式，可以完全反映内存中的 
 
 <div class="autocb" style="text-align:center;"><img src="./mlir.assets\autocb_4.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
 
-#### 4.5. 文档
+### 4.5. 文档
 
 Dialect、Op 和 接口 都有从其对应 ODS 描述生成的文档。 除了摘要和更易读懂的描述之外，生成的文档还包括参数和结果类型约束。由于验证代码和文档使用相同的来源，因此文档可以与运行时行为保持同步。
 
 > [MLIR-code docs](https://mlir.llvm.org/docs/)
 
 
-#### 4.6. Verifiers
+### 4.6. Verifiers
 
 验证器用于增强 IR 和 Ops 不变式的结构正确性，允许 pass 假定已验证的 IR 不变式是经过检查的，并且还可以用作调试工具。验证过程以 MLIR 总体结构属性检查开始，比如，检查类型必须完全匹配，值仅定义一次且遵守支配规则和可见性，符号名称在符号表中是唯一的，所有块均以终结符Op结尾，等等。之后，应用各个Op和属性的验证器。每个Op可以定义一组检查结构和语义有效性规则。例如，二元Op会检查是否有两个操作数，许多Op只接受特定类型的值，而许多Op需要附加特定的属性或区域。同样，dialect属性只能在特定的Op上被允许使用，或者通过这些属性对其所附加的Op做进一步的限制。例如，dialect属性可以要求Op仅使用dialect中定义的类型，即使Op本身更通用。验证失败被视为invariant violation并中止编译。
 
 
-### 5. Evaluation: Applications of MLIR
+## 5. Evaluation: Applications of MLIR
 
 MLIR 是一个旨在泛化多种编译器项目的系统，**因此主要评估指标是表明它正在被各种项目采用和使用**。 我们提供了社区活动的摘要，并更详细地描述了一些用例，以突出 MLIR 的通用性和可扩展性，并展示它如何很好地实现可定制性设计原则。
 
 如今，MLIR 是一个不断发展的开源项目，社区跨越学术界和工业界。 例如，关于在高性能计算 (HPC) 中使用 MLIR 的学术研讨会有来自 16 所大学的个人参加，涉及来自 4 个不同国家的 4 个国家实验室。 MLIR 还得到了 14 家跨国公司的认可，在 LLVM 开发者会议上，超过 100 名行业开发人员参加了关于 MLIR 的圆桌会议。 社区采用和参与是可用性和需求的代理度量。 超过 26 种方言正在公共或私人开发中，不同公司的 7 个项目正在用 MLIR 替换自定义基础设施。 我们认为这表明了对 MLIR 的真正需求，并认可了它的可用性。
 
-#### 5.1. TensorFlow graphs
+### 5.1. TensorFlow graphs
 
 虽然讨论到的其他 IR 对于大多数编译器开发来说都很熟悉，但 MLIR 的一个关键用例是支持机器学习框架的开发。 **它们的内部表示通常基于具有动态执行语义的数据流图** [53]。
 
@@ -281,18 +279,18 @@ MLIR 在 TensorFlow 中用于对这种内部表示进行建模并针对 图1 中
 <div class="autocb" style="text-align:center;"><img src="./mlir.assets\autocb_8.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
 
 
-#### 5.2. Polyhedral code generation
+### 5.2. Polyhedral code generation
 MLIR 的最初动机之一是探索 accelerators 上的多面体代码生成。 仿射方言 ( affine dialect) 是一种简化的多面体表示，旨在实现渐进降低。 虽然对此处设计点的全面探索超出了本文的范围，但我们说明了仿射方言的各个方面以展示 MLIR 的建模能力并将仿射方言与过去的表示进行对比 [17、19、54、55、52] .
 
 1. <u>**相似之处**</u>
 
-MLIR affine dialect 在结构化多维类型上运行，用于所有内存访问。 在默认情况下，这些结构化类型是单射的：保证不同的索引不会因构造而混淆，这是多面体依赖分析的常见先决条件。
+    MLIR affine dialect 在结构化多维类型上运行，用于所有内存访问。 在默认情况下，这些结构化类型是单射的：保证不同的索引不会因构造而混淆，这是多面体依赖分析的常见先决条件。
 
-仿射建模分为两部分。 属性用于在编译时对仿射映射和整数集建模，Ops 用于对代码应用仿射限制。 也就是说，`affine.for` Op 是一个 "for" 循环，其边界表示为函数中需要不变的值的仿射映射。 因此循环具有静态控制流。 类似地， `affine.if` 是一个受仿射整数集限制的条件。 循环和条件的主体是使用 `affine.load` 和 `affine.store` 将索引限制为周围循环迭代器的仿射形式的区域。 这使得精确的仿射依赖分析成为可能，同时避免了从有损的低级表示中推断仿射形式的需要。
+    仿射建模分为两部分。 属性用于在编译时对仿射映射和整数集建模，Ops 用于对代码应用仿射限制。 也就是说，`affine.for` Op 是一个 "for" 循环，其边界表示为函数中需要不变的值的仿射映射。 因此循环具有静态控制流。 类似地， `affine.if` 是一个受仿射整数集限制的条件。 循环和条件的主体是使用 `affine.load` 和 `affine.store` 将索引限制为周围循环迭代器的仿射形式的区域。 这使得精确的仿射依赖分析成为可能，同时避免了从有损的低级表示中推断仿射形式的需要。
 
-2. <u>**Differences**</u>
+2. <u>**不同之处**</u>
 
-    与现有多面体框架的差异很多，我们可以将它们分为四类：
+    与现有多面体框架的差异很多，可以概括为以下4点：
 
     1. **丰富的类型(Rich types)**：MLIR 结构化内存引用类型包含一个连接缓冲区索引空间和实际地址空间的布局图。 这种关注点分离使循环和数据转换更好地组合：数据布局的更改不会影响代码，也不会污染依赖性分析。 之前已经探索过这种混合转换 [38]，但并不常见。
 
@@ -302,9 +300,9 @@ MLIR affine dialect 在结构化多维类型上运行，用于所有内存访问
 
     4. **编译速度**是 MLIR 的一个关键目标，如 4.3 节所述，但并不是大多数现有多面体方法的重点。 这些在很大程度上依赖于具有指数复杂度的算法：使用整数线性规划来自动导出循环顺序，以及使用多面体扫描算法将表示转换回循环。 MLIR 采用的方法明确不依赖于多面体扫描，因为在 IR 中保留了循环。
 
-仿射方言的经验表明它对范围广泛的代码生成项目很有用，它的开发是 MLIR 设计实用化的重要探索。
+仿射方言的经验表明它对很多代码生成项目很有用，它的开发是 MLIR 设计实用化的重要探索。
 
-#### 5.3. Fortran IR (FIR)
+### 5.3. Fortran IR (FIR)
 由NVIDIA/PGI 主导的LLVM 前端"flang" 正在积极开发中。和swift, rust 及其他语言类似，flang 需要特殊的IR 来支持 高性能的 fortrance codebse 的转换。flang 使用MLIR来支持Fortran特定的优化。这些高级优化——高级循环优化，数组拷贝消除，调用规范，devirtualization——如果只是用LLVM 来实现建模是非常复杂的。
 
 举个例子，FIR 可以对fortran 的虚拟派发表(virtual dispatch table)建模成一等概念。
@@ -328,11 +326,11 @@ MLIR 有一个可扩展的模式重写系统，在第 4 节中描述。除了静
 
 MLIR 被用作这个专门领域的新编译器的基础，它由专门的搜索方法驱动——有效地导致在编译期间解决机器学习问题。 最终的编译器是通过投入 3 个人月的努力开发的，在生产模型上实现了高达 8 倍的性能提升，同时还提高了编译过程中的透明度。
 
-### 6. Consequences of the MLIR Design
+## 6. Consequences of the MLIR Design
 
 MLIR设计有助于对新语言和编译抽象进行建模，同时有助于重用现有的、通用的相关编译方法。**MLIR对很多问题的有效解决方法是 "add new ops, new types"， 如果可能，将其收集到 "a new dialect" 中**。对于编译器工程而言，这是重大的设计转变，产生了新的机遇，挑战和见解。本节将探讨其中部分观点。
 
-#### 6.1. Reusable Compiler Passes
+### 6.1. Reusable Compiler Passes
 
 如果一种 IR 有表示多个抽象级别的能力，那么会自然而然地带来一个需求，即，编写可在多个抽象级别工作的 pass 。关于 MLIR 的一个常见问题是，既然 MLIR 具有可扩展的操作和类型系统，那么如何编写编译器 pass ？虽然编译器 pass 可能总是以保守、正确的方式处理未知结构，但MLIR的目标是生成高性能代码，主要有四种方法：
 
@@ -365,7 +363,7 @@ MLIR设计有助于对新语言和编译抽象进行建模，同时有助于重�
 
     最后，定义特定dialect可以定义专用pass，MLIR系统中的这些pass和在其它编译器系统中的pass一样都很有用。比如说，如果想让代码生成器根据特定的机器约束对机器指令进行自定义调度，就可以通过专用pass达到目的。这可当作开发新转换pass的起点，不需要考虑pass的通用性。
 
-#### 6.2. Mixing dialects together
+### 6.2. Mixing dialects together
 
 MLIR 中一个最关键（也是最难理解）的部分是允许并鼓励将来自不同 dialect 的操作混合在一个程序中。尽管在某些情况下（例如，将主机和加速器计算保存在同一模块中），这样做很容易理解，但最有趣的情况是，在 MLIR 中可以将 dialect 直接混合（因为这样可以实现整个类的重用），这在其它系统中是见不到的。
 
@@ -373,7 +371,7 @@ MLIR 中一个最关键（也是最难理解）的部分是允许并鼓励将来
 
 重用通用多面体转换（使用Op接口获取特定转换中操作的语义）的能力是分解编译器基础结构的一种有力方法。另一个例子是，可以在各种源语言IR中使用和重用 `OpenMP dialect` 。
 
-#### 6.3. Interoperability
+### 6.3. Interoperability
 
 本文的工作涉及与大量现有系统的互操作，例如，protobuff格式的机器学习图、包括LLVM IR在内的编译器IR、各种专有指令集等。任何一种表示形式不可避免都有各种缺陷，虽然这些缺陷在某个现有系统的适用场景下是合理的，但是MLIR的表达能力使MLIR成为一种更好的表示形式。因为importer和exporters的测试难度很大（测试用例通常是二进制格式），因此我们希望确保其复杂性最低。
 
@@ -383,17 +381,17 @@ MLIR 中一个最关键（也是最难理解）的部分是允许并鼓励将来
 
 这种方法对我们来说效果很好，并且MLIR工具对于编写外来二进制文件格式的测试用例也很有用。
 
-#### 6.4. Unopinionated design provides new challenges
+### 6.4. Unopinionated design provides new challenges
 
 虽然 MLIR 允许人们定义几乎任意的抽象，但它对应该做什么提供的指导很少：在实践中什么更好或更差？ 我们有一些工程师和研究人员将技术应用于新问题领域的经验，并且已经意识到编译器 IR 设计和抽象设计的 “艺术” 在编译器和语言领域并没有得到很好的理解 —— 很多人 在既定系统的约束下工作，但相对较少的人有机会自己定义抽象。
 
 这是一个挑战，但也是未来研究的另一组机会。 更广泛的 MLIR 社区正在通过这些抽象设计权衡建立大量的专业知识，我们预计随着时间的推移，这将成为一个丰富的研究领域。
 
-#### 6.5. Looking forward
+### 6.5. Looking forward
 
 MLIR 的设计与我们仍在学习的其他编译器基础架构有很大不同——即使在构建它并将其应用于许多不同的系统之后也是如此。 我们相信还有很多东西有待发现，还需要几年的研究才能完全理解设计要点并建立最佳实践。 例如，out-of-tree 方言的兴起，使用 MLIR 的源语言前端数量的增加，对抽象语法树的可能应用，以及对结构化数据（如 JSON、protocol buffers 等）的应用，这些都还在起步阶段，并且 正在/可能 会发现有趣的新挑战和机遇。
 
-### 7. 相关工作
+## 7. 相关工作
 MLIR 是一个和多个领域重叠的项目。尽管把所有的这些基础设施组合在一起时一个足够新颖的系统，这些组件本身都可以在文献中找到相似点。关于IR设计本身的参考和讨论，请参考第二小节。
 
 MLIR 和LLVM 类似，但是和 **LLVM 致力于标量优化和异构编译**不同， MLIR 旨在对作为一等值和操作的数据结构和算法建模，包括张量代数和算法，图表示和异构编译。MLIR 混搭(mix-and-match)优化将编译 pass 解耦成组件，重新定义lowering，cleanup roles. 这主要归功于模式重写基础设施，捕获成熟的变换并作为小的本地模式的组合并控制每个独立的算子上应用哪个模式重写。对重写逻辑的自动扩展，形式化和验证会是下一步工作的重点。从后端来看，MLIR 的 DDR 和LLVM 的指令选择逻辑和相似，支持多结果模式和规格限制的可扩展操作。
@@ -406,204 +404,3 @@ MLIR 和LLVM 类似，但是和 **LLVM 致力于标量优化和异构编译**不
 
 XLA、GLOW、TVM 等系统更多的在机器学习的场景被提及，这些系统也强调异构的编译目标，但是这些系统从基于图的抽象到加速器的矢量抽象更为具体。所有的这些都可以将MLIR 作为基础设施，使用公共功能的同时，采用自己的代码生成策略。相似地，**Halide 和TVM 的循环嵌套元编程技术，earlier look nest metaprogramming，PolyMega 的全自动流(flow)，Tensor Comprehension，Stripe, Diesel，Tiramisu 和其底层的多面体编译技术可以作为基于MLIR 的编译框架的不同路径共存**。序列化和互操作格式如 ONNX 提供一套公共的算子(OP)集合，不同框架将自己的模型映射到这一套集合上以解决机器学习前端的多样性。ONNX 可以作为 MLIR 的方言(dialect)， 其他算子(OP)可以lower 到该方言(dialect)，或者从该方言(dialect)生成
 
-## (二) Compiling ONNX Neural Network Models Using MLIR
-
-IBM 于 20年8月 挂在 Arxiv。 onnx-mlir 现在作为 ONNX 的子项目之一： [ONNX-MLIR](https://github.com/onnx/onnx-mlir)
-
-### 0. 摘要
-
-本文对 onnx-mlir 编译器的做初步 high-level 报告。 Onnx-mlir 是一个开源编译器，使用 MLIR 基础架构实现。 Onnx-mlir 依赖 MLIR 的方言概念来实现其功能。 我们在这里提出两种新的方言：（1）一种 ONNX 特定方言，它对 ONNX 标准语义进行编码（2）一种基于循环的方言，为所有 ONNX 方言操作提供一个共同的降低点。 每个中间表示分别促进其自身的图级和基于循环优化的特征集。 我们通过提出的表示遵循几个模型来说明我们的方法，并且我们包括一些早期的优化工作和性能结果。
-
-### 1. Intro
-
-首先 diss 了依赖于第三方加速库的方法： 
-
-> 1. 可以重写的模型数量受到库中提供的函数的限制
-> 2. 通常情况下，用户需要安装附加包才能使库正常运行
-> 3. 它缺乏针对不同问题定制代码的能力
-
-接着提出了 ONNX-MLIR compiler： 使用编译器长期发展过程中开发的许多成熟优化技术，例如针对特定问题定制代码的能力、内存优化和并行化。 选择了开放神经网络交换 (ONNX) [1] 作为表示编译器输入模型的格式。 使用 MLIR [5] 编写——这是一种用于多级中间表示的现代开源编译器基础架构。 尽管它仍处于开发阶段，但它已经可以将一些流行的模型（如 MNIST 和 ResNet50）编译为 x86 机器、IBM Power Systems 和 IBM System Z 上的本地代码。
-
-文章从 4 个方面介绍这个编译器：
-
-1. 介绍编译器的总体设计和架构，
-2. 引入的两种新方言： `onnx` 方言编码 ONNX 标准语义， `krnl` 方言为所有 ONNX 方言操作提供一个共同的降低点。
-3. 优化 passes ，例如图重写、常量传播和内存管理
-4. 讨论为不同架构生成代码时遇到的一些问题。
-
-章节2讨论了 ONNX 和 MLIR。 章节3介绍编译器的设计原理和架构， 还在本节中讨论了两种新方言，即 `onnx` 和 `krnl` ，以及一些优化pass。 章节4，展示 IBM Power Systems 上 MNIST 和 ResNet50 模型的一些初步实验结果。 章节5总结论文并讨论了未来的工作。
-
-### 5. Conclusion
-onnx-mlir 开源编译器用于将 ONNX 模型编译成 native code。 MLIR 被用作构建编译器的基础设施，并引入了 onnx 和 krnl 两种方言。值得注意的是，由于使用 MLIR 基础设施，新的优化可以很容易地集成到 onnx-mlir 中。 未来将添加更多优化，例如多面体优化、循环融合、SIMD 优化，并为加速器代码生成添加支持。
-
-### 2. Background
-#### 2.1. ONNX
-ONNX 定义了一个可扩展的计算图模型、算子和标准数据类型，为不同的框架提供了一个通用的 IR。 有两种 ONNX 变体：
-1. the neural-network-only ONNX 仅将张量识别为输入和输出类型
-2. the classic machine learning ONNX-ML 也识别序列和映射。 ONNX-ML 使用不基于神经网络的机器学习算法扩展了 ONNX 算子集。 
-
-在本文中，我们关注仅神经网络的 ONNX 变体，并将其简称为 ONNX。
-
-#### 2.2. MLIR
-MLIR [5] 是一种可重用和可扩展的现代编译器基础架构。 它通过 facilitating the design and implementation of 不同抽象级别的代码生成器、翻译器和优化器，降低了构建特定领域编译器的成本。在本节中，我们简要回顾了用于构建我们的编译器的 MLIR 中的一些特性。
-
-与 LLVM 类似，MLIR 中的 IR 是基于静态单一分配 (SSA) 的 三地址码，其中值在使用前定义，并且具有由它们的支配关系定义的范围。 操作可能会产生零个或多个结果，并且每个操作都是一个不同的 SSA 值，具有由类型系统定义的自己的类型。 MLIR 中的类型系统是开放的，可以定义特定于应用程序的类型。 有许多基本类型，例如 `integers`，以及用于表示张量和内存缓冲区的聚合类型，例如 `Tensor` 和 `MemRef`。 `Tensor` 类型是较为高阶的抽象，没有指向数据的指针，`MemRef` 类型是较低级的表示，指向特定的内存区域。 在 MLIR 中，`Tensor` 和 `MemRef` 类型在语法上表示为 `tensor<D1×D2× ... ×DN×dtype>` 和 `memref<D1×D2× ... ×DN×dtype>`, 其中 D1, D2, ... , DN 是表示 tensor 或 memref 维度的整数，dtype 是张量或 memref 中元素的类型，例如，f32 表示 float32。`<D1×D2× ... ×DN>`称为 `tensor` 或 `memref` 的形状。 `Tensor` 和 `MemRef` 类型在形状未知时可以被标记为 unranked 。 在 MLIR 中，unranked Tensor 和 MemRef 类型在语法上分别表示为 `tensor<∗×dtype>` 和 `memref<∗×dtype>`。
-
-MLIR 的operation 提供了对于 嵌套区域(nested regions) 的一流支持， 这对于表示模型中的控制流比较友好。
-
-使用 MLIR 二次开发，需要自定义 dialects and optimization passes 。 MLIR 中有现成可用的方言，例如 llvm、std、scf 和 affine。 llvm方言是一种低级方言。 它将 LLVM IR 类型和指令包装到 MLIR 类型和操作中。 std 方言包括标准操作，如 load、store、addi、addf、absf 和 call。 scf 方言定义了控制流操作，例如 for 和 if。 affine 方言为 affine 操作和分析提供了抽象。
-
-### 3. Compiling ONNX Models
-本节介绍 onnx-mlir 。 首先讨论它的整体架构。 然后介绍两种新方言 onnx 和 krnl。 最后，介绍用于执行优化的 MLIR passes。
-
-#### 3.1. Overview
-图 2 显示了 onnx-mlir 的整体架构。 输入是一个 ONNX 模型，输出是一个包含编译代码的库。 输出库包含一个名为 "_dyn_entry_point_main_graph" 的入口函数， 其输入和输出分别类似于 ONNX 模型的输入和输出。 为了使用输出库进行推理，用户编写程序通过将输入传递给函数来调用入口函数并获得结果。
-
-<div class="autocb" style="text-align:center;"><img src="./mlir.assets\autocb_10.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
-
-onnx-mlir 中有五种主要方言： onnx、krnl、affine、std 和 llvm，分为四个抽象级别。
-1. 第一个抽象级别是 ONNX 操作的高级表示。 由 onnx 和 std 方言中的 operation 组成，其中 onnx 方言是通过 importer 自动生成的。 
-2. 第二个抽象级别包括 krnl、affine 和 std 方言。 krnl dialect 提供了一种适用于循环优化的表示，能够轻松地进行 tiling、 skew、 和 permutation 等变换。 它充当中间方言，有效地将 onnx 方言降级为更低级方言（例如，affine、std 和 llvm）。 
-3. 第三个抽象级别包括 affine 和 std 方言，其中可以自由应用 MLIR 中现有的优化 pass。 
-4. 第四个抽象级别仅包括真正生成 bitcode 的 llvm 方言。
-
-MLIR passes 用于将一种方言转换为另一种方言，以及针对特定方言进行优化。 onnx 方言通过 pass `--convert-onnx-to-krnl` 转换为 krnl 方言。 然后通过 pass `--convert-krnl-to-affine` 将 krnl 方言（except some of its operations）转换为 affine 和 std 方言。 krnl dialect 中的剩余操作和 affine 和 std dialect 中的操作通过 pass `--convert-krnl-to-llvm` 直接转换为 llvm 中的指令。 图 2 的右侧显示了可以在每个抽象级别执行的优化过程(我们在这里只列举了重要的优化)。
-
-在详细讨论方言和优化过程之前，我们给出一个简短的运行示例，并在 onnx-mlir 中介绍方言。 此示例是 ONNX 中的一个测试用例模型，它执行逐元素加法。 图 3 显示了测试用例的这个 ONNX 模型。 add 操作接受两个 `<3x4x5xf32>` 类型的 tensor 并返回相同类型的结果，即 `sum`。 清单 3、4 和 5 分别显示了在 onnx、krnl、affine 方言中的程序。 限于篇幅省略了llvm中的程序。
-
-<div class="autocb" style="text-align:center;"><img src="./mlir.assets\autocb_11.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
-
-<div class="autocb" style="text-align:center;"><img src="./mlir.assets\autocb_12.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
-
-
-在 onnx 方言中，操作的表示类似于它们在 ONNX 中的描述。 ONNX模型转化为函数 `main_graph` 。 为了生成接收用户输入的入口点函数，我们在 onnx 方言中创建了一个辅助操作，即 `onnx.EntryPoint`，它将元数据保存在操作的属性中，例如要调用的函数名称和输入的数量以及输出。
-
-在 krnl 方言中，`onnx.Add` 操作被翻译成基于循环的计算，由 krnl 方言中的操作表示，其中标量计算由 affine 和 std 方言中的原始操作表示。 我们可以将循环优化（例如 tiling、 skew 或 tranpose）应用于基于循环的计算。 **在此级别，我们为输出张量分配内存，并可以执行内存管理**。
-
-在 affine 方言中，krnl 方言中优化的基于循环的计算被转换为 `affine.for` 循环。 在这一层，我们在 krnl 中还有一个操作，即 `krnl.entry_point`。 这样的操作与主计算无关，会直接转为 llvm。 在降低为 llvm 方言中的指令之前， affine 方言中的操作将转换为 std 和 scf 方言中的操作。
-
-#### 3.2. onnx dialect
-onnx 方言是 onnx-mlir 中的第一个抽象级别。 我们编写了一个 python 脚本来自动将 ONNX 操作导入到 MLIR 中基于 TableGen 的操作定义中。 这些导入的操作被组织到 onnx 方言中。 多亏了 tablegen，onnx 方言中的操作定义与 ONNX 中的操作描述非常相似，我们能够将所有必要的信息（例如输入、输出、属性和描述）以人类可读的文本形式定义表示到一个基于 tablegen 的表中。
-
-我们还在 onnx 方言中创建了一个新操作，即 `onnx.EntryPoint` 以保存与 ONNX 模型中的 dynamic list of inputs 相关的信息。 这个操作会被降级生成生成库的入口函数 `dyn_entry_point_main_graph`。
-
-清单 6 显示了通过 onnx-mlir 导入 relu 操作的定义。 所有输入和输出都将作为 MLIR 中的张量导入。 importer 自动推断输入、属性和输出的元素类型。 然而，张量的形状将通过 `--shape-inference-pass` 推断出来， 这是 LeakyRelu 操作（第 2 行）中的一个 trait 。 MLIR 从其 Tablegen-based definition  中为 operation 生成 C++ 类定义。 如果用户想在类中定义自定义声明，可以通过"ex-traClassDeclaration" 字段（第 7 行）来完成。
-
-#### 3.3. krnl dialect
-神经网络工作负载中的计算内核具有局部结构简单性，其中循环嵌套通常很简单，例如，超矩形和语句带有非常简单的算术语义。 这种特性非常适合在多面体模型中表示以进行优化 [8]。 krnl 方言旨在于单一表示中同时托管 循环优化 和 标量语义优化 。 它有望提供可解释性，不仅多面体表示可读，而且还使程序语义（或执行什么）和程序调度（如何以及何时执行）独立。 换句话说，**我们的目标不仅是优化程序，还优化各个调度的组合，这是其他现有系统通常缺乏的功能。**
-
-!!! warning "疑问"
-    Halide 和 TVM 中的计算调度分离？
-
-
-下面是一个在 krnl 中定义嵌套循环的例子：
-
-```c++
-%ii, %jj = krnl.define_loops 2
-krnl.iterate ( %ii , %jj ) with ( %ii -> %i = 0 to 10 , %jj -> %j = 0 to 10) {
-    %foo = std.addi %i , %j : index
-}
-```
-
-其中 `krnl.define_loops` 定义了两个循环，称为 `ii` 和 `jj`。 这些循环变量将用于表达程序语义和调度。 操作 `krnl.iterate` 在语义上接受两种类型的循环变量：原始循环的变量和预定循环的变量。 在语法糖形式中，我们通过关键字 `with` 将两种类型的循环分开，即 (scheduled loops) `with` (original loops)。 归纳变量，例如上例中的 i 和 j，将使用原始循环定义。 如果没有调度（例如 block, skew 等），调度循环类似于原始循环。
-
-接下来是一个 block(或 称为tiling) 调度的例子：
-
-```c++
-%ii = krnl.define_loops 1
-%ib, %il = krnl.block %ii 2 : (!krnl.loop) ->(!krnl.loop, !krnl.loop)
-krnl.iterate (%ib, %il) with (%ii -> %i = 0 to 10){
-  %foo = std.addi %i , %i : index
-}
-```
-
-Operation `krnl.block`（第 2 行）将循环和整数作为输入，其中整数是tile size（即一个tile块的大小）。 结果是内外层两个循环变量。 这两个循环将用作调度的结果并传递给 `krnl.iterate`（第 3 行）。 值得注意的是，在插入调度时， `krnl.iterate` 中的原始循环和计算保持不变，这正是我们在 krnl 方言中分离程序语义和调度所需要的。
-
-`--convert-krnl-to-affine` 过程自动生成优化的 `affine.for` 循环，如下所示。
-
-```c++
-#map0 = affine_map <(d0) -> (d0)>
-#map1 = affine_map <(d0) -> (d0 + 2)>
-affine.for %arg0 = 0 to 10 step 2 {
-  affine.for %arg1 = #map0 (%arg0) to #map1 (%arg0) {
-    %0 = addi %arg1 , %arg1 : index
-  }
-}
-```
-
-外层 `affine.for` 迭代步长为 2，即 tile size， 内部 `affine.for` 迭代一个 `tile` 中的元素。
-
-以类似的方式使用其他调度，例如偏斜和排列。 所有计划都是可组合的并且可以嵌套。
-
-#### 3.4. Optimization Passes
-本节讨论 onnx-mlir 中的一些优化 pass。 由于 MLIR 的表达能力，许多优化可以通过声明重写规则 (DRR) 使用 tablegen 轻松表达
-
-1. **<u>Operation Decomposition</u>**
-
-    ONNX 中许多操作可用其他基本操作表示。 如，向量 x 上的 ReduceL1(即L1范数) 即为对 x 中元素的绝对值求和。 换句话说，我们有
-
-    $$\texttt{ReduceL1} (x) = \texttt{ReduceSum} (\texttt{Abs} (x))$$
-
-    我们只需将 onnx 方言中的操作子集降低到 krnl 方言中，而onnx方言中的其余操作将分解为子集中的操作。
-
-    使用 MLIR 中的 DRR，操作分解简明地写成以下模式：
-
-    ```py
-    def ReduceL1Pattern: Pat<
-        (ReduceL1Op $x, $axes, $keepdims),
-        (ReduceSumOp (AbsOp $x), $axes, $keepdims)
-    >;
-    ```
-
-    其中 `ReduceL1Op`、`ReduceSumOp` 和 `AbsOp` 分别是 onnx.ReduceL1、onnx.ReduceSum 和 onnx.Abs 的可编程操作形式。 变量 x、axes 和 keepdims 用于保存操作 ReduceL1Op 的输入值。 重写模式 `ReduceL1Pattern` 将会匹配 `ReduceL1Op` 替换为 `ReduceSumOp` 和 `AbsOp`。
-
-2. **<u>Shape Inference</u>**
-
-    `--shape-inference` pass 尝试在 onnx 的程序中推断所有张量的形状。 pass 遍历程序中的所有操作，推断具有 unranked shape 的张量的形状（即 $\texttt{tensor}\langle * \times f32\rangle$），将 ranked shape 传播到 consuming operations ， 并在所有张量具有 ranked shapes 后终止。 对于一个操作，如果其输入具有静态形状，则 `--shape-inference` pass 很可能能够为其输出推断静态形状。 如果输入具有动态形状 (如 $\texttt{tensor} \langle ?\times ?\times ?\times f32\rangle$)， 则输出也将具有动态形状(除了一些在操作属性中指定输出张量形状的操作)。
-
-3. **<u>Graph Rewriting</u>**
-
-    在 MLIR 中，图重写规则可以方便地使用 DRR 表示。例如，下面的规则是在 `MatMulOp` 的结果只被 `AddOp` 消费的条件下，将 onnx.Add 和 onnx.MatMul 融合为一个onnx.Gemm 的操作：
-
-    ```py
-    def MulAddToGemmPattern: Pat<
-      (AddOp(MatMulOp: $res $m1, $m2), $m3),
-      (GemmOp $m1, $m2, $m3),
-      [(HasOneUse $res)]
-    >;
-    ```
-
-    另一个例子是通过将其输入直接传递给它的消费操作来删除 IdentityOp 操作。
-
-    ```py
-    def IdentityEliminationPattern: Pat<
-      (ONNXIdentityOp $arg),
-      (replaceWithValue $arg)
-    >;
-    ```
-
-4. **<u>Constant propagation</u>**
-
-    常量传播有两个关键思想：（1）如果一个操作的所有输入都是常量，则在编译期间计算其输出并删除该操作，（2）如果存在常量和非常量的混合， normalize the operation。 归一化是为了增加不断传播的可能性，并且在很大程度上取决于操作的数学属性。 以下是 onnx-mlir 中 onnx.Add 操作的一些规范化规则，其属性是 associative and communicative。 Normalization rules 同样使用 DRR 表示。
-
-    (1) $c + x \Rightarrow x + c$
-
-    (2) $(x + c_1) + c_2 \Rightarrow x + (c_1 + c_2)$
-
-    (3) $(x + c) + y \Rightarrow (x + y) + c$
-
-    (4) $x + (y + c) \Rightarrow (x + y) + c$
-
-    (5) $(x + c_1) + (y + c_2) \Rightarrow (x + y) + (c_1 + c_2)$
-
-### 4. Preliminary Experiments
-#### 4.1. ONNX operation support and testcases
-ONNX 为每个操作提供了一组测试用例。 当我们支持 onnx-mlir 中的任何操作时，我们启用它的 ONNX 测试用例来检查操作是否正确运行并产生正确的结果。 在撰写本文时（2020年），onnx-mlir 支持 ONNX 中 139 个操作中的 51 个操作，包括卷积、池化、Gemm 和 LSTM 等。 这些足以编译和执行 MNIST 和 ResNet50 等主要网络。 
-
-> 2023 年 3月 11日， 172 models from ONNX Model Zoo: 120 passed, 19 failed, 33 skipped
-
-- MNIST 是一个小型模型，具有两个卷积运算、一个最大池化运算和一个矩阵乘法，然后是逐元素加法。 编译 MNIST 模型并进行推理的速度相当快，不到一秒即可完成。 在 MNIST 模型中，图重写规则 `MulAddToGemm-Pattern` 。 
-
-- ResNet50 是一个复杂的深度模型，由 50 层卷积和池化等操作组成。 该模型大约有 100MB， 包括学习的权重。 **对于 ResNet50，当前版本的 onnx-mlir 在编译期间没有对模型应用任何优化**。 但是，我们认为编译时间看起来合理，推理时间也没有那么慢。 我们希望一旦我们在不久的将来集成重要的优化，如多面体优化、SIMD 优化和循环融合，推理时间将显着减少。
-
-虽然 onnx-mlir 完全建立在广泛使用的开源软件（如 ONNX 和 MLIR）之上，但我们发现了一个与支持不同系统相关的问题。 我们无法在 IBM System Z (s390-linux) 上的 Linux 上运行 ONNX 模型，因为大端格式在 ONNX 和 MLIR 中没有得到很好的支持。 出现这样的问题有两个原因。 首先，ONNX 中大量的 public 输入数据和模型都是以小端格式存储的。 因此，在大端系统中使用它们之前，必须将它们转换为大端格式。 其次，我们发现 ONNX 模型中的常量值未正确加载到 MLIR 中。 LLVM 在 big-endian 中得到了很好的支持，但 MLIR 却没有。 我们创建了两个补丁来解决这个问题：一个在 ONNX 中，一个在 MLIR 中，它们现在可以在 ONNX 和 MLIR 的主分支上使用。 因此，onnx-mlir 现在支持 Linux on x86 (x86-Linux)、Linux on Power Systems (ppc64le-Linux)、Linux on IBM Z (s390-Linux) 和 Windows。

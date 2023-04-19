@@ -1038,157 +1038,157 @@ def build(ir_mod,target=None, target_host=None,
 
     4. 接下来通过 Visitor 的方式DFS遍历刚才得到的 IR ， 将 IR 中的 CallNode, VarNode 和 ConstantNode 等按照相应的规则转换成对应的 GraphNode; **这里值得注意的是 Relay GraphExecutor 是不支持控制流的，因此如果 Relay IR 中含有 If, Match 等， 在这里会构建失败**：
 
-    ```c++
-    std::vector<GraphNodeRef> VisitExpr_(const VarNode* op) override {
-      Expr expr = GetRef<Expr>(op);
-      return var_map_[expr.get()];
-    }
+        ```c++
+        std::vector<GraphNodeRef> VisitExpr_(const VarNode* op) override {
+          Expr expr = GetRef<Expr>(op);
+          return var_map_[expr.get()];
+        }
 
-    std::vector<GraphNodeRef> VisitExpr_(const IfNode* op) override {
-      LOG(FATAL) << "Graph executor does not support control flow (found IfNode)";
-    }
+        std::vector<GraphNodeRef> VisitExpr_(const IfNode* op) override {
+          LOG(FATAL) << "Graph executor does not support control flow (found IfNode)";
+        }
 
-    std::vector<GraphNodeRef> VisitExpr_(const ConstructorNode* op) override {
-      LOG(FATAL) << "Graph executor does not support ADTs (found ConstructorNode)";
-    }
+        std::vector<GraphNodeRef> VisitExpr_(const ConstructorNode* op) override {
+          LOG(FATAL) << "Graph executor does not support ADTs (found ConstructorNode)";
+        }
 
-    std::vector<GraphNodeRef> VisitExpr_(const GlobalVarNode* op) override {
-      LOG(FATAL) << "All GlobalVarNodes should be removed before graph executor's Codegen is called";
-    }
-    ```
-    
-    接下来， GraphNode 会被组织在 `GraphExecutorCodegen` 的 `std::vector<GraphObjectPtr> nodes_` 中。 这个图最终被写入 graph_json 中:
-
-        ```json
-        {
-          "nodes": [
-            {
-              "op": "null",
-              "name": "data",
-              "inputs": []
-            },
-            {
-              "op": "null",
-              "name": "weight1",
-              "inputs": []
-            },
-            {
-              "op": "null",
-              "name": "bias1",
-              "inputs": []
-            },
-            {
-              "op": "null",
-              "name": "weight2",
-              "inputs": []
-            },
-            {
-              "op": "null",
-              "name": "bias2",
-              "inputs": []
-            },
-            {
-              "op": "tvm_op",
-              "name": "tvmgen_default_fused_layout_transform",
-              "attrs": {
-                "hash": "e9662aa5b8e67b96",
-                "num_inputs": "1",
-                "src_layout": "NC",
-                "dst_layout": "NC8n",
-                "func_name": "tvmgen_default_fused_layout_transform",
-                "flatten_data": "0",
-                "num_outputs": "1"
-              },
-              "inputs": [
-                [1,0,0]
-              ]
-            },
-            {
-              "op": "tvm_op",
-              "name": "tvmgen_default_fused_nn_contrib_dense_pack_expand_dims_add_nn_relu",
-              "attrs": {
-                "hash": "f360b4c42be956c4",
-                "num_inputs": "3",
-                "weight_layout": "NC8n",
-                "func_name": "tvmgen_default_fused_nn_contrib_dense_pack_expand_dims_add_nn_relu",
-                "flatten_data": "0",
-                "num_outputs": "1"
-              },
-              "inputs": [
-                [0,0,0],
-                [5,0,0],
-                [2,0,0]
-              ]
-            },
-            {
-              "op": "tvm_op",
-              "name": "tvmgen_default_fused_layout_transform_1",
-              "attrs": {
-                "hash": "86451ec737a6a453",
-                "num_inputs": "1",
-                "src_layout": "NC",
-                "dst_layout": "NC5n",
-                "func_name": "tvmgen_default_fused_layout_transform_1",
-                "flatten_data": "0",
-                "num_outputs": "1"
-              },
-              "inputs": [
-                [3,0,0]
-              ]
-            },
-            {
-              "op": "tvm_op",
-              "name": "tvmgen_default_fused_nn_contrib_dense_pack_expand_dims_add_nn_relu_1",
-              "attrs": {
-                "hash": "32a532a5919d3a8b",
-                "num_inputs": "3",
-                "weight_layout": "NC5n",
-                "func_name": "tvmgen_default_fused_nn_contrib_dense_pack_expand_dims_add_nn_relu_1",
-                "flatten_data": "0",
-                "num_outputs": "1"
-              },
-              "inputs": [
-                [6,0,0],
-                [7,0,0],
-                [4,0,0]
-              ]
-            }
-          ],
-          "arg_nodes": [0,1,2,3,4],
-          "heads": [
-            [8,0,0]
-          ],
-          "attrs": {
-            "storage_id": [
-              "list_int",
-              [0,1,2,3,4,5,6,7,8]
-            ],
-            "shape": [
-              "list_shape",
-              [
-                [1,784],
-                [128,784],
-                [128],
-                [10,128],
-                [10],
-                [16,784,8],
-                [1,28],
-                [2,128,5],
-                [1,10]
-              ]
-            ],
-            "device_index": [
-              "list_int",
-              [1,1,1,1,1,1,1,1,1]
-            ],
-            "dltype": [
-              "list_str",
-              ["float32","float32","float32","float32","float32","float32","float32","float32","float32"]
-            ]
-          },
-          "node_row_ptr": [0,1,2,3,4,5,6,7,8,9]
+        std::vector<GraphNodeRef> VisitExpr_(const GlobalVarNode* op) override {
+          LOG(FATAL) << "All GlobalVarNodes should be removed before graph executor's Codegen is called";
         }
         ```
+    
+        接下来， GraphNode 会被组织在 `GraphExecutorCodegen` 的 `std::vector<GraphObjectPtr> nodes_` 中。 这个图最终被写入 graph_json 中:
+
+          ```json
+          {
+            "nodes": [
+              {
+                "op": "null",
+                "name": "data",
+                "inputs": []
+              },
+              {
+                "op": "null",
+                "name": "weight1",
+                "inputs": []
+              },
+              {
+                "op": "null",
+                "name": "bias1",
+                "inputs": []
+              },
+              {
+                "op": "null",
+                "name": "weight2",
+                "inputs": []
+              },
+              {
+                "op": "null",
+                "name": "bias2",
+                "inputs": []
+              },
+              {
+                "op": "tvm_op",
+                "name": "tvmgen_default_fused_layout_transform",
+                "attrs": {
+                  "hash": "e9662aa5b8e67b96",
+                  "num_inputs": "1",
+                  "src_layout": "NC",
+                  "dst_layout": "NC8n",
+                  "func_name": "tvmgen_default_fused_layout_transform",
+                  "flatten_data": "0",
+                  "num_outputs": "1"
+                },
+                "inputs": [
+                  [1,0,0]
+                ]
+              },
+              {
+                "op": "tvm_op",
+                "name": "tvmgen_default_fused_nn_contrib_dense_pack_expand_dims_add_nn_relu",
+                "attrs": {
+                  "hash": "f360b4c42be956c4",
+                  "num_inputs": "3",
+                  "weight_layout": "NC8n",
+                  "func_name": "tvmgen_default_fused_nn_contrib_dense_pack_expand_dims_add_nn_relu",
+                  "flatten_data": "0",
+                  "num_outputs": "1"
+                },
+                "inputs": [
+                  [0,0,0],
+                  [5,0,0],
+                  [2,0,0]
+                ]
+              },
+              {
+                "op": "tvm_op",
+                "name": "tvmgen_default_fused_layout_transform_1",
+                "attrs": {
+                  "hash": "86451ec737a6a453",
+                  "num_inputs": "1",
+                  "src_layout": "NC",
+                  "dst_layout": "NC5n",
+                  "func_name": "tvmgen_default_fused_layout_transform_1",
+                  "flatten_data": "0",
+                  "num_outputs": "1"
+                },
+                "inputs": [
+                  [3,0,0]
+                ]
+              },
+              {
+                "op": "tvm_op",
+                "name": "tvmgen_default_fused_nn_contrib_dense_pack_expand_dims_add_nn_relu_1",
+                "attrs": {
+                  "hash": "32a532a5919d3a8b",
+                  "num_inputs": "3",
+                  "weight_layout": "NC5n",
+                  "func_name": "tvmgen_default_fused_nn_contrib_dense_pack_expand_dims_add_nn_relu_1",
+                  "flatten_data": "0",
+                  "num_outputs": "1"
+                },
+                "inputs": [
+                  [6,0,0],
+                  [7,0,0],
+                  [4,0,0]
+                ]
+              }
+            ],
+            "arg_nodes": [0,1,2,3,4],
+            "heads": [
+              [8,0,0]
+            ],
+            "attrs": {
+              "storage_id": [
+                "list_int",
+                [0,1,2,3,4,5,6,7,8]
+              ],
+              "shape": [
+                "list_shape",
+                [
+                  [1,784],
+                  [128,784],
+                  [128],
+                  [10,128],
+                  [10],
+                  [16,784,8],
+                  [1,28],
+                  [2,128,5],
+                  [1,10]
+                ]
+              ],
+              "device_index": [
+                "list_int",
+                [1,1,1,1,1,1,1,1,1]
+              ],
+              "dltype": [
+                "list_str",
+                ["float32","float32","float32","float32","float32","float32","float32","float32","float32"]
+              ]
+            },
+            "node_row_ptr": [0,1,2,3,4,5,6,7,8,9]
+          }
+          ```
 
 
 5. 最终 `executor_factory = _executor_factory.GraphExecutorFactoryModule()` 会将
@@ -1210,3 +1210,9 @@ def build(ir_mod,target=None, target_host=None,
 2. 但是需要注意的是通过这条路径，我们只能编译 静态模型， 无论是控制流还是 动态 shape， 支持的都不是很好； Relay 的后续工作 nimble 在这一方面做出了改进，可以参考: [nimble](./paper-nimble.md)。 简单来讲，我们不再依赖这个简单地 graph_executor, 而是构建了一个虚拟机进行运行时的分析、内存分配、算子派发等，在 Relax 中也是这样做的，因此接下来的一节以 Relax 为例， 看一下 TVM 如何支持动态shape， 动态控制流， 如何使用 VM 进行相应支持。
 
 ## 4. Lower Relax
+
+`gen_call_tir_inputs` 中 `_convert_te_arg` 注释：
+
+> 在动态形状的情况下，传入的参数可能包含 TIR 变量。 例如，参数可以是具有符号形状的 TensorStructInfo 的 Relax Var，或者参数可以是具有符号变量的 ShapeExpr。 为了使生成的 PrimFunc 与调用者 Relax 函数具有自变量，我们将用新的变量替换输入参数中的 TIR 变量，这是通过维护 TIR 变量映射来完成的。
+>
+> 

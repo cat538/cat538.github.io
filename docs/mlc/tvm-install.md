@@ -2,6 +2,7 @@
 ## windows
 主要参考官网的：[install from source](https://tvm.apache.org/docs/install/from_source.html#install-from-source)
 以下自己总结值得注意的点：
+
 1. 在windows上安装tvm首先要从源码安装llvm，注意这里**不能使用**
    从llvm官网下载的预编译的llvm，因为pre-built-binary中
    没有`llvm-config`等编译tvm所需要的东西。
@@ -13,11 +14,19 @@
     ```powershell
     mkdir build
     cd build
-    cp ../cmake/config.cmake . # 修改其中set(USE_LLVM ON)以及其它变量(参考官网)
+    cp ../cmake/config.cmake .       # 修改其中set(USE_LLVM ON)以及其它变量(参考官网)
     cmake -GNinja -DCMAKE_CXX_COMPILER=cl -DCMAKE_C_COMPILER=cl -DCMAKE_BUILD_TYPE=Release ..
     cmake --build .
     cmake --build . --target install # 该步骤可省略
     ```
+    
+    修改 `build/config.cmake`:
+
+    1. `set(USE_RELAY_DEBUG ON)`
+    2. `(USE_LLVM "/path/to/llvm-config --link-static")`
+    3. `set(HIDE_PRIVATE_SYMBOLS ON)`
+    4. 启用 CUDA: `set(USE_CUDA ON)`
+
     执行 `build` 后， 应该会得到编译生成的`tvm.dll`和`tvm_runtime.dll`(以及对应的两个导入库即.lib文件)
 
     执行`install`之后会显示安装的位置，默认应该是在`C:\Program Files(X86)`，可以自己放到合适的位置。
@@ -32,6 +41,7 @@
 
         **学习 TVM 经常需要改动 python 源码，这种方式更加推荐**
 
+        接下来还需要安装 TVM 依赖的一些其他包，比如自动调优依赖的 `xgboost`, `pandas` 等，具体见官网
 
     2. 也可以安装预编译好的安装包，参照[https://tlcpack.ai/](https://tlcpack.ai/)即可：
     
