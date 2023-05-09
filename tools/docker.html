@@ -1,0 +1,2173 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="cmake.html">
+      
+      
+        <link rel="next" href="git.html">
+      
+      <link rel="icon" href="../images/favicon.ico">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.11">
+    
+    
+      
+        <title>docker - Cat538's Blog</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.85bb2934.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.a6bdf11c.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#docker" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="Cat538&#39;s Blog" class="md-header__button md-logo" aria-label="Cat538's Blog" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Cat538's Blog
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              docker
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+            
+              <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+              </label>
+            
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+            
+              <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+              </label>
+            
+          
+        </form>
+      
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="Cat538&#39;s Blog" class="md-nav__button md-logo" aria-label="Cat538's Blog" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Cat538's Blog
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        Prologue
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plan.html" class="md-nav__link">
+        Exercise
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          Cpp
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Cpp
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/toolchain.html" class="md-nav__link">
+        toolchain
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/move.html" class="md-nav__link">
+        move
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/align.html" class="md-nav__link">
+        align
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/ranges.html" class="md-nav__link">
+        ranges
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/benchmark.html" class="md-nav__link">
+        benchmark
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/profiler.html" class="md-nav__link">
+        profiler
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/IO-multiplexing.html" class="md-nav__link">
+        IO-multiplexing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/epoll.html" class="md-nav__link">
+        epoll
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/signal.html" class="md-nav__link">
+        signal
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/fork-safe.html" class="md-nav__link">
+        fork-safe
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          Rust
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Rust
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-toolchain.html" class="md-nav__link">
+        rust-toolchain
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-study.html" class="md-nav__link">
+        rust-study
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-attributes.html" class="md-nav__link">
+        rust-attributes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-modules.html" class="md-nav__link">
+        rust-modules
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-macro.html" class="md-nav__link">
+        rust-macro
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-network.html" class="md-nav__link">
+        rust-network
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-option.html" class="md-nav__link">
+        rust-optin
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-str.html" class="md-nav__link">
+        rust-str
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          Tools
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Tools
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="cmake.html" class="md-nav__link">
+        cmake
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          docker
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="docker.html" class="md-nav__link md-nav__link--active">
+        docker
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    存储管理
+  </a>
+  
+    <nav class="md-nav" aria-label="存储管理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#docker_1" class="md-nav__link">
+    迁移docker数据存储位置
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    起步
+  </a>
+  
+    <nav class="md-nav" aria-label="起步">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    起步例子
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-docker-dashboard" class="md-nav__link">
+    The docker dashboard
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#containerimage" class="md-nav__link">
+    什么是container和image？
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    案例教程
+  </a>
+  
+    <nav class="md-nav" aria-label="案例教程">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#appcontainer-image" class="md-nav__link">
+    创建app的container image
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#image" class="md-nav__link">
+    使用创建的image
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    更新容器
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#share-the-app" class="md-nav__link">
+    Share the app
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#persist-the-db" class="md-nav__link">
+    Persist the DB
+  </a>
+  
+    <nav class="md-nav" aria-label="Persist the DB">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#persist-the-todo-data" class="md-nav__link">
+    Persist the todo data
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#volume" class="md-nav__link">
+    深入volume
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#use-bind-mounts" class="md-nav__link">
+    Use bind mounts
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    多容器应用
+  </a>
+  
+    <nav class="md-nav" aria-label="多容器应用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#container-networking" class="md-nav__link">
+    Container networking
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#docker-compose" class="md-nav__link">
+    使用 Docker Compose
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="git.html" class="md-nav__link">
+        git
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="powershell.html" class="md-nav__link">
+        powershell
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="regex.html" class="md-nav__link">
+        regex
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="mkdocs.html" class="md-nav__link">
+        mkdocs
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+          Courses
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          Courses
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/%E5%AF%86%E7%A0%81%E5%88%86%E6%9E%90%E5%AD%A6%E5%A4%8D%E4%B9%A0.html" class="md-nav__link">
+        密码分析学
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/%E5%AF%86%E7%A0%81%E5%AD%A6%E5%BC%95%E8%AE%BA%E5%A4%8D%E4%B9%A0.html" class="md-nav__link">
+        密码学引论
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/algorithm.html" class="md-nav__link">
+        算法设计与分析
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86.html" class="md-nav__link">
+        编译原理
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+          Crypto
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          Crypto
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crypto/ecdsa-pk-recovery.html" class="md-nav__link">
+        ecdsa-pk-recovery
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crypto/algo-rsa.html" class="md-nav__link">
+        algo-rsa
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crypto/algo-fft%26ntt.html" class="md-nav__link">
+        algo-fft&ntt
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crypto/algo-reduction.html" class="md-nav__link">
+        algo-reduction
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+          Mlc
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_8">
+          <span class="md-nav__icon md-icon"></span>
+          Mlc
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/dlc-survey.html" class="md-nav__link">
+        dlc-survey
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/tvm-install.html" class="md-nav__link">
+        tvm-install
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/tvm-ffi.html" class="md-nav__link">
+        tvm-ffi
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/tvm-type.html" class="md-nav__link">
+        tvm-type
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/tvm-tensorIR.html" class="md-nav__link">
+        tvm-tensorIR
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/tvm-lowering.html" class="md-nav__link">
+        tvm-lowering
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/tvm-autotvm.html" class="md-nav__link">
+        tvm-autotvm
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/tvm-ansor.html" class="md-nav__link">
+        tvm-ansor
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/mlir.html" class="md-nav__link">
+        mlir
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/mlir-toy.html" class="md-nav__link">
+        mlir-toy
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/mlir-onnx.html" class="md-nav__link">
+        mlir-onnx
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/mlir-iree.html" class="md-nav__link">
+        mlir-iree
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/paper-torch.fx.html" class="md-nav__link">
+        paper-torch.fx
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/paper-nimble.html" class="md-nav__link">
+        paper-nimble
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/paper-disc.html" class="md-nav__link">
+        paper-disc
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/paper-cortex.html" class="md-nav__link">
+        paper-cortex
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/paper-freetensor.html" class="md-nav__link">
+        paper-freetensor
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../about.html" class="md-nav__link">
+        About
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    存储管理
+  </a>
+  
+    <nav class="md-nav" aria-label="存储管理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#docker_1" class="md-nav__link">
+    迁移docker数据存储位置
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    起步
+  </a>
+  
+    <nav class="md-nav" aria-label="起步">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    起步例子
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-docker-dashboard" class="md-nav__link">
+    The docker dashboard
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#containerimage" class="md-nav__link">
+    什么是container和image？
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    案例教程
+  </a>
+  
+    <nav class="md-nav" aria-label="案例教程">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#appcontainer-image" class="md-nav__link">
+    创建app的container image
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#image" class="md-nav__link">
+    使用创建的image
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    更新容器
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#share-the-app" class="md-nav__link">
+    Share the app
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#persist-the-db" class="md-nav__link">
+    Persist the DB
+  </a>
+  
+    <nav class="md-nav" aria-label="Persist the DB">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#persist-the-todo-data" class="md-nav__link">
+    Persist the todo data
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#volume" class="md-nav__link">
+    深入volume
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#use-bind-mounts" class="md-nav__link">
+    Use bind mounts
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    多容器应用
+  </a>
+  
+    <nav class="md-nav" aria-label="多容器应用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#container-networking" class="md-nav__link">
+    Container networking
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#docker-compose" class="md-nav__link">
+    使用 Docker Compose
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="docker">Docker</h1>
+<blockquote>
+<p>更好的教程：<a href="https://docs.microsoft.com/zh-cn/visualstudio/docker/tutorials/docker-tutorial">教程：开始在 Visual Studio Code 中使用 Docker 应用 | Microsoft Docs</a></p>
+</blockquote>
+<p>这个教程涵盖以下主题：</p>
+<ul>
+<li>运行第一个容器</li>
+<li>构建容器</li>
+<li>了解正在运行的容器并删除它们</li>
+<li>使用volumes做数据持久化</li>
+<li>Using bind mounts to support development 使用 bind mounts 来支持开发</li>
+<li>Using container networking to support multi-container applications 使用容器网络支持多容器应用</li>
+<li>Using Docker Compose to simplify the definition and sharing of applications 使用 Docker Compose 简化app的定义和共享</li>
+<li>Using image layer caching to speed up builds and reduce push/pull size 使用image layer caching来加速构建并减少 push/pull 大小</li>
+<li>Using multi-stage builds to separate build-time and runtime dependencies 使用多阶段构建来分离构建时和运行时依赖项</li>
+</ul>
+<p>三个基本概念</p>
+<ul>
+<li><strong>镜像（Image）</strong>
+  类似于虚拟机中的镜像，是一个包含有文件系统的面向Docker engine的<strong>只读模板</strong>。任何应用程序运行都需要环境，而镜像就是用来提供这种运行环境的。例如一个Ubuntu镜像就是一个包含Ubuntu操作系统环境的模板，同理在该镜像上装上Apache软件，就可以称为Apache镜像。</li>
+<li><strong>容器（Container）</strong>
+  类似于一个轻量级的沙盒，可以将其看作一个极简的Linux系统环境（包括root权限、进程空间、用户空间和网络空间等），以及运行在其中的应用程序。Docker引擎利用容器来运行、隔离各个应用。容器是镜像创建的应用实例，可以创建、启动、停止、删除容器，各个容器之间是是相互隔离的，互不影响。<strong>注意</strong>：镜像本身是只读的，容器从镜像启动时，Docker在镜像的上层创建一个可写层，镜像本身不变。</li>
+<li><strong>仓库（Repository）</strong>
+  类似于代码仓库，这里是镜像仓库，是Docker用来集中存放镜像文件的地方。注意与注册服务器（Registry）的区别：注册服务器是存放仓库的地方，一般会有多个仓库；而仓库是存放镜像的地方，一般每个仓库存放一类镜像，每个镜像利用tag进行区分，比如Ubuntu仓库存放有多个版本（12.04、14.04等）的Ubuntu镜像。</li>
+</ul>
+<h2 id="_1">存储管理</h2>
+<p>启用 WSL 后，Docker 运行数据都在 WSL 发行版中，因此镜像存储位置只能由 WSL 管理。</p>
+<p>安装 Docker 后，Docker 会自动创建 2 个发行版：</p>
+<ul>
+<li>docker-desktop： 存储在 <code>%LOCALAPPDATA%\Docker\wsl\distro</code></li>
+<li>docker-desktop-data： 存储在 <code>%LOCALAPPDATA%\Docker\wsl\data</code>（占用空间的元凶）</li>
+</ul>
+<p><img src="docker.assets/image-20220718164353713.png" alt="image-20220718164353713" style="zoom: 67%;" /></p>
+<h3 id="docker_1">迁移docker数据存储位置</h3>
+<p>用 WSL 命令就可以简单实现迁移，操作步骤如下：</p>
+<ol>
+<li>停止 Docker 进程</li>
+<li>关闭所有发行版： <code>wsl --shutdown</code></li>
+<li>导出 docker-desktop-data 发行版： <code>wsl --export docker-desktop-data D:\docker-desktop-data.tar</code></li>
+<li>注销 docker-desktop-data 发行版： <code>wsl --unregister docker-desktop-data</code></li>
+<li>导入 docker-desktop-data 到期望迁移的目录： <code>wsl --import docker-desktop-data D:\software\wsl\docker\data D:\docker-desktop-data.tar --version 2</code> （迁移目录 <code>D:\software\wsl\docker\data\</code> 可根据个人需求修改）</li>
+<li>（可选）删除第 3 步导出的临时文件： <code>D:\wsl\docker\tmp\docker-desktop-data.tar</code></li>
+<li>（可选）另一个 Docker 发行版 docker-desktop 可使用同样方式迁移，但是其占用空间很小，不迁移亦可</li>
+</ol>
+<blockquote>
+<p>迁移完成后可发现 <code>%LOCALAPPDATA%/Docker/wsl</code> 目录下的发行版文件已被删除， C 盘空间已释放</p>
+</blockquote>
+<h2 id="_2">起步</h2>
+<h3 id="_3">起步例子</h3>
+<div class="highlight"><pre><span></span><code>docker run -d -p 80:80 docker/getting-started
+</code></pre></div>
+<p>Docker在容器内运行应用程序。在一个容器内运行一个应用程序需要命令 <code>docker run</code></p>
+<p>上面这行命令：</p>
+<ul>
+<li><code>-d</code> 指定容器在后台运行 (detached mode)</li>
+<li><code>-p 80:80</code> 将主机的80端口映射到容器的80端口(<strong>冒号前是host port ，后是container port</strong>)</li>
+<li><code>docker/getting-started</code> 指定使用该image，如果找不到此镜像，从docker hub拉取</li>
+</ul>
+<blockquote>
+<p>上述命令可以把单个字符的flag缩写：<code>docker run -dp 80:80 docker/getting-started</code></p>
+</blockquote>
+<p>此时在浏览器访问<code>localhost:80</code>，就能打开该运行中的程序啦！</p>
+<h3 id="the-docker-dashboard">The docker dashboard</h3>
+<p>在mac和windows上，docker dashboard可以更清晰的展示当前容器的运行状态，以及image信息等：</p>
+<p><img alt="image-20220718170425821" src="docker.assets/image-20220718170425821.png" /></p>
+<h3 id="containerimage">什么是container和image？</h3>
+<p>我们已经运行起来了一个容器，那么什么是容器？ 简而言之，容器只是您机器上的另一个进程，它与主机上的所有其他进程隔离。 这种隔离利用了kernel namespaces 和 cgroups——这些特性已经在 Linux 中存在了很长时间。 Docker 致力于使这些功能变得易于使用。</p>
+<p>每个容器使用隔离的文件系统。 这个定制的文件系统由image提供。 由于镜像包含容器的文件系统，它必须包含运行应用程序所需的一切——所有依赖项、配置、脚本、二进制文件等。镜像还包含容器的其他配置，例如环境变量、运行的默认命令、 和其他元数据。</p>
+<p>稍后我们将深入研究image，涵盖诸如分层、最佳实践等主题。</p>
+<h2 id="_4">案例教程</h2>
+<p>接下来以一个 Node.js 的Todo-List 为例学习docker：从<a href="https://github.com/docker/getting-started/tree/master/app">getting-started/app at master · docker/getting-started · GitHub</a> 下载示例app</p>
+<p><img src="docker.assets/image-20220718174947082.png" alt="image-20220718174947082" style="zoom:50%;" /></p>
+<h3 id="appcontainer-image">创建app的container image</h3>
+<p>为了构建应用程序，我们需要使用 Dockerfile。 Dockerfile 是一个text-based 脚本，用于创建容器映像。 如果你之前创建过 Dockerfile，你可能会发现下面的 Dockerfile 中有一些缺陷，接下来我们会相应讨论。 </p>
+<ol>
+<li>在与文件 package.json 相同的文件夹中创建一个名为 Dockerfile 的文件，其内容如下：</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="c"># syntax=docker/dockerfile:1</span>
+<span class="k">FROM</span><span class="w"> </span><span class="s">node:12-alpine</span>
+<span class="k">RUN</span><span class="w"> </span>apk<span class="w"> </span>add<span class="w"> </span>--no-cache<span class="w"> </span>python2<span class="w"> </span>g++<span class="w"> </span>make
+<span class="k">WORKDIR</span><span class="w"> </span><span class="s">/app</span>
+<span class="k">COPY</span><span class="w"> </span>.<span class="w"> </span>.
+<span class="k">RUN</span><span class="w"> </span>yarn<span class="w"> </span>install<span class="w"> </span>--production
+<span class="k">CMD</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;src/index.js&quot;</span><span class="p">]</span>
+<span class="k">EXPOSE</span><span class="w"> </span><span class="s">3000</span>
+</code></pre></div>
+<p>请确保 Dockerfile 没有像 <code>.txt</code> 这样的文件扩展名。 一些编辑器可能会自动附加此文件扩展名，这将导致下一步出错。</p>
+<ol>
+<li>在当前目录build container image：</li>
+</ol>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span>getting-started<span class="w"> </span>.
+</code></pre></div>
+<p>此命令使用 Dockerfile 脚本构建新的image。您可能注意到 a lot of “layers” were downloaded。这是因为我们指示builder我们要从 <code>node:12-alpine</code> image开始。但是，由于我们的机器上没有该image，因此需要下载该image。</p>
+<p>下载image后，COPY到我们的应用程序中并使用 yarn 来安装app的依赖。 CMD 指令指定从该映像启动容器时运行的默认命令。</p>
+<p>最后， <code>-t</code> 标志tag我们的image。可以将其简单地视为最终image的人类可读名称。由于我们将镜像命名为 <code>getting-started</code>，因此我们可以利用该名字在运行容器时引用该镜像。</p>
+<p><code>.</code>在 docker build 命令的末尾告诉 Docker 它应该在当前目录中查找 Dockerfile。</p>
+<h3 id="image">使用创建的image</h3>
+<p>我们有了一个image，现在让我们运行该app。我们使用 <code>docker run</code> 命令来启动：</p>
+<ol>
+<li>Start your container using the <code>docker run</code> command and specify the name of the image we just created:</li>
+</ol>
+<div class="highlight"><pre><span></span><code>$ docker run -dp 3000:3000 getting-started
+</code></pre></div>
+<p>Remember the <code>-d</code> and <code>-p</code> flags? We’re running the new container in “detached” mode (in the background) and creating a mapping between the host’s port 3000 to the container’s port 3000. Without the port mapping, we wouldn’t be able to access the application.</p>
+<ol>
+<li>After a few seconds, open your web browser to <a href="http://localhost:3000/">http://localhost:3000</a>. You should see our app.</li>
+</ol>
+<p><img alt="Empty Todo List" src="https://docs.docker.com/get-started/images/todo-list-empty.png" /></p>
+<ol>
+<li>继续添加一两个项目，看看它是否按预期工作。 你可以将item标记为完成并删除item。 前端成功将item存储在后端。 相当快速和容易，对吧？</li>
+</ol>
+<p>接下来，我们将对我们的app进行修改，并学习如何使用新image更新正在运行的app。 在此过程中，我们将学习一些其他有用的命令。</p>
+<h3 id="_5">更新容器</h3>
+<p>现在遇到一个需求，需要改动一行代码</p>
+<ol>
+<li>在 <code>src/static/js/app.js</code> 中, 更新第 56 行代码：</li>
+</ol>
+<div class="highlight"><pre><span></span><code> -                &lt;p className=&quot;text-center&quot;&gt;No items yet! Add one above!&lt;/p&gt;
+ +                &lt;p className=&quot;text-center&quot;&gt;You have no todo items yet! Add one above!&lt;/p&gt;
+</code></pre></div>
+<ol>
+<li>然后让我们像之前一样build更新后的app镜像</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="w"> </span>$<span class="w"> </span>docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span>getting-started<span class="w"> </span>.
+</code></pre></div>
+<ol>
+<li>然后启动它</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="w"> </span>$<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>-dp<span class="w"> </span><span class="m">3000</span>:3000<span class="w"> </span>getting-started
+</code></pre></div>
+<p><strong>Uh oh!</strong> You probably saw an error like this (the IDs will be different):</p>
+<div class="highlight"><pre><span></span><code>docker: Error response from daemon: driver failed programming external connectivity on endpoint laughing_burnell 
+(bb242b2ca4d67eba76e79474fb36bb5125708ebdabd7f45c8eaf16caaabde9dd): Bind for 0.0.0.0:3000 failed: port is already allocated.
+</code></pre></div>
+<p>我们无法启动新容器，因为我们的旧容器仍在运行。 这是因为容器正在使用主机的 3000 端口，并且机器上只有一个进程（包括容器）可以监听特定端口。 为了解决这个问题，我们需要移除旧容器。</p>
+<p><strong>替换old container</strong></p>
+<p>为了替换掉旧的容器，我们要先将它停止运行：</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>ps<span class="w">                       </span><span class="c1"># 查看正在运行的容器信息</span>
+$<span class="w"> </span>docker<span class="w"> </span>stop<span class="w"> </span>&lt;the-container-id&gt;<span class="w">    </span><span class="c1"># 停止正在运行的容器</span>
+$<span class="w"> </span>docker<span class="w"> </span>rm<span class="w"> </span>&lt;the-container-id&gt;<span class="w">      </span><span class="c1"># 删除old容器</span>
+</code></pre></div>
+<blockquote>
+<p>后两句也可以简写为一条: <code>docker rm -f &lt;the-container-id&gt;</code></p>
+</blockquote>
+<p>虽然我们能够构建更新app，但您可能已经注意到两件事：</p>
+<ol>
+<li>我们待办事项列表中的所有现有项目都消失了！ 这不是一个很好的app！ 我们很快就会谈到这一点。</li>
+<li>这么小的更新涉及这么多步骤。 在接下来的部分中，我们将讨论如何在每次进行更改时无需重新构建和启动新容器即可查看代码更新。</li>
+</ol>
+<p>在讨论数据持久化之前，我们将快速了解如何与他人共享这些image</p>
+<h3 id="share-the-app">Share the app</h3>
+<p>要与他人共享image，必须使用Docker registry，Docker 默认的注册中心是Docker Hub，也正是i我们默认拉取image的地方。</p>
+<p>// TODO</p>
+<p>在本节中，我们学习了如何通过将image推送到注册表来共享image。</p>
+<p>让我们回到我们在上一节末尾注意到的内容。 提醒一下，我们注意到当我们重新启动应用程序时，我们丢失了所有的待办事项列表项。 这显然不是一个很好的用户体验，所以让我们学习如何在重启后保留数据！</p>
+<h3 id="persist-the-db">Persist the DB</h3>
+<p>当一个容器运行时，它使用image中的各个layer作为其 filesystem。每个容器还有自己的“暂存空间”来创建/更新/删除文件。任何更改对于其他容器是不可见的——即使它们使用相同的image。</p>
+<p>虽然容器可以创建、更新和删除文件，但当容器被remove并且所有更改都与该容器隔离时，这些更改会丢失。 Volume的出现使得数据持久化变得可能。</p>
+<p>Volume提供了将container的特定文件系统挂载到host的能力。 如果容器中的目录已挂载，则对于容器的更改在host上可见。 如果我们在容器重启时挂载相同的目录，我们会看到相同的文件。</p>
+<p>Volume有两种主要类型。 我们最终将同时使用两者，但我们将从 <strong>named volumes</strong>开始。</p>
+<h4 id="persist-the-todo-data">Persist the todo data</h4>
+<p>默认情况下，todo app把数据使用 SQLite 存在<code>/etc/todos/todo.db</code>中。如果我们可以把这个文件的数据保存到host中去，我们就能让下一个容器继续使用上一个容器的数据。通过创建一个volume，并将其挂载到存储数据的文件夹下，我们可以实现数据持久化。在本例中，这意味着<code>todo.db</code>文件会被持久化到host的volume中。</p>
+<p>如同上面提到的，我们首先使用named volume，Docker维护这个volume在磁盘的物理位置，用户只需要记住这个volume的name。</p>
+<ol>
+<li>使用<code>docker volume create</code>创建一个volume</li>
+</ol>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>volume<span class="w"> </span>create<span class="w"> </span>todo-db
+</code></pre></div>
+<ol>
+<li>启动app 容器，并使用<code>-v</code>指定挂载的volume。在这里我们使用 named volume，并把它挂载到路径<code>/etc/todos</code>，他会捕获这个路径下创建的所有文件</li>
+</ol>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>-dp<span class="w"> </span><span class="m">3000</span>:3000<span class="w"> </span>-v<span class="w"> </span>todo-db:/etc/todos<span class="w"> </span>getting-started
+</code></pre></div>
+<ol>
+<li>
+<p>然后打开app，向todo list 中添加一些项</p>
+</li>
+<li>
+<p>使用<code>docker rm -f &lt;id&gt;</code>删除正在运行的这个容器</p>
+</li>
+<li>
+<p>启动一个新的容器，和刚才的容器使用同一个volume；可以看到新的容器打开后保留了上一个容器中的数据</p>
+</li>
+</ol>
+<h4 id="volume">深入volume</h4>
+<p>很多人经常问，当我使用named volume时，docker究竟把我的数据存在了哪里？如果你想要指导，你可以使用 <code>docker volume inspect</code>来查看：</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>volume<span class="w"> </span>inspect<span class="w"> </span>todo-db
+<span class="o">[</span>
+<span class="w">    </span><span class="o">{</span>
+<span class="w">        </span><span class="s2">&quot;CreatedAt&quot;</span>:<span class="w"> </span><span class="s2">&quot;2022-07-18T12:50:51Z&quot;</span>,
+<span class="w">        </span><span class="s2">&quot;Driver&quot;</span>:<span class="w"> </span><span class="s2">&quot;local&quot;</span>,
+<span class="w">        </span><span class="s2">&quot;Labels&quot;</span>:<span class="w"> </span><span class="o">{}</span>,
+<span class="w">        </span><span class="s2">&quot;Mountpoint&quot;</span>:<span class="w"> </span><span class="s2">&quot;/var/lib/docker/volumes/todo-db/_data&quot;</span>,
+<span class="w">        </span><span class="s2">&quot;Name&quot;</span>:<span class="w"> </span><span class="s2">&quot;todo-db&quot;</span>,
+<span class="w">        </span><span class="s2">&quot;Options&quot;</span>:<span class="w"> </span><span class="o">{}</span>,
+<span class="w">        </span><span class="s2">&quot;Scope&quot;</span>:<span class="w"> </span><span class="s2">&quot;local&quot;</span>
+<span class="w">    </span><span class="o">}</span>
+<span class="o">]</span>
+</code></pre></div>
+<p><code>Mountpoint</code>是数据在磁盘上的真正位置，通常需要root权限来访问这些数据。</p>
+<p>我们之前看到，为每次代码更改都重建image很费时间。 必须有更好的方法来解决。使用bind mounts是一个更好的解决方案。接下来一起来看。</p>
+<h3 id="use-bind-mounts">Use bind mounts</h3>
+<p>使用 bind mounts 我们可以控制容器中的文件在host中的真正挂载点（而不是向 named volume 一样交给Docker去决定）。同时也可以用来把主机的资源，比如源代码，挂载到container中，让容器即时的看到代码的变化并进行热更新。</p>
+<p>对于Node程序而言，nodemon就是这样一个提供监控-热更新服务的程序。</p>
+<p>为了让我们的容器支持开发工作流，我们需要做以下几件事情：</p>
+<ul>
+<li>把我们的源代码挂载到container</li>
+<li>在容器中安装所有的开发依赖</li>
+<li>在容器中开启 nodemon 来监控fs的变化</li>
+</ul>
+<p>接下来按照这个步骤执行：</p>
+<ol>
+<li>
+<p>确保当前没有任何 getting-started 容器正在运行。</p>
+</li>
+<li>
+<p>在app目录运行以下命令：</p>
+</li>
+</ol>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>-dp<span class="w"> </span><span class="m">8000</span>:3000<span class="w"> </span><span class="se">\</span>
+<span class="w">     </span>-w<span class="w"> </span>/app<span class="w"> </span>-v<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span><span class="s2">:/app&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">     </span>node:12-alpine<span class="w"> </span><span class="se">\</span>
+<span class="w">     </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;yarn install &amp;&amp; yarn run dev&quot;</span>
+</code></pre></div>
+<p>If you are using Windows then use this command in PowerShell:</p>
+<div class="highlight"><pre><span></span><code><span class="w"> </span>PS&gt;<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>-dp<span class="w"> </span><span class="m">8000</span>:3000<span class="w"> </span><span class="sb">`</span>
+<span class="w">     </span>-w<span class="w"> </span>/app<span class="w"> </span>-v<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span><span class="s2">:/app&quot;</span><span class="w"> </span><span class="sb">`</span>
+<span class="w">     </span>node:12-alpine<span class="w"> </span><span class="sb">`</span>
+<span class="w">     </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;yarn install &amp;&amp; yarn run dev&quot;</span>
+</code></pre></div>
+<ul>
+<li><code>-dp 3000:3000</code> 后台运行，将容器的3000port映射到host的8000</li>
+<li><code>-w /app</code> 设置工作目录</li>
+<li><code>-v "$(pwd):/app"</code> 将主机的当前目录挂载到容器中的<code>/app</code>目录</li>
+<li><code>node:12-alpine</code> 使用的image，注意这是Dockerfile中的base image</li>
+<li>
+<p><code>sh -c "yarn install &amp;&amp; yarn run dev"</code> 这条命令启动一个shell，然后 <code>yarn install</code> 安装所有依赖，然后 <code>yarn run dev</code>，在 <code>package.json</code>, 可以看到 <code>dev</code> 脚本将启动 <code>nodemon</code></p>
+</li>
+<li>
+<p>你可以使用<code>docker logs</code>查看日志，You’ll know you’re ready to go when you see this:
+   <img alt="image-20220718224901988" src="docker.assets/image-20220718224901988.png" /></p>
+</li>
+<li>
+<p>此时在host对于代码的任何更改都可以直接影响到容器中的程序</p>
+</li>
+</ul>
+<p>接下来，我们将使用关系数据库并将我们的app切换为使用 MySQL。接下来我们将看到，如何运行 MySQL， 如何允许容器相互通信。</p>
+<h3 id="_6">多容器应用</h3>
+<p>承接上一节的问题，“我们在哪里运行MySQL？和app在同一个容器中还是单独的一个容器？” <strong>In general, each container should do one thing and do it well.</strong>理由如下：</p>
+<ul>
+<li>There’s a good chance you’d have to scale APIs and front-ends differently than databases</li>
+<li>每个功能分配单独容器更方便管理版本</li>
+<li>虽然您可以在本地为数据库使用容器，但您可能希望在生产环境中为数据库使用托管服务。 而不在app中发布你的数据库引擎。</li>
+<li>运行多个进程将需要一个进程管理器（容器只启动一个进程），这增加了容器启动/关闭的复杂性</li>
+</ul>
+<h4 id="container-networking">Container networking</h4>
+<p><strong>networking</strong>是容器间通信的方式，如果两个容器在同一个网络，则它们可以通信，否则不可以。</p>
+<p>有两种方法将容器们放在一个网络上：1）在一开始分配好；2）连接一个已存在的容器。现在我们将首先创建一个network并把MySQL容器在启动时分配到这个网络上。</p>
+<ol>
+<li>创建network：</li>
+</ol>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>network<span class="w"> </span>create<span class="w"> </span>todo-app
+</code></pre></div>
+<ol>
+<li>启动MySQL容器并把它attach到这个网络上：</li>
+</ol>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span><span class="se">\</span>
+<span class="w">     </span>--network<span class="w"> </span>todo-app<span class="w"> </span>--network-alias<span class="w"> </span>mysql<span class="w"> </span><span class="se">\</span>
+<span class="w">     </span>-v<span class="w"> </span>todo-mysql-data:/var/lib/mysql<span class="w"> </span><span class="se">\</span>
+<span class="w">     </span>-e<span class="w"> </span><span class="nv">MYSQL_ROOT_PASSWORD</span><span class="o">=</span>secret<span class="w"> </span><span class="se">\</span>
+<span class="w">     </span>-e<span class="w"> </span><span class="nv">MYSQL_DATABASE</span><span class="o">=</span>todos<span class="w"> </span><span class="se">\</span>
+<span class="w">     </span>mysql:5.7
+</code></pre></div>
+<p>If you are using Windows then use this command in <code>PowerShell</code>：</p>
+<div class="highlight"><pre><span></span><code><span class="w"> </span>PS&gt;<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span><span class="sb">`</span>
+<span class="w">     </span>--network<span class="w"> </span>todo-app<span class="w"> </span>--network-alias<span class="w"> </span>mysql<span class="w"> </span><span class="sb">`</span>
+<span class="w">     </span>-v<span class="w"> </span>todo-mysql-data:/var/lib/mysql<span class="w"> </span><span class="sb">`</span>
+<span class="w">     </span>-e<span class="w"> </span><span class="nv">MYSQL_ROOT_PASSWORD</span><span class="o">=</span>secret<span class="w"> </span><span class="sb">`</span>
+<span class="w">     </span>-e<span class="w"> </span><span class="nv">MYSQL_DATABASE</span><span class="o">=</span>todos<span class="w"> </span><span class="sb">`</span>
+<span class="w">     </span>mysql:5.7
+</code></pre></div>
+<blockquote>
+<p>命令中我们使用了named volume <code>todo-mysql-data</code> 挂载到 <code>/var/lib/mysql</code>, which is where MySQL stores its data. 但我们事先并没有运行 <code>docker volume create</code> . 事实上，Docker会意识到这一点，并为我们自动创建这个 named volume</p>
+</blockquote>
+<ol>
+<li>为了确认mysql容器在运行，我们连接到数据库进行验证：</li>
+</ol>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>&lt;mysql-container-id&gt;<span class="w"> </span>mysql<span class="w"> </span>-u<span class="w"> </span>root<span class="w"> </span>-p
+</code></pre></div>
+<p>OK，现在我们得到了一个网络和在这个network上的MySQL容器，可接下来我们该怎么让app运行在同一个网络上，并且在网络上找到mysql呢？为了解决这一点，<strong>我们将要使用 <code>nicolaka/netshoot</code> 容器：</strong></p>
+<ol>
+<li>使用 nicolaka/netshoot image启动一个新容器，确保它和mysql连接在同一个网络上：</li>
+</ol>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>--network<span class="w"> </span>todo-app<span class="w"> </span>nicolaka/netshoot
+</code></pre></div>
+<ol>
+<li>在这个容器中，我们将要使用<code>dig</code>命令(一个DNS工具)，我们将使用这个工具来查找主机名为 <code>mysql</code>(在创建mysql 容器时指定的alias)的IP地址</li>
+</ol>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>dig<span class="w"> </span>mysql
+</code></pre></div>
+<p><img alt="image-20220718232340755" src="docker.assets/image-20220718232340755.png" /></p>
+<p>在"ANSWER SECTION"可以看到将主机名解析到IP地址<code>172.18.0.2</code>，接下来就可以利用这个IP让app在网络上找到mysql数据库了！</p>
+<p><strong>使用app连接mysql</strong></p>
+<p>The todo app supports the setting of a few environment variables to specify MySQL connection settings. They are:</p>
+<ul>
+<li><code>MYSQL_HOST</code> - the hostname for the running MySQL server</li>
+<li><code>MYSQL_USER</code> - the username to use for the connection</li>
+<li><code>MYSQL_PASSWORD</code> - the password to use for the connection</li>
+<li><code>MYSQL_DB</code> - the database to use once connected</li>
+</ul>
+<blockquote>
+<p>虽然使用 <strong>环境变量</strong> 来设置连接设置对于开发来说通常是可以的，但在生产中运行应用程序时，不应这么做！ Docker 的前安全主管 Diogo Monica 写了一篇<a href="https://diogomonica.com/2017/03/27/why-you-shouldnt-use-env-variables-for-secret-data/">精彩的博客文章</a>来解释原因。</p>
+<p>更安全的方式是使用container orchestration framework提供的secret support。 在大多数情况下，这些秘密作为文件挂载在正在运行的容器中。 您会看到许多应用程序（包括 MySQL image和todo app）也支持带有 <code>_FILE</code> 后缀的环境变量，以指向包含该变量的文件。</p>
+<p>例如，设置 <code>MYSQL_PASSWORD_FILE</code> 变量将导致应用程序使用引用文件的内容作为连接口令。 Docker 没有做任何事情来支持这些环境变量。您的应用需要知道如何处理这些环境变量。</p>
+</blockquote>
+<ol>
+<li><strong>Note</strong>: for MySQL versions 8.0 and higher, make sure to include the following commands in <code>mysql</code>.</li>
+</ol>
+<div class="highlight"><pre><span></span><code>mysql&gt;<span class="w"> </span>ALTER<span class="w"> </span>USER<span class="w"> </span><span class="s1">&#39;root&#39;</span><span class="w"> </span>IDENTIFIED<span class="w"> </span>WITH<span class="w"> </span>mysql_native_password<span class="w"> </span>BY<span class="w"> </span><span class="s1">&#39;secret&#39;</span><span class="p">;</span>
+mysql&gt;<span class="w"> </span>flush<span class="w"> </span>privileges<span class="p">;</span>
+</code></pre></div>
+<ol>
+<li>设置刚才提到的环境变量，并与mysql容器连接到同一网络：</li>
+</ol>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>-dp<span class="w"> </span><span class="m">3000</span>:3000<span class="w"> </span><span class="se">\</span>
+<span class="w">   </span>-w<span class="w"> </span>/app<span class="w"> </span>-v<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span><span class="s2">:/app&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">   </span>--network<span class="w"> </span>todo-app<span class="w"> </span><span class="se">\</span>
+<span class="w">   </span>-e<span class="w"> </span><span class="nv">MYSQL_HOST</span><span class="o">=</span>mysql<span class="w"> </span><span class="se">\</span>
+<span class="w">   </span>-e<span class="w"> </span><span class="nv">MYSQL_USER</span><span class="o">=</span>root<span class="w"> </span><span class="se">\</span>
+<span class="w">   </span>-e<span class="w"> </span><span class="nv">MYSQL_PASSWORD</span><span class="o">=</span>secret<span class="w"> </span><span class="se">\</span>
+<span class="w">   </span>-e<span class="w"> </span><span class="nv">MYSQL_DB</span><span class="o">=</span>todos<span class="w"> </span><span class="se">\</span>
+<span class="w">   </span>node:12-alpine<span class="w"> </span><span class="se">\</span>
+<span class="w">   </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;yarn install &amp;&amp; yarn run dev&quot;</span>
+</code></pre></div>
+<p>If you are using Windows then use this command in PowerShell:</p>
+<div class="highlight"><pre><span></span><code><span class="w"> </span>PS&gt;<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>-dp<span class="w"> </span><span class="m">3000</span>:3000<span class="w"> </span><span class="sb">`</span>
+<span class="w">   </span>-w<span class="w"> </span>/app<span class="w"> </span>-v<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span><span class="s2">:/app&quot;</span><span class="w"> </span><span class="sb">`</span>
+<span class="w">   </span>--network<span class="w"> </span>todo-app<span class="w"> </span><span class="sb">`</span>
+<span class="w">   </span>-e<span class="w"> </span><span class="nv">MYSQL_HOST</span><span class="o">=</span>mysql<span class="w"> </span><span class="sb">`</span>
+<span class="w">   </span>-e<span class="w"> </span><span class="nv">MYSQL_USER</span><span class="o">=</span>root<span class="w"> </span><span class="sb">`</span>
+<span class="w">   </span>-e<span class="w"> </span><span class="nv">MYSQL_PASSWORD</span><span class="o">=</span>secret<span class="w"> </span><span class="sb">`</span>
+<span class="w">   </span>-e<span class="w"> </span><span class="nv">MYSQL_DB</span><span class="o">=</span>todos<span class="w"> </span><span class="sb">`</span>
+<span class="w">   </span>node:12-alpine<span class="w"> </span><span class="sb">`</span>
+<span class="w">   </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;yarn install &amp;&amp; yarn run dev&quot;</span>
+</code></pre></div>
+<ol>
+<li>查看日志：<code>docker logs &lt;container-id&gt;</code>连接成功：</li>
+</ol>
+<p><img alt="image-20220718234621955" src="docker.assets/image-20220718234621955.png" /></p>
+<p>如果您查看 Docker Dashboard，您会发现我们有两个应用程序容器正在运行。 但是，没有真正的迹象表明它们被组合在一个应用程序中。 我们很快就会看到如何让它变得更好！</p>
+<h3 id="docker-compose">使用 Docker Compose</h3>
+<p>Docker Compose 是一种用于帮助定义和共享多容器应用程序的工具。 使用 Compose，我们可以创建一个 <code>YAML</code> 文件来定义服务，并且使用一个命令，就可以启动所有内容或将其全部关闭。</p>
+<p>使用 Compose 的最大优势是您可以在一个文件中定义app stack，将其保存在项目 repo 的根目录中，并且可以轻松地让其他人为您的项目做出贡献。 别人只需要克隆您的存储库并start the compose app。 <strong>事实上，你现在可能会在 GitHub/GitLab 上看到不少项目正是这样做的。</strong></p>
+<p>windows中，Docker-Desktop自带了Docker-Compose，<strong>接下来首先创建 Compose file</strong></p>
+<ol>
+<li>
+<p>在 app的根路径，创建一个<code>docker-compose.yml</code></p>
+</li>
+<li>
+<p>在compose file中我们从定义 schema 版本开始。在大多数情况下，最好使用支持的最新版本。</p>
+</li>
+</ol>
+<div class="highlight"><pre><span></span><code>version: &quot;3.7&quot;
+</code></pre></div>
+<ol>
+<li>接下来定义构成app的服务(容器)列表：</li>
+</ol>
+<div class="highlight"><pre><span></span><code>version: &quot;3.7&quot;
+
+services:
+</code></pre></div>
+<p>现在我们开始将一个service迁移到 compose file中，其实就是将之前的启动命令翻译成compose file中特定格式的语言：</p>
+<ol>
+<li>
+<p>对于app应用，首先定义service的入口点以及容器的镜像。你可以给service任意一个名字，这个name自动成为network的别名。</p>
+<div class="highlight"><pre><span></span><code>PS&gt;<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>-dp<span class="w"> </span><span class="m">3000</span>:3000<span class="w"> </span><span class="sb">`</span>
+<span class="w">  </span>-w<span class="w"> </span>/app<span class="w"> </span>-v<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span><span class="s2">:/app&quot;</span><span class="w"> </span><span class="sb">`</span>
+<span class="w">  </span>--network<span class="w"> </span>todo-app<span class="w"> </span><span class="sb">`</span>
+<span class="w">  </span>-e<span class="w"> </span><span class="nv">MYSQL_HOST</span><span class="o">=</span>mysql<span class="w"> </span><span class="sb">`</span>
+<span class="w">  </span>-e<span class="w"> </span><span class="nv">MYSQL_USER</span><span class="o">=</span>root<span class="w"> </span><span class="sb">`</span>
+<span class="w">  </span>-e<span class="w"> </span><span class="nv">MYSQL_PASSWORD</span><span class="o">=</span>secret<span class="w"> </span><span class="sb">`</span>
+<span class="w">  </span>-e<span class="w"> </span><span class="nv">MYSQL_DB</span><span class="o">=</span>todos<span class="w"> </span><span class="sb">`</span>
+<span class="w">  </span>node:12-alpine<span class="w"> </span><span class="sb">`</span>
+<span class="w">  </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;yarn install &amp;&amp; yarn run dev&quot;</span>
+</code></pre></div>
+<p>一般来说，<code>image</code>后跟随的是<code>command</code>字段，其他字段翻译成相应格式：</p>
+<div class="highlight"><pre><span></span><code><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;3.7&quot;</span>
+
+<span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">app</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node:12-alpine</span>
+<span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sh -c &quot;yarn install &amp;&amp; yarn run dev&quot;</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3000:3000</span>
+<span class="w">    </span><span class="nt">working_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/app</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./:/app</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">MYSQL_HOST</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql</span>
+<span class="w">      </span><span class="nt">MYSQL_USER</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">root</span>
+<span class="w">      </span><span class="nt">MYSQL_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">secret</span>
+<span class="w">      </span><span class="nt">MYSQL_DB</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">todos</span>
+</code></pre></div>
+</li>
+<li>
+<p>接下来是 MySQL service</p>
+<div class="highlight"><pre><span></span><code>PS&gt;<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span><span class="sb">`</span>
+<span class="w">  </span>--network<span class="w"> </span>todo-app<span class="w"> </span>--network-alias<span class="w"> </span>mysql<span class="w"> </span><span class="sb">`</span>
+<span class="w">  </span>-v<span class="w"> </span>todo-mysql-data:/var/lib/mysql<span class="w"> </span><span class="sb">`</span>
+<span class="w">  </span>-e<span class="w"> </span><span class="nv">MYSQL_ROOT_PASSWORD</span><span class="o">=</span>secret<span class="w"> </span><span class="sb">`</span>
+<span class="w">  </span>-e<span class="w"> </span><span class="nv">MYSQL_DATABASE</span><span class="o">=</span>todos<span class="w"> </span><span class="sb">`</span>
+<span class="w">  </span>mysql:5.7
+</code></pre></div>
+<p>我们将首先定义新服务并将其命名为 mysql，以便它自动获取网络的alias。 我们将继续并指定要使用的image。接着定义 volume映射，当我们使用<code>docker run</code>的时候，如果我们使用了未定义的 named volume，<code>docker run</code>会自动创建，然而在Compose中却并非如此。我们需要在最上层的<code>volumes</code>字段定义一个volume，然后在service config里指定要挂载的路径：</p>
+<div class="highlight"><pre><span></span><code><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;3.7&quot;</span>
+
+<span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">app</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node:12-alpine</span>
+<span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sh -c &quot;yarn install &amp;&amp; yarn run dev&quot;</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3000:3000</span>
+<span class="w">    </span><span class="nt">working_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/app</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./:/app</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">MYSQL_HOST</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql</span>
+<span class="w">      </span><span class="nt">MYSQL_USER</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">root</span>
+<span class="w">      </span><span class="nt">MYSQL_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">secret</span>
+<span class="w">      </span><span class="nt">MYSQL_DB</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">todos</span>
+
+<span class="w">  </span><span class="nt">mysql</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql:5.7</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">todo-mysql-data:/var/lib/mysql</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">MYSQL_ROOT_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">secret</span>
+<span class="w">      </span><span class="nt">MYSQL_DATABASE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">todos</span>
+
+<span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">todo-mysql-data</span><span class="p">:</span>
+</code></pre></div>
+</li>
+</ol>
+<p>接下来就是使用docker-compose运行：<code>docker-compose up -d</code></p>
+<p><img alt="image-20220719004311998" src="docker.assets/image-20220719004311998.png" /></p>
+<p>您会注意到volume以及一个network已创建！ 默认情况下，Docker Compose 会自动为应用程序stack创建一个网络（这就是我们没有在 compose 文件中定义网络的原因）。</p>
+<blockquote>
+<p>当app启动时，它实际上需要等待 MySQL 启动并准备好，然后再尝试连接它。 Docker 没有任何内置支持来等待另一个容器完全启动、运行和准备好，然后再启动另一个容器。因此这需要在app代码中进行相应处理，对于Node-based 项目，可以使用<code>wait-port</code>依赖项来处理。 其他语言/框架也存在类似的解决方案。</p>
+</blockquote>
+<p>当你需要停止整个应用时，只需要执行<code>docker-compose down</code>，或者从Dashboard关闭。</p>
+<blockquote>
+<p>Removing Volumes</p>
+<p>默认情况下, <code>docker-compose down</code>命令不会被删除 compose file中定义的named volumes。如果你想要删除volumes, 需要添加 <code>--volumes</code> flag.</p>
+<p>Docker Dashboard 同样<strong>不会删除</strong> volumes when you delete the app stack.</p>
+</blockquote>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.sections", "navigation.indexes"], "search": "../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.fac441b0.min.js"></script>
+      
+        <script src="../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

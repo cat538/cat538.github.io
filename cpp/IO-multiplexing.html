@@ -1,0 +1,1639 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="profiler.html">
+      
+      
+        <link rel="next" href="epoll.html">
+      
+      <link rel="icon" href="../images/favicon.ico">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.11">
+    
+    
+      
+        <title>IO-multiplexing - Cat538's Blog</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.85bb2934.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.a6bdf11c.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#io" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="Cat538&#39;s Blog" class="md-header__button md-logo" aria-label="Cat538's Blog" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Cat538's Blog
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              IO-multiplexing
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+            
+              <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+              </label>
+            
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+            
+              <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+              </label>
+            
+          
+        </form>
+      
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="Cat538&#39;s Blog" class="md-nav__button md-logo" aria-label="Cat538's Blog" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Cat538's Blog
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        Prologue
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plan.html" class="md-nav__link">
+        Exercise
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          Cpp
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Cpp
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="toolchain.html" class="md-nav__link">
+        toolchain
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="move.html" class="md-nav__link">
+        move
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="align.html" class="md-nav__link">
+        align
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="ranges.html" class="md-nav__link">
+        ranges
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="benchmark.html" class="md-nav__link">
+        benchmark
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="profiler.html" class="md-nav__link">
+        profiler
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          IO-multiplexing
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="IO-multiplexing.html" class="md-nav__link md-nav__link--active">
+        IO-multiplexing
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    前置知识
+  </a>
+  
+    <nav class="md-nav" aria-label="前置知识">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    文件描述符
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#io_1" class="md-nav__link">
+    理解IO
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#select" class="md-nav__link">
+    select
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#epoll" class="md-nav__link">
+    epoll
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#event-driven" class="md-nav__link">
+    event-driven
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#io-vs" class="md-nav__link">
+    IO多路复用 v.s. 多线程
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="epoll.html" class="md-nav__link">
+        epoll
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="signal.html" class="md-nav__link">
+        signal
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="fork-safe.html" class="md-nav__link">
+        fork-safe
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          Rust
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Rust
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-toolchain.html" class="md-nav__link">
+        rust-toolchain
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-study.html" class="md-nav__link">
+        rust-study
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-attributes.html" class="md-nav__link">
+        rust-attributes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-modules.html" class="md-nav__link">
+        rust-modules
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-macro.html" class="md-nav__link">
+        rust-macro
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-network.html" class="md-nav__link">
+        rust-network
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-option.html" class="md-nav__link">
+        rust-optin
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-str.html" class="md-nav__link">
+        rust-str
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          Tools
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Tools
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/cmake.html" class="md-nav__link">
+        cmake
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/docker.html" class="md-nav__link">
+        docker
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/git.html" class="md-nav__link">
+        git
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/powershell.html" class="md-nav__link">
+        powershell
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/regex.html" class="md-nav__link">
+        regex
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/mkdocs.html" class="md-nav__link">
+        mkdocs
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+          Courses
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          Courses
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/%E5%AF%86%E7%A0%81%E5%88%86%E6%9E%90%E5%AD%A6%E5%A4%8D%E4%B9%A0.html" class="md-nav__link">
+        密码分析学
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/%E5%AF%86%E7%A0%81%E5%AD%A6%E5%BC%95%E8%AE%BA%E5%A4%8D%E4%B9%A0.html" class="md-nav__link">
+        密码学引论
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/algorithm.html" class="md-nav__link">
+        算法设计与分析
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86.html" class="md-nav__link">
+        编译原理
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+          Crypto
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          Crypto
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crypto/ecdsa-pk-recovery.html" class="md-nav__link">
+        ecdsa-pk-recovery
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crypto/algo-rsa.html" class="md-nav__link">
+        algo-rsa
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crypto/algo-fft%26ntt.html" class="md-nav__link">
+        algo-fft&ntt
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crypto/algo-reduction.html" class="md-nav__link">
+        algo-reduction
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+          Mlc
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_8">
+          <span class="md-nav__icon md-icon"></span>
+          Mlc
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/dlc-survey.html" class="md-nav__link">
+        dlc-survey
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/tvm-install.html" class="md-nav__link">
+        tvm-install
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/tvm-ffi.html" class="md-nav__link">
+        tvm-ffi
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/tvm-type.html" class="md-nav__link">
+        tvm-type
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/tvm-tensorIR.html" class="md-nav__link">
+        tvm-tensorIR
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/tvm-lowering.html" class="md-nav__link">
+        tvm-lowering
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/tvm-autotvm.html" class="md-nav__link">
+        tvm-autotvm
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/tvm-ansor.html" class="md-nav__link">
+        tvm-ansor
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/mlir.html" class="md-nav__link">
+        mlir
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/mlir-toy.html" class="md-nav__link">
+        mlir-toy
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/mlir-onnx.html" class="md-nav__link">
+        mlir-onnx
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/mlir-iree.html" class="md-nav__link">
+        mlir-iree
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/paper-torch.fx.html" class="md-nav__link">
+        paper-torch.fx
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/paper-nimble.html" class="md-nav__link">
+        paper-nimble
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/paper-disc.html" class="md-nav__link">
+        paper-disc
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/paper-cortex.html" class="md-nav__link">
+        paper-cortex
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/paper-freetensor.html" class="md-nav__link">
+        paper-freetensor
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../about.html" class="md-nav__link">
+        About
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    前置知识
+  </a>
+  
+    <nav class="md-nav" aria-label="前置知识">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    文件描述符
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#io_1" class="md-nav__link">
+    理解IO
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#select" class="md-nav__link">
+    select
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#epoll" class="md-nav__link">
+    epoll
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#event-driven" class="md-nav__link">
+    event-driven
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#io-vs" class="md-nav__link">
+    IO多路复用 v.s. 多线程
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="io">IO 多路复用</h1>
+<h2 id="_1">前置知识</h2>
+<h3 id="_2">文件描述符</h3>
+<p>Linux 中一切都可以看作文件，包括普通文件、链接文件、Socket 以及设备驱动等，对其进行相关操作时，都可能会创建对应的文件描述符。文件描述符（file descriptor）是内核为了高效管理已被打开的文件所创建的索引，用于指代被打开的文件，对文件所有 I/O 操作相关的系统调用都需要通过文件描述符。</p>
+<p><img src="https://pic3.zhimg.com/80/v2-8f13aacb6715c1a1452440f92633a06e_720w.jpg" alt="img" style="zoom: 50%;" /></p>
+<p>文件描述符与文件是什么关系呢？下图可以体现：</p>
+<p><img alt="img" src="https://pic1.zhimg.com/80/v2-57c1b1809b414ecf1dc38c927bc081e8_720w.jpg?source=1940ef5c" /></p>
+<ul>
+<li><strong>进程级别的文件描述符表</strong>：内核为每个进程维护一个文件描述符表，该表记录了文件描述符的相关信息，包括文件描述符、指向打开文件表中记录的指针。</li>
+<li><strong>系统级别的打开文件表</strong>：内核对所有打开文件维护的一个进程共享的打开文件描述表，表中存储了处于打开状态文件的相关信息，包括文件类型、访问权限、文件操作函数(file_operations)等。</li>
+<li><strong>系统级别的 <code>i-node</code> 表</strong>：每个文件系统都会为其中所有文件建立一个<code>inode</code>表。<code>i-node</code> 结构体记录了文件相关的信息，包括文件长度，文件所在设备，文件物理位置，创建、修改和更新时间等，<code>ls -i</code>命令可以查看文件 <code>i-node</code> 节点</li>
+</ul>
+<p>进程A中文件描述符1和20都指向同一个打开的文件句柄(标号为23)，这可能是通过调用<code>dup</code>、<code>dup2</code>或<code>fcntl</code>形成的。</p>
+<p>进程A的文件描述符2和进程B的文件描述符2都指向同一个打开的文件句柄(标号为73)，这可能是调用fork后出现的，即进程A与进程B是父子关系。</p>
+<p>进程A的文件描述符0和进程B的文件描述符3分别指向不同的打开文件句柄，但是这些句柄均指向<code>inode</code>表中的相同条目(1976)，即指向同一文件。这可能因为每个进程各自对同一个文件发起了open调用，同一个进程两次打开同一文件，也会发生类似情况。</p>
+<h3 id="io_1">理解IO</h3>
+<p>用一个<code>socket</code>的例子来理解IO：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">//创建socket </span>
+<span class="kt">int</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">socket</span><span class="p">(</span><span class="n">AF_INET</span><span class="p">,</span><span class="w"> </span><span class="n">SOCK_STREAM</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w">    </span>
+<span class="c1">//绑定 </span>
+<span class="n">bind</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="p">...)</span><span class="w"> </span>
+<span class="c1">//监听 </span>
+<span class="n">listen</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="p">...)</span><span class="w"> </span>
+<span class="c1">//接受客户端连接 </span>
+<span class="kt">int</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">accept</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="p">...)</span><span class="w"> </span>
+<span class="c1">//接收客户端数据 </span>
+<span class="n">recv</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="w"> </span><span class="p">...);</span><span class="w"> </span>
+<span class="c1">//将数据打印出来 </span>
+<span class="n">printf</span><span class="p">(...)</span><span class="w"> </span>
+</code></pre></div>
+<p>先新建 Socket 对象，依次调用<code>Bind</code>、<code>Listen</code>与<code>Accept</code>，最后调用<code>recv</code>接收数据。接下来我们只关心<code>recv</code>的过程，<code>recv</code>是如何把数据从客户端接收到进程空间中进行处理的呢？</p>
+<p><code>recv</code>是个<strong>阻塞</strong>方法，当程序运行到<code>Recv</code>时，它会一直等待，直到接收到数据才往下执行。</p>
+<p><img alt="20191025213749309" src="https://github.com/cat538/images-auto/raw/main/img/20191025213749309.png" /></p>
+<p>上图展示了数据接收的全过程，进程在<code>Recv</code>阻塞期间处于阻塞态，不在就绪队列中：</p>
+<ol>
+<li>计算机收到了对端传送的数据(步骤 ①)</li>
+<li>数据经由网卡传送到内存，由DMA等执行，不需要CPU参与(步骤 ②)</li>
+<li>然后网卡通过<strong>中断信号通知 CPU</strong> 有数据到达，CPU 执行<strong>中断程序</strong>(步骤 ③)</li>
+</ol>
+<p>此处的<strong>中断程序</strong>主要有两项功能：</p>
+<ol>
+<li>将网络数据写入到对应 Socket 的接收缓冲区里面(步骤 ④)</li>
+<li>唤醒进程 A(步骤 ⑤)，重新将进程 A 放入工作队列中</li>
+</ol>
+<p>可以看到，如果按照上述过程，则一个进程(线程)同时只能监视一个socket，因为在<code>recv</code>把进程阻塞，直到该socket可用。试想如果服务程序就是这样一个单进程，面对到来的1000个连接，只考虑<code>recv</code>，服务器只能按到达顺序，调用1000次<code>recv</code>依次接收数据，则必然会导致饥饿的问题(可能最后一个连接只传输很少的数据，但是被前面大量连接阻塞)。总结以下三点：</p>
+<ol>
+<li>进程在 <code>recv</code> 的时候大概率会被阻塞掉，导致一次进程切换</li>
+<li>当连接上数据就绪的时候进程又会被唤醒，又是一次进程切换</li>
+<li>一个进程同时只能等待一条连接，如果有很多并发，则需要很多进程</li>
+</ol>
+<p>有没有一种方式能够让进程同时监视多个socket呢？</p>
+<p>其实我们可以把<code>read</code>(即<code>recv</code>)设置为非阻塞，即如果文件描述符处于ready，则返回之，否则返回一个错误值；这样一来，我们就可以在代码里把所有描述符放到一个数组理，写一个循环使用<code>read</code>不断轮询这个数组。这样我们就实现了一个进程监视多个socket。</p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">fd_set</span><span class="p">[</span><span class="mi">1000</span><span class="p">];</span>
+<span class="c1">//...</span>
+<span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">){</span>
+<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">fd</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">fd_set</span><span class="p">){</span>
+<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">read</span><span class="p">(</span><span class="n">fd</span><span class="p">)){</span>
+<span class="w">            </span><span class="c1">//对文件描述符操作</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="p">{</span><span class="w"> </span><span class="k">continue</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>问题似乎得到了解决，但是这种方式存在严重的效率问题，因为<code>read</code>是一个系统调用，每次调用<code>read</code>都产生一次OS在用户态和内核态切换的开销。</p>
+<p>假如我们能够向内核预先传入一个 socket 列表(而不是1个socket)，内核帮我们遍历这个列表，如果列表中的 socket 都没有数据，挂起进程，直到有任何一个socket 收到数据，唤醒进程，开销就很小了——这就是系统调用<code>select</code>的做法。</p>
+<p><img alt="20191025214848328" src="https://github.com/cat538/images-auto/raw/main/img/20191025214848328.png" /></p>
+<h2 id="select">select</h2>
+<p>接口如下：</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;sys/select.h&gt;</span>
+<span class="cm">/** </span>
+<span class="cm"> * 遍历检查n个文件描述符，是否处于IO就绪状态(可读或可写)，并把符合条件的文件描述符(比如一个套接字)</span>
+<span class="cm"> * 加到相应(读、写、异常)集合中(即设置相应fdset的相应bit为1，不符合条件设置为0)。调用者负责检查集合</span>
+<span class="cm"> *</span>
+<span class="cm"> * @param n         使用时记住这个值为待检测的最大文件描述符加1即可；</span>
+<span class="cm"> * @param readfds   指定了被读监控的文件描述符集；</span>
+<span class="cm"> * @param writefds  指定了被写监控的文件描述符集；</span>
+<span class="cm"> * @param exceptfds 指定了被例外条件监控的文件描述符集；</span>
+<span class="cm"> * @param timeout   很常用的一个timeeval结构，起定时器的作用：到指定的时间，无论是否有fd准备好，都返回调用</span>
+<span class="cm"> */</span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">select</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">maxfd</span><span class="p">,</span><span class="w"> </span><span class="n">fd_set</span><span class="w"> </span><span class="o">*</span><span class="n">readfds</span><span class="p">,</span><span class="w"> </span><span class="n">fd_set</span><span class="w"> </span><span class="o">*</span><span class="n">writefds</span><span class="p">,</span><span class="w"> </span><span class="n">fe_set</span><span class="w"> </span><span class="o">*</span><span class="n">exceptfds</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">timeval</span><span class="w"> </span><span class="o">*</span><span class="n">timeout</span><span class="p">);</span>
+</code></pre></div>
+<p>详细的解释：</p>
+<ul>
+<li>测试指定的<code>fd</code>(可以是很多个<code>fd</code>)可读？可写？有异常条件待处理？  </li>
+<li><code>maxfd</code>：需要检查的文件描述符的个数（即检查到<code>fd_set</code>的第几位），数值应该比三组<code>fd_set</code>中所含的最大<code>fd</code>值更大，一般设为三组<code>fd_set</code>中所含的最大<code>fd</code>值加1（如在<code>readset</code>,<code>writeset</code>,<code>exceptset</code>中所含最大的<code>fd</code>为5，则<code>nfds=6</code>，因为<code>fd</code>是从0开始的）。这个值是为提高效率，使函数不必检查<code>fd_set</code>的所有1024位。</li>
+<li><code>readfs</code>：<code>fd_set* readfds</code>是指向<code>fd_set</code>结构的指针，这个集合中应该包括文件描述符，我们是要监视这些文件描述符的<strong>读</strong>变化的，即我们关心是否可以从这些文件中读取数据了，如果这个集合中有一个文件可读，<code>select</code>就会返回一个大于0的值，表示有文件可读，如果没有可读的文件，则根据timeout参数再判断是否超时，若超出timeout的时间，<code>select</code>返回0，若发生错误返回负值。可以传入<code>NULL</code>值，表示不关心任何文件的读变化。</li>
+<li><code>timeout</code>：限定了<code>select</code>的阻塞上限，即最久轮询时间；如果要非阻塞，则设置为0即可</li>
+<li>返回值：返回对应位为1的<code>fd</code>的总数</li>
+</ul>
+<p>与之相关的几个宏：</p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="nf">FD_SET</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">fd</span><span class="p">,</span><span class="w"> </span><span class="n">fd_set</span><span class="w"> </span><span class="o">*</span><span class="n">fdset</span><span class="p">);</span><span class="c1">//设置文件描述符集fdset中对应于文件描述符fd的位(设置为1)，即将fd加入fdset集的操作；</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">FD_CLR</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">fd</span><span class="p">,</span><span class="w"> </span><span class="n">fd_set</span><span class="w"> </span><span class="o">*</span><span class="n">fdset</span><span class="p">);</span><span class="c1">//清除文件描述符集fdset中对应于文件描述符fd的位(设置为0)，与上相反操作；</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">FD_ISSET</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">fd</span><span class="p">,</span><span class="w"> </span><span class="n">fd_set</span><span class="w"> </span><span class="o">*</span><span class="n">fdset</span><span class="p">);</span><span class="c1">//检测文件描述符集fdset中对应于文件描述符fd的位是否被设置,如果置1，就进行相应操作；</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">FD_ZERO</span><span class="p">(</span><span class="n">fd_set</span><span class="w"> </span><span class="o">*</span><span class="n">fdset</span><span class="p">);</span><span class="c1">//清除文件描述符集fdset中的所有位(既把所有位都设置为0)</span>
+</code></pre></div>
+<p>使用<code>select</code>的过程一般是：</p>
+<p>先调用宏FD_ZERO将指定的<code>fd_set</code>清零，然后调用宏FD_SET将需要测试的<code>fd</code>加入<code>fd_set</code>(即把对应位置1)，接着调用函数select测试<code>fd_set</code>中的所有<code>fd</code>(如果<code>fd</code>符合条件，则不会被置0，否则会被置0)，最后用宏FD_ISSET检查某个<code>fd</code>在函数select调用后，相应位是否仍然为1。</p>
+<blockquote>
+<p><strong>注意：</strong>上述过程中省略了一个问题，即内核是如何得知<strong>如果这个集合中有一个文件可读</strong>这一事件的呢？在<code>select</code>中，事实上内核只是简单的轮询所有描述符，看起是否处于可读状态，因此<code>select</code>不会让出CPU！！！</p>
+</blockquote>
+<p>再一次总结<code>select</code>解决同时监视多个socket问题的思想：我们构建一个兴趣列表(即添加了描述符的<code>fd_set</code>)包含要监视的所有socket，然后通过<code>select</code>向内核传入这个socket列表，如果列表中的socket都没有数据，挂起进程，直到有一个socket收到数据，<strong>中断程序</strong>将唤起进程。可以看到，这种方式，既做到了一个线程处理多个客户端连接socket，又减少了系统调用的开销（多个socket只有一次 select 的系统调用 + n 次就绪状态的文件描述符的 read 系统调用）。但是注意到<code>select</code>的三个限制：</p>
+<ul>
+<li>每次调用<code>select</code>，都需要把<code>fd_set</code>从用户态拷贝到内核态，这个开销在<code>fd</code>很多时会很大</li>
+<li><code>select</code>在内核层仍然是通过遍历的方式检查文件描述符的就绪状态，是个同步过程，只不过无系统调用切换上下文的开销(相比于我们把<code>read</code>设置为非阻塞，然后在用户层不断轮循多个描述符)。</li>
+<li>对于<code>select</code>每次的返回值(如果不为0)，我们都需要遍历从内核返回来的<code>fd_set</code>，这个开销在<code>fd</code>很多时很大</li>
+<li><code>select</code>只支持有限文件描述符数量，默认是1024</li>
+</ul>
+<p>基于以上不足，Linux2.6之后提供的另一个解决方案<code>epoll</code>针对上述缺点进行了改进，性能更好。</p>
+<p><img alt="epoll" src="https://github.com/cat538/images-auto/raw/main/img/epoll.jpg" /></p>
+<h2 id="epoll">epoll</h2>
+<p>参考 <a href="epoll.html">epoll</a></p>
+<h2 id="event-driven">event-driven</h2>
+<p>I/O多路复用可以用做并发事件驱动(event-driven)程序的基础，在事件驱动程序中，某些事件会导致流向前推进。一般的思路是将逻辑流模型化为状态机。不严格地说，一个状态机就是一组状态、输入事件和转移。其中转移是将状态和输人事件映射到状态。每个转移是将一个(输入状态，输人事件)对映射到一个输出状态。自循环(self-loop)是同一输入和输出状态之间的转移。通常把状态机画成有向图，其中节点表示状态，有向弧表示转移，而弧上的标号表示输入事件。一个状态机从某种初始状态开始执行。每个输入事件都会引发一个从当前状态到下一状态的转移。</p>
+<p>对于每个新的客户端<span class="arithmatex">\(k\)</span>，基于I/O多路复用的并发服务器会创建一个新的状态机<span class="arithmatex">\(s_k\)</span>，并将它和已连接描述符<span class="arithmatex">\(d_k\)</span>联系起来。如图12-7所示，每个状态机<span class="arithmatex">\(s_k\)</span>,都有一个状态(“等待描述符<span class="arithmatex">\(d\)</span>,准备好可读”)、一个输人事件(“描述符<span class="arithmatex">\(d_k\)</span>,准备好可以读了”)和一个转移(“从描述符<span class="arithmatex">\(d_k\)</span>,读一个文本行”)。</p>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20220114015925864.png" style="zoom: 80%;" /></p>
+<p>服务器使用I/О多路复用，借助<code>select</code>函数检测输入事件的发生。当每个已连接描述符准备好可读时，服务器就为相应的状态机执行转移，在这里就是从描述符读和写回一个文本行。</p>
+<p>图<code>12-8</code>展示了一个基于I/O多路复用的并发事件驱动服务器的完整示例代码。一个<code>pool</code>结构里维护着活动客户端的集合(第3～11行)。在调用<code>init_pool</code>初始化池(第27行)之后，服务器进人一个无限循环。在循环的每次迭代中，服务器调用select函数来检测两种不同类型的输入事件:</p>
+<ul>
+<li>a)来自一个新客户端的连接请求到达，</li>
+<li>b)一个已存在的客户端的已连接描述符准备好可以读了。</li>
+</ul>
+<p>当一个连接请求到达时(第35行)，服务器打开连接(第37行)，并调用<code>add_client</code>函数，将该客户端添加到池里(第38行)。最后，服务器调用<code>check_clients</code>函数，把来自每个准备好的已连接描述符的一个文本行回送回去(第42行)。</p>
+<p><img alt="image-20220114020229654" src="https://github.com/cat538/images-auto/raw/main/img/image-20220114020229654.png" /><img alt="image-20220114020311644" src="https://github.com/cat538/images-auto/raw/main/img/image-20220114020311644.png" /></p>
+<h2 id="io-vs">IO多路复用 v.s. 多线程</h2>
+<p>IO多路复用的优势在于，当处理的消耗对比IO几乎可以忽略不计时，可以处理大量的并发IO，而不用消耗太多CPU/内存。对比多线程，省去了线程切换的开销，以及每个线程单独维护的栈资源等。这就像是一个工作很高效的人，手上一个todo list，他高效的依次处理每个任务。这比每个任务单独安排一个人要节省（雇人是要发工资的……）。典型的例子是<code>nginx</code>做代理，代理的转发逻辑相对比较简单直接，那么IO多路复用很适合。相反，如果是一个做复杂计算的场景，计算本身可能是个复杂的东西，IO不是瓶颈。那么怎么充分利用CPU或者显卡的核心多干活才是关键。</p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.sections", "navigation.indexes"], "search": "../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.fac441b0.min.js"></script>
+      
+        <script src="../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

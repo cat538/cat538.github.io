@@ -1,0 +1,3459 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="密码分析学的复习，包括差分分析、线性分析、Square、广义生日攻击、比特追踪法等...">
+      
+      
+      
+      
+        <link rel="prev" href="../tools/mkdocs.html">
+      
+      
+        <link rel="next" href="%E5%AF%86%E7%A0%81%E5%AD%A6%E5%BC%95%E8%AE%BA%E5%A4%8D%E4%B9%A0.html">
+      
+      <link rel="icon" href="../images/favicon.ico">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.11">
+    
+    
+      
+        <title>密码分析学复习 - Cat538's Blog</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.85bb2934.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.a6bdf11c.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#enigma" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="Cat538&#39;s Blog" class="md-header__button md-logo" aria-label="Cat538's Blog" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Cat538's Blog
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              密码分析学复习
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+            
+              <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+              </label>
+            
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+            
+              <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+              </label>
+            
+          
+        </form>
+      
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="Cat538&#39;s Blog" class="md-nav__button md-logo" aria-label="Cat538's Blog" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Cat538's Blog
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        Prologue
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plan.html" class="md-nav__link">
+        Exercise
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          Cpp
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Cpp
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/toolchain.html" class="md-nav__link">
+        toolchain
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/move.html" class="md-nav__link">
+        move
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/align.html" class="md-nav__link">
+        align
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/ranges.html" class="md-nav__link">
+        ranges
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/benchmark.html" class="md-nav__link">
+        benchmark
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/profiler.html" class="md-nav__link">
+        profiler
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/IO-multiplexing.html" class="md-nav__link">
+        IO-multiplexing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/epoll.html" class="md-nav__link">
+        epoll
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/signal.html" class="md-nav__link">
+        signal
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/fork-safe.html" class="md-nav__link">
+        fork-safe
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          Rust
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Rust
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-toolchain.html" class="md-nav__link">
+        rust-toolchain
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-study.html" class="md-nav__link">
+        rust-study
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-attributes.html" class="md-nav__link">
+        rust-attributes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-modules.html" class="md-nav__link">
+        rust-modules
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-macro.html" class="md-nav__link">
+        rust-macro
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-network.html" class="md-nav__link">
+        rust-network
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-option.html" class="md-nav__link">
+        rust-optin
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-str.html" class="md-nav__link">
+        rust-str
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          Tools
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Tools
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/cmake.html" class="md-nav__link">
+        cmake
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/docker.html" class="md-nav__link">
+        docker
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/git.html" class="md-nav__link">
+        git
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/powershell.html" class="md-nav__link">
+        powershell
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/regex.html" class="md-nav__link">
+        regex
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/mkdocs.html" class="md-nav__link">
+        mkdocs
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+          Courses
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          Courses
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          密码分析学
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="%E5%AF%86%E7%A0%81%E5%88%86%E6%9E%90%E5%AD%A6%E5%A4%8D%E4%B9%A0.html" class="md-nav__link md-nav__link--active">
+        密码分析学
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#enigma" class="md-nav__link">
+    Enigma机
+  </a>
+  
+    <nav class="md-nav" aria-label="Enigma机">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    复杂度分析
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    差分攻击
+  </a>
+  
+    <nav class="md-nav" aria-label="差分攻击">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    构造区分器
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    采样
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    去噪
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    求解相关密钥的方程
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    信噪比
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    截断差分
+  </a>
+  
+    <nav class="md-nav" aria-label="截断差分">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31cipher4" class="md-nav__link">
+    3+1Cipher4截断差分
+  </a>
+  
+    <nav class="md-nav" aria-label="3+1Cipher4截断差分">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    构造区分器
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    采样
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    建方程恢复密钥
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#131cipher4" class="md-nav__link">
+    1+3+1Cipher4截断差分(重点)
+  </a>
+  
+    <nav class="md-nav" aria-label="1+3+1Cipher4截断差分(重点)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    构造区分器
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    采样
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    建方程恢复密钥
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    回飞棒攻击
+  </a>
+  
+    <nav class="md-nav" aria-label="回飞棒攻击">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    区分器
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    增强的回飞棒攻击
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    矩形攻击
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    不可能差分
+  </a>
+  
+    <nav class="md-nav" aria-label="不可能差分">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    构造区分器（重点）
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    采样
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    去噪
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    恢复密钥
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    线性攻击
+  </a>
+  
+    <nav class="md-nav" aria-label="线性攻击">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_25" class="md-nav__link">
+    区分器
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_26" class="md-nav__link">
+    采样
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_27" class="md-nav__link">
+    恢复密钥
+  </a>
+  
+    <nav class="md-nav" aria-label="恢复密钥">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    算法1
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    算法2
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_28" class="md-nav__link">
+    堆积引理
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_29" class="md-nav__link">
+    长轮数线性逼近式
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_30" class="md-nav__link">
+    复杂度分析
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#-" class="md-nav__link">
+    差分-线性攻击
+  </a>
+  
+    <nav class="md-nav" aria-label="差分-线性攻击">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1994" class="md-nav__link">
+    1994年模型
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2002" class="md-nav__link">
+    2002年模型
+  </a>
+  
+    <nav class="md-nav" aria-label="2002年模型">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_31" class="md-nav__link">
+    构造区分器
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_32" class="md-nav__link">
+    区分攻击
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#8des" class="md-nav__link">
+    8轮DES密钥恢复
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_33" class="md-nav__link">
+    复杂度分析
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_34" class="md-nav__link">
+    零相关线性攻击
+  </a>
+  
+    <nav class="md-nav" aria-label="零相关线性攻击">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aes" class="md-nav__link">
+    AES零相关线性壳
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#141aes" class="md-nav__link">
+    1+4+1AES密钥恢复
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_35" class="md-nav__link">
+    复杂度分析
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#square" class="md-nav__link">
+    Square攻击
+  </a>
+  
+    <nav class="md-nav" aria-label="Square攻击">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aes3" class="md-nav__link">
+    AES3轮区分器
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_36" class="md-nav__link">
+    采样
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_37" class="md-nav__link">
+    恢复密钥
+  </a>
+  
+    <nav class="md-nav" aria-label="恢复密钥">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31" class="md-nav__link">
+    3+1轮密钥恢复
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32" class="md-nav__link">
+    3+2轮密钥恢复
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#41" class="md-nav__link">
+    4+1轮密钥恢复
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_38" class="md-nav__link">
+    广义生日攻击
+  </a>
+  
+    <nav class="md-nav" aria-label="广义生日攻击">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#2-sum" class="md-nav__link">
+    2-SUM
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-tree" class="md-nav__link">
+    4-tree
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#k-tree" class="md-nav__link">
+    k-tree
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_39" class="md-nav__link">
+    中间相遇攻击
+  </a>
+  
+    <nav class="md-nav" aria-label="中间相遇攻击">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aes3_1" class="md-nav__link">
+    AES3轮区分器
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#31_1" class="md-nav__link">
+    3+1密钥恢复
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    5轮区分器
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#41_1" class="md-nav__link">
+    4+1密钥恢复
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#142" class="md-nav__link">
+    1+4+2密钥恢复
+  </a>
+  
+    <nav class="md-nav" aria-label="1+4+2密钥恢复">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_40" class="md-nav__link">
+    复杂度分析
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hash" class="md-nav__link">
+    Hash函数
+  </a>
+  
+    <nav class="md-nav" aria-label="Hash函数">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#md" class="md-nav__link">
+    MD结构第二原象攻击
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#md_1" class="md-nav__link">
+    强MD结构多碰撞
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mdmac" class="md-nav__link">
+    强MD结构密钥前缀MAC安全
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#md4" class="md-nav__link">
+    比特追踪法—MD4为例
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="%E5%AF%86%E7%A0%81%E5%AD%A6%E5%BC%95%E8%AE%BA%E5%A4%8D%E4%B9%A0.html" class="md-nav__link">
+        密码学引论
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="algorithm.html" class="md-nav__link">
+        算法设计与分析
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86.html" class="md-nav__link">
+        编译原理
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+          Crypto
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          Crypto
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crypto/ecdsa-pk-recovery.html" class="md-nav__link">
+        ecdsa-pk-recovery
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crypto/algo-rsa.html" class="md-nav__link">
+        algo-rsa
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crypto/algo-fft%26ntt.html" class="md-nav__link">
+        algo-fft&ntt
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crypto/algo-reduction.html" class="md-nav__link">
+        algo-reduction
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+          Mlc
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_8">
+          <span class="md-nav__icon md-icon"></span>
+          Mlc
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/dlc-survey.html" class="md-nav__link">
+        dlc-survey
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/tvm-install.html" class="md-nav__link">
+        tvm-install
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/tvm-ffi.html" class="md-nav__link">
+        tvm-ffi
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/tvm-type.html" class="md-nav__link">
+        tvm-type
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/tvm-tensorIR.html" class="md-nav__link">
+        tvm-tensorIR
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/tvm-lowering.html" class="md-nav__link">
+        tvm-lowering
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/tvm-autotvm.html" class="md-nav__link">
+        tvm-autotvm
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/tvm-ansor.html" class="md-nav__link">
+        tvm-ansor
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/mlir.html" class="md-nav__link">
+        mlir
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/mlir-toy.html" class="md-nav__link">
+        mlir-toy
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/mlir-onnx.html" class="md-nav__link">
+        mlir-onnx
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/mlir-iree.html" class="md-nav__link">
+        mlir-iree
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/paper-torch.fx.html" class="md-nav__link">
+        paper-torch.fx
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/paper-nimble.html" class="md-nav__link">
+        paper-nimble
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/paper-disc.html" class="md-nav__link">
+        paper-disc
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/paper-cortex.html" class="md-nav__link">
+        paper-cortex
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/paper-freetensor.html" class="md-nav__link">
+        paper-freetensor
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../about.html" class="md-nav__link">
+        About
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#enigma" class="md-nav__link">
+    Enigma机
+  </a>
+  
+    <nav class="md-nav" aria-label="Enigma机">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    复杂度分析
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    差分攻击
+  </a>
+  
+    <nav class="md-nav" aria-label="差分攻击">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    构造区分器
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    采样
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    去噪
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    求解相关密钥的方程
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    信噪比
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    截断差分
+  </a>
+  
+    <nav class="md-nav" aria-label="截断差分">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31cipher4" class="md-nav__link">
+    3+1Cipher4截断差分
+  </a>
+  
+    <nav class="md-nav" aria-label="3+1Cipher4截断差分">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    构造区分器
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    采样
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    建方程恢复密钥
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#131cipher4" class="md-nav__link">
+    1+3+1Cipher4截断差分(重点)
+  </a>
+  
+    <nav class="md-nav" aria-label="1+3+1Cipher4截断差分(重点)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    构造区分器
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    采样
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    建方程恢复密钥
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    回飞棒攻击
+  </a>
+  
+    <nav class="md-nav" aria-label="回飞棒攻击">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    区分器
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    增强的回飞棒攻击
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    矩形攻击
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    不可能差分
+  </a>
+  
+    <nav class="md-nav" aria-label="不可能差分">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    构造区分器（重点）
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    采样
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    去噪
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    恢复密钥
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    线性攻击
+  </a>
+  
+    <nav class="md-nav" aria-label="线性攻击">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_25" class="md-nav__link">
+    区分器
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_26" class="md-nav__link">
+    采样
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_27" class="md-nav__link">
+    恢复密钥
+  </a>
+  
+    <nav class="md-nav" aria-label="恢复密钥">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    算法1
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    算法2
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_28" class="md-nav__link">
+    堆积引理
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_29" class="md-nav__link">
+    长轮数线性逼近式
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_30" class="md-nav__link">
+    复杂度分析
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#-" class="md-nav__link">
+    差分-线性攻击
+  </a>
+  
+    <nav class="md-nav" aria-label="差分-线性攻击">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1994" class="md-nav__link">
+    1994年模型
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2002" class="md-nav__link">
+    2002年模型
+  </a>
+  
+    <nav class="md-nav" aria-label="2002年模型">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_31" class="md-nav__link">
+    构造区分器
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_32" class="md-nav__link">
+    区分攻击
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#8des" class="md-nav__link">
+    8轮DES密钥恢复
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_33" class="md-nav__link">
+    复杂度分析
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_34" class="md-nav__link">
+    零相关线性攻击
+  </a>
+  
+    <nav class="md-nav" aria-label="零相关线性攻击">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aes" class="md-nav__link">
+    AES零相关线性壳
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#141aes" class="md-nav__link">
+    1+4+1AES密钥恢复
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_35" class="md-nav__link">
+    复杂度分析
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#square" class="md-nav__link">
+    Square攻击
+  </a>
+  
+    <nav class="md-nav" aria-label="Square攻击">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aes3" class="md-nav__link">
+    AES3轮区分器
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_36" class="md-nav__link">
+    采样
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_37" class="md-nav__link">
+    恢复密钥
+  </a>
+  
+    <nav class="md-nav" aria-label="恢复密钥">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31" class="md-nav__link">
+    3+1轮密钥恢复
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32" class="md-nav__link">
+    3+2轮密钥恢复
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#41" class="md-nav__link">
+    4+1轮密钥恢复
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_38" class="md-nav__link">
+    广义生日攻击
+  </a>
+  
+    <nav class="md-nav" aria-label="广义生日攻击">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#2-sum" class="md-nav__link">
+    2-SUM
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-tree" class="md-nav__link">
+    4-tree
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#k-tree" class="md-nav__link">
+    k-tree
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_39" class="md-nav__link">
+    中间相遇攻击
+  </a>
+  
+    <nav class="md-nav" aria-label="中间相遇攻击">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aes3_1" class="md-nav__link">
+    AES3轮区分器
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#31_1" class="md-nav__link">
+    3+1密钥恢复
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    5轮区分器
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#41_1" class="md-nav__link">
+    4+1密钥恢复
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#142" class="md-nav__link">
+    1+4+2密钥恢复
+  </a>
+  
+    <nav class="md-nav" aria-label="1+4+2密钥恢复">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_40" class="md-nav__link">
+    复杂度分析
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hash" class="md-nav__link">
+    Hash函数
+  </a>
+  
+    <nav class="md-nav" aria-label="Hash函数">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#md" class="md-nav__link">
+    MD结构第二原象攻击
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#md_1" class="md-nav__link">
+    强MD结构多碰撞
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mdmac" class="md-nav__link">
+    强MD结构密钥前缀MAC安全
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#md4" class="md-nav__link">
+    比特追踪法—MD4为例
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  <h1>密码分析学</h1>
+
+<h2 id="enigma">Enigma机</h2>
+<h3 id="_1">复杂度分析</h3>
+<p>设接线板共有<span class="arithmatex">\(l\)</span>根线，那么共有<span class="arithmatex">\(2l\)</span>个字母被配对，26选<span class="arithmatex">\(2l\)</span>共<span class="arithmatex">\(C_{26}^{2l}\)</span>，即<span class="arithmatex">\(\frac{26!}{(26-2l)!\times 2l!}\)</span>，然后配对：10 对组合不考虑顺序、每个组合如 a - b, b - a 被计算了两次，因此除以 <span class="arithmatex">\(2^l × l!\)</span>  最终为<span class="arithmatex">\(|K_1|\)</span></p>
+<p>设共有<span class="arithmatex">\(m\)</span>扰频器，从中选<span class="arithmatex">\(n\)</span>个，每个扰频器初始状态有26种可能：<span class="arithmatex">\(A_m^n\times 26^n\)</span>
+$$
+|K_1| = \frac{26!}{(26-2l)!\times l!\times 2^l}
+$$</p>
+<div class="arithmatex">\[
+|K_2| = A_m^n\times 26^n
+\]</div>
+<ul>
+<li>穷搜：</li>
+</ul>
+<p><span class="arithmatex">\(|K_1 \times K_2|\)</span></p>
+<blockquote>
+<p><code>e.g.</code></p>
+<p>假设总共拥有10条连接线，5个扰频器，则此时可能的密钥个数</p>
+<p><span class="arithmatex">\(\frac{26!}{(26-20)!\times 2^{10}\times 10!}\times P_5^3 \times 26^3\approx 2^{67.1}\)</span></p>
+</blockquote>
+<ul>
+<li>分治：</li>
+</ul>
+<p>也就是先不管接线板，根据Crib来筛除扰频器设置，然后再恢复接线板</p>
+<p>近似 <span class="arithmatex">\(|K_1|+|K_2|\)</span></p>
+<h2 id="_2">差分攻击</h2>
+<figure>
+  <img src="https://github.com/cat538/images-auto/raw/main/img/image-20211029160632183.png" width="300" />
+  <figcaption>差分分布表</figcaption>
+</figure>
+<h3 id="_3">构造区分器</h3>
+<p>找到跨越多轮的高概率差分</p>
+<h3 id="_4">采样</h3>
+<p>关键是正确对和错误对的概念：因为差分往往不是概率1的，因此选择满足区分器头部的输入差分，得到的输出差分有可能不满足区分器尾部(正确密钥解密一轮)，这样的对被称为错误对，会对恢复密钥产生影响(噪声)</p>
+<p>下表是<code>正确对</code>和<code>错误对</code>对正确密钥和错误密钥计数器的影响：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>正确密钥</th>
+<th>错误密钥</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>正确对</strong></td>
+<td>一定+1</td>
+<td>平均概率+1</td>
+</tr>
+<tr>
+<td><strong>错误对</strong></td>
+<td>平均概率+1</td>
+<td>平均概率+1</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_5">去噪</h3>
+<p>其主要思想为：做密钥恢复攻击时要在区分器尾部之后加上一轮，由于区分器尾部确定，因此密文对的差分只有有限种可能，不满足这些可能的一定是错误对。</p>
+<ul>
+<li>区分器尾部为0：密文差分一定为0</li>
+<li>区分器尾部为<span class="arithmatex">\(\alpha\)</span>：根据<code>DDT</code>查出<span class="arithmatex">\(\alpha\)</span>对应的输出差分(即密文差分)</li>
+</ul>
+<p>在选择满足输入差分的明文对之后，再根据密文输出差分的限制筛除掉错误对，从而降低噪声</p>
+<blockquote>
+<p><code>e.g.</code></p>
+<p><strong>DES S-box 输入差分为4时输出差分有两种可能，则过滤概率为：</strong></p>
+<p><span class="arithmatex">\(\frac{2}{16}\)</span></p>
+</blockquote>
+<p>注意过滤之后<strong>不全是正确对</strong>(虽然密文差分只有<span class="arithmatex">\(1,2,9,a\)</span>四种可能，但是用正确密钥解密一轮后差分不一定为2)，<strong>但是比例大大提高</strong>。</p>
+<p><strong>不过事实上利用<span class="arithmatex">\(a\rightarrow 1,2,9,a\)</span>这个条件过滤并没有太大意义，因为那些差分不为<span class="arithmatex">\(1,2,9,a\)</span>的密文对S逆推上去不可能为2，也就不可能给任何密钥计数器+1</strong>，大概只是降低了时间复杂度</p>
+<h3 id="_6">求解相关密钥的方程</h3>
+<p>对于差分不为0的S盒，可建立与密钥有关的方程：<span class="arithmatex">\(S^{-1}(c_1\oplus k)\oplus S^{-1}(c_2\oplus k) = \Delta_{out}\)</span>，求解该方程有两种思路，举例如下：</p>
+<p>设得到两组明密文对<span class="arithmatex">\(\{(a\rightarrow9),(5\rightarrow6)\} and \{(9\rightarrow7),(8\rightarrow0)\}\)</span></p>
+<p>有S盒逆表如下：</p>
+<p><center>
+<img src="https://github.com/cat538/images-auto/raw/main/img/image-20211105161935408.png" alt="image-20211105161935408" style="zoom:50%;" />
+</center>
+<center>
+<img src="https://github.com/cat538/images-auto/raw/main/img/image-20211105161424022.png" alt="image-20211105161424022" style="zoom:67%;" />
+</center>
+可以建立方程<span class="arithmatex">\(R(x\oplus k_1)\oplus R(x^*\oplus k_1) = \beta\)</span>两种求解有关S-box方程的方法：</p>
+<ol>
+<li>穷举密钥空间</li>
+</ol>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211105162347304.png" alt="image-20211105162347304" style="zoom:50%;" /></p>
+<ol>
+<li>利用<em>S</em>盒差分分布表（DDT）</li>
+</ol>
+<p>在构造差分分布表的时候，顺带把<code>DDT[in,out]</code>对应的输入<code>X</code>，记录下来，这样一来<span class="arithmatex">\(key  = x\oplus X\)</span></p>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/key-recover.png" alt="image-20211105192932547" style="zoom: 67%;" /></p>
+<p>其实就是预记录了异或密钥之前的值，选择明文，加密，得到异或密钥之后的值，两者异或，即得到候选密钥</p>
+<h3 id="_7">信噪比</h3>
+<p>对于一条概率<span class="arithmatex">\(p\)</span>的差分路径，采样阶段采<span class="arithmatex">\(N\)</span>个明文对，欲恢复<span class="arithmatex">\(m\)</span>比特密钥，错误密钥满足方程的平均概率记为<span class="arithmatex">\(P_w\)</span></p>
+<p>定义：$S_N = $正确密钥的计数/错误密钥的平均计数</p>
+<ul>
+<li>正确密钥的计数：<span class="arithmatex">\(Np\)</span></li>
+<li>错误密钥的计数：<span class="arithmatex">\(\frac{N\cdot \beta \cdot \alpha}{2^m}\)</span>；其中<span class="arithmatex">\(\beta <span class="arithmatex">\(为去噪阶段过滤比例，\)</span>\alpha\)</span>为<strong>去噪之后</strong>，每个对对应的可能候选密钥个数(每个方程的解平均个数)m为恢复比特数</li>
+<li>
+<p>关于<span class="arithmatex">\(\alpha\)</span>的理解：去噪前差分不为<span class="arithmatex">\(1,2,9,a\)</span>的密文对一定不会满足区分器尾部<span class="arithmatex">\(2\)</span>，因此其对计数器影响一定为0；故去噪排除掉这些之后，剩余的对对应的候选密钥一定是大于1的，具体来说就是看<code>DDT</code>的那一行(如输入差分2的那一行值对应4种可能输出差分)，有几种可能就用总数(cipher4是<span class="arithmatex">\(2^{4} = 16\)</span>)除以几</p>
+</li>
+<li>
+<p><span class="arithmatex">\(S_N = \frac{S}{N} = \frac{Np}{N\alpha \beta /2^m} = \frac{p}{p_w}\)</span>，其中<span class="arithmatex">\(p_w\)</span>为错误密钥满足方程的平均概率</p>
+</li>
+<li>S/N取不同值时，对所选取的对有多少的正确对作出限制，信噪比越高，需要选的对越少</li>
+</ul>
+<blockquote>
+<p><code>e.g.</code></p>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211204182717447.png" alt="image-20211204182717447" style="zoom:50%;" /></p>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211204182659334.png" alt="image-20211204182659334" style="zoom:50%;" /></p>
+</blockquote>
+<h2 id="_8">截断差分</h2>
+<p>差分<code>0010</code>过S盒出来有四种可能<span class="arithmatex">\(1、2、9、a\)</span>，4种可能过 P置换后变成下图所示四种情况</p>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211029160525508.png" alt="image-20211029160525508" style="zoom: 33%;" /></p>
+<p>在这里把不同的地方用<code>*</code>表示就得到了一个概率1成立的一轮截断差分：</p>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211029161543863.png" alt="image-20211029161543863" style="zoom:50%;" /></p>
+<p>但如果在这里截断的话，要继续往下扩展就很难了（==因为只要S盒的输入有一个 * 输出差分就无法确定了，变成4个 *==），至多再扩展一轮：<code>0000 0000 0010 0000</code><span class="arithmatex">\(\Longrightarrow\)</span><code>00*0 0000 00*0 00*0 00*0</code><span class="arithmatex">\(\Longrightarrow\)</span><code>**0* **0* **0* **0*</code>。</p>
+<p><strong>因此过早截断（比方说在第一轮就截断）会损失过多的信息。</strong></p>
+<p>对于上述例子，如果我们不在第1轮就截断成<code>00*0 0000 00*0 00*0 00*0</code>，而是遍历第1轮的所有可能输出差分，再过第2轮置换，可以得到如下结果：</p>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211029162013097.png" alt="image-20211029162013097" style="zoom:50%;" /></p>
+<p>这样得到的2轮截断差分输出就从之前的<code>**0* **0* **0* **0*</code> <span class="arithmatex">\(\Longrightarrow\)</span> <code>*0** 0000 *0** *0**</code>，多了3比特信息</p>
+<p>从2轮截断差分输出<code>*0** 0000 *0** *0**</code>再向下推一轮变成<code>**0* **0* **0* **0*</code>这样就得到了一个3轮截断差分：</p>
+<p><code>输入 0000 0000 0010 0000</code><span class="arithmatex">\(\Longrightarrow\)</span><code>输出 **0* **0* **0* **0*</code></p>
+<h3 id="31cipher4">3+1Cipher4截断差分</h3>
+<h4 id="_9">构造区分器</h4>
+<p>如上，我们已经构造了一个概率为1的3轮截断差分区分器，在其后加上1轮可以攻击4轮（3+1）Cipher Four 算法</p>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211029163954962.png" alt="image-20211029163954962" style="zoom:67%;" /></p>
+<h4 id="_10">采样</h4>
+<p>与普通的差分攻击相同，是选择明文攻击：选取满足输入差分的明文对即可</p>
+<p><strong>关于去噪：</strong></p>
+<p>去噪是根据区分器尾部过S盒之后的一些确定性信息筛除错误对，从而提高信噪比的操作。但是在这个3轮截断差分区分器中，可以看到输出差分为<code>*0** *0** *0** *0**</code>，每个S盒理论上有8种输入，应该没有什么可以利用的有效信息了。。因此没法去噪</p>
+<h4 id="_11">建方程恢复密钥</h4>
+<p>遍历密钥空间，对于每个猜测密钥，遍历所有密文对，往上推一轮，推到区分器尾部，<strong>如果不满足区分器输出差分则直接排除</strong>（因为这是一个<strong>概率1</strong>成立 的事件）。</p>
+<p>还有必要设计数器么？还是需要设计数器的。虽然使用截断差分很容易筛除猜错的错误密钥：只要计数器值小于选择明文对的数量，就可以直接排除。但是如果选择明文对数量比较少还是有会出错，所以还是要设置一个计数器。</p>
+<h3 id="131cipher4">1+3+1Cipher4截断差分(重点)</h3>
+<h4 id="_12">构造区分器</h4>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211029180118877.png" alt="image-20211029180118877" style="zoom:67%;" /></p>
+<h4 id="_13">采样</h4>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211029180034983.png" alt="image-20211029180034983" style="zoom:50%;" /></p>
+<p>因为在头部加了一轮，因此需要选择合适的明文对——这些明文对在一轮加密之后满足输入差分。该如何选择这样的明文呢？</p>
+<p>把区分器头部往上推到第一轮S盒输出，可知若要得到这样的输出，则输入差分应当是<code>0000 0000 **** 0000</code></p>
+<p>因此可以先不关心其它12比特，或者说把12比特先定下来，与中间变化的4比特组成一个结构体（这样的一个结构体包含<span class="arithmatex">\(2^4\)</span>个明文）这样的一个结构体中任意两个差分都是<code>0000 0000 **** 0000</code>。而如果我们是随机选的话，确定n个明文对需要2n的明文量。这样提高了明文的利用率。</p>
+<p>但是中间还有一层密钥，因此还要猜测<span class="arithmatex">\(K_{0,2}\)</span>，在固定了第一轮S盒输出差分之后，对于<span class="arithmatex">\(K_{0,2}\)</span>的每一个猜测，<strong>每一个结构体（16个明文）可以配对配成8个明文对。</strong></p>
+<p>然后对这些明文对加密得到相应的密文对。</p>
+<p><strong>与上一节相同，对于如<code>*0** *0** *0** *0**</code>这样的区分器尾部差分很难去噪</strong></p>
+<h4 id="_14">建方程恢复密钥</h4>
+<p>以<code>0000 0000 0010 0000</code><span class="arithmatex">\(\Longrightarrow\)</span><code>*0** *0** *0** *0**</code>的三轮区分器，在其头尾各加一轮为例：</p>
+<p><strong>(这个例子说明了正确率的判断依赖于<span class="arithmatex">\(K_{0,2}\)</span>的猜测)</strong></p>
+<p>设选择明文对的数量为<span class="arithmatex">\(x\)</span>，尝试恢复<span class="arithmatex">\(K_{0,2}\)</span>和<span class="arithmatex">\(K_{5,0}\)</span>（当然可以直接恢复<span class="arithmatex">\(K_5\)</span>）</p>
+<ul>
+<li>如果<span class="arithmatex">\(K_{0,2}\)</span>猜对——则得到的都是正确对</li>
+<li>若<span class="arithmatex">\(K_{5,0}\)</span>猜对，则密文对的最高位4比特一轮解密后，以概率1满足区分器尾部<code>*0**</code>。在这种情况下（<strong><span class="arithmatex">\(K_{0,2}\)</span>猜对 且 <span class="arithmatex">\(K_{5,0}\)</span>猜对</strong>）<span class="arithmatex">\(K_{5,0}\)</span>的计数器数值<strong>一定等于</strong><span class="arithmatex">\(x\)</span>；</li>
+<li>若<span class="arithmatex">\(K_{5,0}\)</span>猜错，则密文对的最高位4比特一轮解密后，以随机概率（<span class="arithmatex">\(\frac{1}{2}\)</span>）满足区分器尾部，则<span class="arithmatex">\(K_{5,0}\)</span>的计数器数值大概率<strong>小于</strong><span class="arithmatex">\(x\)</span>（其期望值是<span class="arithmatex">\(\frac{x}{2}\)</span>）</li>
+<li>如果<span class="arithmatex">\(K_{0,2}\)</span>猜错——则得到的都是错误对</li>
+<li>在这种情况下，无论<span class="arithmatex">\(K_{5,0}\)</span>是否猜对，往上解密一轮，平均意义下应该是以随机概率（<span class="arithmatex">\(\frac{1}{2}\)</span>）满足区分器尾部差分。所以，对于一个<span class="arithmatex">\(K_{0,2}\)</span>猜测，如果遍历<span class="arithmatex">\(K_{5,0}\)</span>，所有计数器的值均小于<span class="arithmatex">\(x\)</span>，<strong>则说明<span class="arithmatex">\(K_{2}\)</span>一定猜错了</strong></li>
+</ul>
+<p>综上所述，我们可以恢复<span class="arithmatex">\(K_5\)</span>16比特和<span class="arithmatex">\(K_0\)</span>的4比特<span class="arithmatex">\(K_{0,2}\)</span>，共计20比特密钥</p>
+<h2 id="_15">回飞棒攻击</h2>
+<p>是一种<strong>选择明密文攻击</strong></p>
+<p>其过程如图所示：</p>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211030172827335.png" alt="image-20211030172827335" style="zoom: 33%;" /></p>
+<ul>
+<li>选择明文<span class="arithmatex">\((m1,m2)\)</span>满足<span class="arithmatex">\(m_1\oplus m_2 = \alpha\)</span>，往下推一轮<span class="arithmatex">\(x_1 \oplus x_2 = \beta\)</span>以概率<span class="arithmatex">\(p_1\)</span>成立</li>
+<li>A是一个线性变换，因此<span class="arithmatex">\(y_1 \oplus y_2 = \beta\)</span>以概率<span class="arithmatex">\(p_1\)</span>成立</li>
+<li>选择密文<span class="arithmatex">\((c_3,c_4)\)</span>满足<span class="arithmatex">\(c_1\oplus c_3 = c_2\oplus c_4 = \gamma\)</span>，往上推一轮<span class="arithmatex">\(y_1 \oplus y_3 = \Phi,~y_2 \oplus y_4 = \Phi\)</span>分别以概率<span class="arithmatex">\(q\)</span>成立，这一步综合概率是<span class="arithmatex">\(q^2\)</span></li>
+<li>在y这一层有<span class="arithmatex">\(\Longrightarrow y_1\oplus y_3 \oplus y_2 \oplus y_4 = \Phi \oplus \Phi = 0 \Longrightarrow y_1\oplus y_2  = y_3 \oplus y_4\)</span></li>
+<li>往上推一层<span class="arithmatex">\(x_1\oplus x_2  = x_3 \oplus x_4  = \beta \Longrightarrow m_3 \oplus m_4 = \alpha\)</span>箭头右边以概率<span class="arithmatex">\(p_2\)</span>成立</li>
+</ul>
+<p>但上述过程中有两个地方可以改进：</p>
+<ul>
+<li>要使得<span class="arithmatex">\(y_1\oplus y_3 \oplus y_2 \oplus y_4  = 0\)</span>，只需要<span class="arithmatex">\(y_1\oplus y_3 = y_2 \oplus y_4\)</span>，不一定非要等于<span class="arithmatex">\(\Phi\)</span>，或者说<span class="arithmatex">\(\Phi\)</span>可以有多种取值。因此在确定输入差分为<span class="arithmatex">\(\alpha\)</span>之后：选择满足输入差分的明文<span class="arithmatex">\(m_1\oplus m_2 = \alpha\)</span>，得到相应的密文；然后选择密文<span class="arithmatex">\((c_3,c_4)\)</span>满足<span class="arithmatex">\(c_1\oplus c_3 = c_2\oplus c_4 = \gamma\)</span>各自向上解密一轮，这里只要满足<span class="arithmatex">\(y_1\oplus y_3 = y_2 \oplus y_4\)</span>，而无需是一个特定值，故这里的概率由原来<span class="arithmatex">\(Pr = q^2:(\gamma\rightarrow\Phi)^2\)</span>变为<span class="arithmatex">\(Pr = \sum q_i^2:\sum (\gamma\rightarrow\Phi_i)^2\)</span>（就是取<code>DDT</code>种<span class="arithmatex">\(\gamma\)</span>那一行所有概率平方求和）</li>
+<li>类似的，<span class="arithmatex">\(\beta\)</span>也不是一个固定的取值，这样一来，<span class="arithmatex">\(p_1,p_2\)</span>的概率<strong>也变为所有的路线概率总和</strong>：<span class="arithmatex">\(p_1p_2 = \sum Pr(\alpha\rightarrow \beta_i)Pr(\beta_i \rightarrow \alpha)\)</span></li>
+</ul>
+<h3 id="_16">区分器</h3>
+<p>（以未改进版为例：）选择明文<span class="arithmatex">\((m1,m2)\)</span>满足<span class="arithmatex">\(m_1\oplus m_2 = \alpha\)</span>，并得到相应的密文<span class="arithmatex">\(（c_1,c_2）\)</span>然后选择密文<span class="arithmatex">\((c_3,c_4)\)</span>满足<span class="arithmatex">\(c_1\oplus c_3 = c_2\oplus c_4 = \gamma\)</span>向上上解密两轮得到<span class="arithmatex">\((m_3,m_4)\)</span>，则有：</p>
+<ul>
+<li>如果是随机置换：<span class="arithmatex">\(m_3 \oplus m_4 = \alpha\)</span>以随机概率成立</li>
+<li>如果是加密算法，则以概率<span class="arithmatex">\(p_1 q^2 p_2\)</span>成立</li>
+</ul>
+<h3 id="_17">增强的回飞棒攻击</h3>
+<p>把选择明密文改成了选择明文</p>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211031155143025.png" alt="image-20211031155143025" style="zoom:50%;" /></p>
+<ul>
+<li>选择明文<span class="arithmatex">\((m1,m2)\)</span>满足<span class="arithmatex">\(m_1\oplus m_2 = \alpha\)</span>，<span class="arithmatex">\(m_3\oplus m_4 = \alpha\)</span>  </li>
+<li>往下推一轮<span class="arithmatex">\(x_1 \oplus x_2 = \beta~~, ~~x_3 \oplus x_4 = \beta\)</span>同时成立的概率：<span class="arithmatex">\(p^2\)</span>成立，若条件满足，则有<span class="arithmatex">\(x_1 \oplus x_2 \oplus x_3 \oplus x_4 = 0\)</span></li>
+<li>过A之后必有<span class="arithmatex">\(y_1 \oplus y_3 = y_2 \oplus y_4\)</span>，<span class="arithmatex">\(y_1 \oplus y_3 = \Phi\)</span>的概率为随机概率<span class="arithmatex">\(2^{-n}\)</span></li>
+<li>再推到<span class="arithmatex">\(c_1\oplus c_3 = c_2\oplus c_4 = \gamma\)</span>，概率<span class="arithmatex">\(q^2\)</span>成立</li>
+</ul>
+<p>如果是随机概率：<span class="arithmatex">\(2^{-2n}\)</span>，如果存在高概率差分路线上述概率为<span class="arithmatex">\(p^2q^22^{-n}\)</span></p>
+<p>因此需要<span class="arithmatex">\(pq&gt;2^{-\frac{n}{2}}\)</span>，当然可以按照上一节中的方法提升概率，同理。</p>
+<h3 id="_18">矩形攻击</h3>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211031160917397.png" alt="image-20211031160917397" style="zoom:50%;" /></p>
+<h2 id="_19">不可能差分</h2>
+<p>对<em>r</em>轮加密的密码算法进行不可能差分分析的流程：</p>
+<ul>
+<li>寻找<em>r</em>-1轮不可能差分<span class="arithmatex">\(\Delta_{in}\nrightarrow \Delta_{out}\)</span></li>
+<li>选择满足输入差分为<span class="arithmatex">\(\Delta_{in}\)</span>的明文对(<span class="arithmatex">\(P,P\oplus\Delta_{in}\)</span>)，并进行<em>r</em>轮加密，所得密文对记为<span class="arithmatex">\(C~~and~~C^*\)</span></li>
+<li>根据 <span class="arithmatex">\(\Delta_{out}\)</span>对密文对进行筛选（去噪）</li>
+<li>猜测第<span class="arithmatex">\(r\)</span>轮轮密钥<span class="arithmatex">\(K_r\)</span>，对<span class="arithmatex">\(C~~and~~C^*\)</span>解密一轮到区分器尾部，所得的中间值记为<span class="arithmatex">\(D~~and~~D^*\)</span>，<strong>判断$D\oplus D^* =\Delta_{out} $</strong> 是否成立，若成立，则对应的猜测值一定是错误密钥，将其从密钥空间中排除；</li>
+<li>重复上述步骤，密钥空间中只有一个密钥为止，该密钥即是正确密钥</li>
+</ul>
+<h3 id="_20">构造区分器（重点）</h3>
+<p>不可能差分大部分时间在讲搜索不可能差分路径的<span class="arithmatex">\(\mu\)</span>算法。</p>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211030165432181.png" alt="image-20211030165432181" style="zoom: 50%;" /></p>
+<p>下图展示了一个不可能差分路径：输入为<span class="arithmatex">\((\alpha,0)\)</span>输出为<span class="arithmatex">\((0,\alpha)\)</span>，从上往下推两轮得到<span class="arithmatex">\((\alpha,\beta)\)</span>其中<span class="arithmatex">\(\beta\)</span>为非零但取值不确定差分。从下往上推三轮则可以得到<span class="arithmatex">\((\alpha\oplus \delta,\gamma)\)</span>其中<span class="arithmatex">\(\delta\)</span>为非零但取值不确定差分，其与<span class="arithmatex">\(\alpha\)</span>肯定不同，故推出矛盾，得到一条不可能差分路径。</p>
+<p>接下来是自动搜索<span class="arithmatex">\(\mu\)</span>算法，只与算法结构有关，与算法所采用的具体S盒无关：</p>
+<p><strong>5种符号：</strong></p>
+<table>
+<thead>
+<tr>
+<th>输入</th>
+<th>对应差分形式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>0差分</td>
+</tr>
+<tr>
+<td>1</td>
+<td>非零且取值不确定的差分</td>
+</tr>
+<tr>
+<td>1*</td>
+<td>非零且取值固定的差分(推导中的输入状态)</td>
+</tr>
+<tr>
+<td>2*</td>
+<td><span class="arithmatex">\(1^* \oplus 1\)</span>，即取值非<span class="arithmatex">\(1^*\)</span>的差分(可能为0)</td>
+</tr>
+<tr>
+<td>3，？</td>
+<td>不确定差分</td>
+</tr>
+</tbody>
+</table>
+<p><strong>矛盾集合：</strong></p>
+<table>
+<thead>
+<tr>
+<th>集合</th>
+<th>矛盾集合</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td><span class="arithmatex">\(1\)</span>，<span class="arithmatex">\(1^*\)</span></td>
+</tr>
+<tr>
+<td>1</td>
+<td><span class="arithmatex">\(0\)</span>，</td>
+</tr>
+<tr>
+<td>1*</td>
+<td><span class="arithmatex">\(0\)</span>，<span class="arithmatex">\(1^*\)</span>，<span class="arithmatex">\(2^*\)</span></td>
+</tr>
+<tr>
+<td>2*</td>
+<td><span class="arithmatex">\(1*\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>传播规则：</strong></p>
+<table>
+<thead>
+<tr>
+<th>集合</th>
+<th>过S盒</th>
+<th>异或运算</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>0</td>
+<td><span class="arithmatex">\(0\oplus s = s\)</span>(其中<span class="arithmatex">\(s\)</span>代表<span class="arithmatex">\(\{0,1,1^*,2^*,3\}\)</span>，下同)</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td><span class="arithmatex">\(1\oplus 1 = 3,~~1\oplus 1^* = 2^*,~~1\oplus 2^* = 3\)</span></td>
+</tr>
+<tr>
+<td>1*</td>
+<td>1</td>
+<td><span class="arithmatex">\(1^*\oplus 1^* = 3,~~1^*\oplus 2^* = 3\)</span>,(==注意这里的理解==)</td>
+</tr>
+<tr>
+<td>2*</td>
+<td>3</td>
+<td><span class="arithmatex">\(2^*\oplus 2^* = 3\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><font color=red>推导下列结构不可能差分：</font></p>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211105133406544.png" alt="image-20211105133406544" style="zoom:50%;" /></p>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211031191209225.png" alt="image-20211031191209225" style="zoom: 50%;" /></p>
+<p>其大致过程如下：</p>
+<p>输入差分遍历<span class="arithmatex">\([0,1,1*,2*]\)</span>，往下推到<span class="arithmatex">\((3,3)\)</span>之前</p>
+<div class="highlight"><pre><span></span><code><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">l</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">DIFF</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">          </span><span class="c1">// 遍历0，1，1*，2*</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">DIFF</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">      </span><span class="c1">// 遍历0，1，1*，2* </span>
+<span class="w">        </span><span class="n">string</span><span class="w"> </span><span class="n">_l</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">l</span><span class="p">,</span><span class="w"> </span><span class="n">_r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">r</span><span class="p">,</span><span class="w"> </span><span class="n">tmp</span><span class="p">;</span>
+<span class="w">        </span><span class="n">ret</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+<span class="w">        </span><span class="k">while</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">tmp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_r</span><span class="p">;</span>
+<span class="w">            </span><span class="n">_r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_xor</span><span class="p">(</span><span class="n">_sfn</span><span class="p">(</span><span class="n">_r</span><span class="p">),</span><span class="w"> </span><span class="n">_l</span><span class="p">);</span>
+<span class="w">            </span><span class="n">_l</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tmp</span><span class="p">;</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_l</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;3&quot;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">_r</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;3&quot;</span><span class="p">)</span><span class="w"> </span><span class="k">break</span><span class="p">;</span>
+<span class="w">            </span><span class="n">ret</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">_l</span><span class="p">,</span><span class="w"> </span><span class="n">_r</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="n">res</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">ret</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>输出差分遍历<span class="arithmatex">\([0,1,1*,2*]\)</span>，往上推到<span class="arithmatex">\((3,3)\)</span>之前</p>
+<p>把输入输出差分<span class="arithmatex">\((\alpha,\beta)\)</span>推出来的表错位对比，根据矛盾关系判断中间状态是否存在矛盾，如果存在矛盾，则得到一条<span class="arithmatex">\(\alpha\rightarrow\beta\)</span>的不可能差分路径</p>
+<h3 id="_21">采样</h3>
+<p>选择满足输入差分的明文对，得到相应密文，采样的时候可以类似截断差分</p>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211031171503176.png" alt="image-20211031171503176" style="zoom:50%;" /></p>
+<p>与截断略有不同之处在于这里<span class="arithmatex">\(\alpha\)</span>可以取遍所有非0，故这里对于<span class="arithmatex">\(2^{\frac{b}{2}}\)</span>个消息，共<span class="arithmatex">\(2^{\frac{b}{2}}\times 2^{\frac{b}{2}-1} = 2^{b-1}\)</span>对</p>
+<h3 id="_22">去噪</h3>
+<p>确定输出差分后（或输出差分某一部分），可以根据已知的部分进行去噪，与普通的差分分析相同，</p>
+<h3 id="_23">恢复密钥</h3>
+<ul>
+<li>对于正确的猜测，不可能推到区分器尾部；</li>
+<li>对于错误的猜测，以随机概率推到区分器尾部</li>
+</ul>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211031171315141.png" alt="image-20211031171315141" style="zoom:67%;" /></p>
+<h2 id="_24">线性攻击</h2>
+<h3 id="_25">区分器</h3>
+<p>找到一个r轮的线性逼近式<span class="arithmatex">\((dm \oplus dy) \oplus (dk_0\oplus dk_1\oplus dk_2) = 0\)</span>，偏差为正表示输入内积=输出内积为高概率事件(大于1/2)； 为负反之</p>
+<h3 id="_26">采样</h3>
+<p>线性分析是已知明文攻击</p>
+<h3 id="_27">恢复密钥</h3>
+<h4 id="1">算法1</h4>
+<p>找到线性逼近式：<span class="arithmatex">\((dm \oplus dy) \oplus (dk_0\oplus dk_1\oplus dk_2) = 0\)</span>及其偏差</p>
+<ul>
+<li>根据已知明文<span class="arithmatex">\(x\)</span>得到密文<span class="arithmatex">\(y\)</span>，并统计<span class="arithmatex">\((dm \oplus dy) = 0\)</span>的计数</li>
+<li>通过该计数恢复密钥的1比特信息(根据偏差和统计情况分情况)：</li>
+<li>偏差为正(说明<span class="arithmatex">\((dm \oplus dy)\)</span>与<span class="arithmatex">\((dk_0\oplus dk_1\oplus dk_2)\)</span>以大于<span class="arithmatex">\(\frac{1}{2}\)</span>概率相等)：<ul>
+<li>计数大于<span class="arithmatex">\(N/2\)</span>，则有<span class="arithmatex">\((dk_0\oplus dk_1\oplus dk_2) = 0\)</span>；</li>
+<li>计数小于<span class="arithmatex">\(N/2\)</span>，则有<span class="arithmatex">\((dk_0\oplus dk_1\oplus dk_2) = 1\)</span>；</li>
+</ul>
+</li>
+<li>偏差为负(说明<span class="arithmatex">\((dm \oplus dy)\)</span>与<span class="arithmatex">\((dk_0\oplus dk_1\oplus dk_2)\)</span>以大于<span class="arithmatex">\(\frac{1}{2}\)</span>概率不等)：<ul>
+<li>计数大于<span class="arithmatex">\(N/2\)</span>，则有<span class="arithmatex">\((dk_0\oplus dk_1\oplus dk_2) = 1\)</span>；</li>
+<li>计数小于<span class="arithmatex">\(N/2\)</span>，则有<span class="arithmatex">\((dk_0\oplus dk_1\oplus dk_2) = 0\)</span>；</li>
+</ul>
+</li>
+</ul>
+<h4 id="2">算法2</h4>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211202010650531.png" alt="image-20211202010650531" style="zoom:50%;" /></p>
+<blockquote>
+<p>有位同学之前提了一个线性分析算法2的问题，就是为什么正确密钥的判断依据是看偏差大的而不是和推导分析出来的$ \epsilon$接近的，今天请教了一下其他老师，说线性和差分类似，都是找到偏差或概率较大的以后，在猜测密钥阶段就按照偏离程度大小来排序了，偏差大的对应正确密钥。主要因为我们推导出来的偏差并不是全部情况，而且只是一个期望的结果，偏差本身也是存在分布的，认为远离随机现象倾向于正确</p>
+</blockquote>
+<h3 id="_28">堆积引理</h3>
+<p>记<span class="arithmatex">\(X_i (1≤i≤n)\)</span>为独立随机变量，且<span class="arithmatex">\(X_i=0\)</span>的概率为<span class="arithmatex">\(p_i\)</span>，<span class="arithmatex">\(X_i=1\)</span>的概率为<span class="arithmatex">\(1-p_i\)</span></p>
+<p>则<span class="arithmatex">\(X_1\oplus X_2\oplus \cdots \oplus X_n = 0\)</span>成立的概率为：
+$$
+\frac {1}{2}+2^{n-1} \prod_{i =1}^{n}(p_i-\frac{1}{2})
+$$
+直接计算偏差：
+$$
+\epsilon  = 2^{n-1}\prod_{i = 1}^n\epsilon_i
+$$</p>
+<h3 id="_29">长轮数线性逼近式</h3>
+<p>掩码传播规则：</p>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211203145655379.png" alt="image-20211203145655379" style="zoom:50%;" /></p>
+<h3 id="_30">复杂度分析</h3>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211112220632236.png" alt="image-20211112220632236" style="zoom:50%;" /></p>
+<ul>
+<li>数据复杂度：<strong>选取明文的数量与区分器偏差的-2次方成正比</strong></li>
+<li>时间复杂度：<span class="arithmatex">\(2^4\times 2^{11}\times \frac{1}{4}\times \frac{1}{5}\)</span>是选择数据规模为<span class="arithmatex">\(2^{11}\)</span>，穷举<span class="arithmatex">\(K_{5,0}\)</span>，乘以<span class="arithmatex">\(2^4\)</span>只对第一个S盒攻击，乘<span class="arithmatex">\(\frac{1}{4}\)</span>，4+1轮，需要猜4比特密钥<span class="arithmatex">\(K_{5,0}\)</span>回推1轮，故乘以<span class="arithmatex">\(\frac{1}{5}\)</span></li>
+<li>存储复杂度：每个密钥需要一个11比特(数据规模<span class="arithmatex">\(2^{11}\)</span>)的计数器</li>
+</ul>
+<h2 id="-">差分-线性攻击</h2>
+<ul>
+<li>在线性分析中，利用<strong>堆积引理</strong>把短轮数、高概率线性特征级联；在差分-线性中，我们考虑把差分特征和线性特征级联</li>
+</ul>
+<h3 id="1994">1994年模型</h3>
+<p>事实上是选了一个截断差分，保证差分尾部的相关比特为0，即差分部分的概率为1，因此整个区分器的概率只考虑线性部分即可；仍然是堆积引理，算两路偏差的总偏差</p>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211128220439752.png" alt="image-20211128220439752" style="zoom:50%;" /></p>
+<p>在线性壳之前加一个差分</p>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211128192735743.png" alt="image-20211128192735743" style="zoom:50%;" /></p>
+<p>6轮区分器：</p>
+<ul>
+<li>选择满足输入差分<span class="arithmatex">\(\Delta_{in}\)</span>的明文对，加密得到密文对</li>
+<li>计算密文对的差分与输出掩码的内积</li>
+<li>如果为随机置换，则结果为0的概率为1/2</li>
+<li>如果为DES算法，则结果为0的概率为<span class="arithmatex">\(1/2+2\epsilon^2\)</span></li>
+</ul>
+<h3 id="2002">2002年模型</h3>
+<p>Shamir等人在2002年对94年模型的中间状态（差分与线性壳级联处）做了调整，头部概率不再是1</p>
+<p>在放宽了对差分的要求(<span class="arithmatex">\(p = 1\Longrightarrow p = p'\)</span>)之后，可以做更长轮数的攻击 </p>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211128205002585.png" alt="image-20211128205002585" style="zoom:50%;" /></p>
+<p>其中：设差分路径概率为<span class="arithmatex">\(p'\)</span></p>
+<ul>
+<li>则若<span class="arithmatex">\(\lambda_p\cdot \Delta_{out} = 0\)</span>，则<span class="arithmatex">\(\frac{1}{2}+p = \frac{1}{2}+p'/2\)</span></li>
+<li>若<span class="arithmatex">\(\lambda_p\cdot \Delta_{out} = 1\)</span>，则<span class="arithmatex">\(\frac{1}{2}+p = \frac{1}{2}-p'/2\)</span></li>
+</ul>
+<h4 id="_31">构造区分器</h4>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211128210953363.png" alt="image-20211128210953363" style="zoom:33%;" /></p>
+<p>区分器的概率为<span class="arithmatex">\(\frac{1}{2} + 4\epsilon^2p\)</span>，其中<span class="arithmatex">\(\epsilon\)</span>为线性逼近式的偏差，<span class="arithmatex">\(p\)</span>是差分区分器尾部<span class="arithmatex">\(\Delta_{out}\cdot \lambda_T = 0\)</span>的偏差，设差分区分器概率为<span class="arithmatex">\(p'\)</span>，则<span class="arithmatex">\(\frac{1}{2}+p = p'+\frac{1}{2}(1-p')\)</span></p>
+<h4 id="_32">区分攻击</h4>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211128210857473.png" alt="image-20211128210857473" style="zoom: 50%;" /></p>
+<p>关于这里不是<span class="arithmatex">\(|n/N-1/2|\)</span>的理解：对于差分-线性攻击，选定差分和掩码之后，线性壳的输入<span class="arithmatex">\(\lambda p\cdot \Delta_{out}\)</span>为0是定下来的(<strong>本例中</strong>一定为0，<strong>这1比特信息对应的线性分析算法1中的密钥1比特信息</strong>)<img src="https://github.com/cat538/images-auto/raw/main/img/image-20211128235809475.png" alt="image-20211128235809475" style="zoom:50%;" />，而又因为该线性壳(即<span class="arithmatex">\(dm\oplus dy = 0\)</span>)的偏差是正的(==偏差为正：输入内积=输出内积的概率大于1/2；偏差为负反之==)，因此预期输出掩码与密文的内积值应当是0比较多</p>
+<p>举两个没用的例子帮助理解一下：</p>
+<ul>
+<li>如果改成更多轮差分区分器，线性壳不变，则有可能得到<span class="arithmatex">\(\lambda p\cdot \Delta_{out}\)</span>一定为1，则线性壳输出期望1更多</li>
+<li>如果改成偏差为负的线性壳，差分区分器不变(即<span class="arithmatex">\(\lambda p\cdot \Delta_{out} = 0\)</span>)，则线性壳输出期望1更多</li>
+</ul>
+<p>但无论哪种情况（<span class="arithmatex">\(\lambda p\cdot \Delta_{out} = 0\)</span>或<span class="arithmatex">\(\lambda p\cdot \Delta_{out} =1\)</span>），在线性掩码和差分确定后，注意统计结果及其期望计数即可</p>
+<p><strong>回忆线性分析的算法1：</strong></p>
+<blockquote>
+<p>在线性分析中，我们找到线性逼近式：<span class="arithmatex">\((dm \oplus dy) \oplus (dk_0\oplus dk_1\oplus dk_2) = 0\)</span>及其偏差</p>
+<ul>
+<li>然后统计<span class="arithmatex">\((dm \oplus dy) = 0\)</span>的计数</li>
+<li>通过该计数恢复密钥的1比特信息：</li>
+<li>偏差为正(说明<span class="arithmatex">\((dm \oplus dy)\)</span>与<span class="arithmatex">\((dk_0\oplus dk_1\oplus dk_2)\)</span>以大于<span class="arithmatex">\(\frac{1}{2}\)</span>概率相等)：<ul>
+<li>计数大于<span class="arithmatex">\(N/2\)</span>，则有<span class="arithmatex">\((dk_0\oplus dk_1\oplus dk_2) = 0\)</span>；</li>
+<li>计数小于<span class="arithmatex">\(N/2\)</span>，则有<span class="arithmatex">\((dk_0\oplus dk_1\oplus dk_2) = 1\)</span>；</li>
+</ul>
+</li>
+<li>偏差为负(说明<span class="arithmatex">\((dm \oplus dy)\)</span>与<span class="arithmatex">\((dk_0\oplus dk_1\oplus dk_2)\)</span>以大于<span class="arithmatex">\(\frac{1}{2}\)</span>概率不等)：<ul>
+<li>计数大于<span class="arithmatex">\(N/2\)</span>，则有<span class="arithmatex">\((dk_0\oplus dk_1\oplus dk_2) = 1\)</span>；</li>
+<li>计数小于<span class="arithmatex">\(N/2\)</span>，则有<span class="arithmatex">\((dk_0\oplus dk_1\oplus dk_2) = 0\)</span>；</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<h4 id="8des">8轮DES密钥恢复</h4>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211206114259149.png" alt="image-20211206114259149" style="zoom:50%;" /></p>
+<p>==需要注意的是：在密钥恢复攻击中，DES的 6X8 = 48 比特密钥影响的是上一轮的右半支（左半支直接拉线）==</p>
+<h4 id="_33">复杂度分析</h4>
+<p>针对上述8轮DES：</p>
+<ul>
+<li><strong>时间复杂度：</strong><span class="arithmatex">\(2^{14.81}\times 2^6 / 64 = 2^{14.81}~~8-round-enc\)</span></li>
+<li><strong>数据复杂度：</strong><span class="arithmatex">\(2\times |\epsilon|^{-2} = 2^{14.81}\)</span>个明文</li>
+<li><strong>存储复杂度：</strong><span class="arithmatex">\(2^6\times 14\)</span>；密钥计数器</li>
+</ul>
+<h2 id="_34">零相关线性攻击</h2>
+<p>利用的是与密钥无关的，相关度一定为0的线性壳<span class="arithmatex">\(\alpha \rightarrow \beta <span class="arithmatex">\(，即\)</span>&lt;\alpha,m&gt;\oplus &lt;\beta, y&gt; = 0\)</span></p>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211112221723940.png" alt="image-20211112221723940" style="zoom:50%;" /></p>
+<p>注意这里与不可能差分不同：</p>
+<ul>
+<li>
+<p>不可能差分的含义：对于确定输入差分，正确加密情况下，以概率0得到输出差分。因此只有错误密钥才会使得不可能差分成立。</p>
+</li>
+<li>
+<p>在零相关线性中，正确密钥才满足零线性相关特性。</p>
+</li>
+</ul>
+<p>与不可能差分类似，分别从上往下，从下往上推得到两条概率为1的线性掩码；两条路线在中间矛盾</p>
+<p>以概率1成立的事件：</p>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211203145655379.png" alt="image-20211203145655379" style="zoom:50%;" /></p>
+<p>注意第三条线性映射，在AES分析中用到</p>
+<p><font color = red>分支运算和线性映射为什么？？？？</font></p>
+<h3 id="aes">AES零相关线性壳</h3>
+<p>先回忆一下AES的结构：</p>
+<ul>
+<li>AK：在<code>Initial round</code>先进行一次AK（不计入总轮数）</li>
+<li>S</li>
+<li>SR：第1行左移0，第2行左移1，第3行左移2，第4行左移3</li>
+<li>MC：分别用MC矩阵与每一列相乘，<strong>最后一轮没有MC</strong></li>
+</ul>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211203152733757.png" alt="image-20211203152733757" style="zoom:50%;" /></p>
+<p>利用这个区分器做区分攻击：</p>
+<ol>
+<li>已知<span class="arithmatex">\(2^n\)</span>个明密文对<span class="arithmatex">\((x,y)\)</span>(==注意这里是全明文空间==)；零相关线性壳<span class="arithmatex">\((\Gamma,0,0,0)\rightarrow (\Gamma',0,0,0)\)</span>如图示</li>
+<li>计算输入掩码与x，输出掩码与y的内积，统计相等的数量</li>
+<li>如果为<span class="arithmatex">\(2^{n-1}\)</span>，则判断为4轮AES，否则为RP</li>
+</ol>
+<p><strong>考虑如何降低复杂度？如何用更少的明文计算相关度？</strong></p>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211205143109262.png" alt="image-20211205143109262" style="zoom: 33%;" /></p>
+<p>如图所示可以得<span class="arithmatex">\(T_{10} = T_{01}\Longrightarrow T_{00} = T_{11}\)</span>，故如果要计数<span class="arithmatex">\(\alpha \cdot x\oplus \beta \cdot y = 0\)</span>，则在给定<span class="arithmatex">\(\alpha \cdot x = 0\)</span>得条件下，只需要计数一半</p>
+<p>故在明文的由<span class="arithmatex">\(2^n\)</span>明文<span class="arithmatex">\(\Longrightarrow\)</span>选择<span class="arithmatex">\(2^{n-1}\)</span>明文：满足<span class="arithmatex">\(\alpha \cdot x = 0,\alpha\cdot x = 1,\beta\cdot y = 0,\beta \cdot y =1\)</span>，四个条件之一</p>
+<h3 id="141aes">1+4+1AES密钥恢复</h3>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211205144907535.png" alt="image-20211205144907535" style="zoom: 50%;" /></p>
+<h3 id="_35">复杂度分析</h3>
+<p>攻击<code>AES192</code>，(因为在头部和尾部各加了一轮，无法用上述改进方法降低复杂度)</p>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/BF765068-8E21-4AB9-A715-0C73976731FB.png" alt="BF765068-8E21-4AB9-A715-0C73976731FB" style="zoom: 33%;" /></p>
+<h2 id="square">Square攻击</h2>
+<p>考虑的是集合特性：即对一系列状态取值求和；</p>
+<h3 id="aes3">AES3轮区分器</h3>
+<p>通过选择满足某种特性的明文集合，追踪该集合特性在多轮加密过程中的传播情况，通过轮之后集合特性的不随机现象(例如集合求和为0)，将一个密码算法与随机置换区分开</p>
+<ul>
+<li>只要算法采用的变换是双射，与算法部件的具体取值关系不大</li>
+</ul>
+<p><strong>定义在<span class="arithmatex">\(\mathbb F_{2^n}\)</span>上的三种集合特性：</strong></p>
+<table>
+<thead>
+<tr>
+<th>集合</th>
+<th>特性</th>
+<th>举例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>活跃集A(Active)</strong></td>
+<td>遍历<span class="arithmatex">\(\mathbb F_{2^n}\)</span>所有元素</td>
+<td><span class="arithmatex">\(\mathbb F_{2^3}\)</span>上的集合<span class="arithmatex">\(\{0,1,2,3,4,5,6,7\}\)</span></td>
+</tr>
+<tr>
+<td><strong>稳定集C(Constant)</strong></td>
+<td>集合中所有元素相同为常数c</td>
+<td><span class="arithmatex">\(\mathbb F_{2^3}\)</span>上的集合<span class="arithmatex">\(\{1,1,1,1,1,1,1,1\}\)</span></td>
+</tr>
+<tr>
+<td><strong>平衡集B(Balanced)</strong></td>
+<td>满足求和=0</td>
+<td><span class="arithmatex">\(\mathbb F_{2^3}\)</span>上的集合<span class="arithmatex">\(\{0,1,0,1,2,4,6,0\}\)</span></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>活跃集A和稳定集B都是平衡集</li>
+</ul>
+<p><strong>集合传播规则：</strong></p>
+<ul>
+<li>
+<p>过线性变换(拉线、异或密钥等双射)：三种集合特性保持</p>
+</li>
+<li>
+<p>过可逆S盒：活跃集A、稳定集C保持；平衡集B不确定</p>
+</li>
+<li>
+<p>两个集合求和：</p>
+</li>
+<li>
+<p>活跃+活跃 = 平衡</p>
+</li>
+<li>
+<p>活跃+稳定 = 活跃</p>
+</li>
+<li>
+<p>平衡+平衡 = 平衡</p>
+<table>
+<thead>
+<tr>
+<th>集合</th>
+<th align="left">求和</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A+A</td>
+<td align="left">B</td>
+</tr>
+<tr>
+<td>A+B</td>
+<td align="left">B</td>
+</tr>
+<tr>
+<td>A+C</td>
+<td align="left">A</td>
+</tr>
+<tr>
+<td>B+B</td>
+<td align="left">B</td>
+</tr>
+<tr>
+<td>B+C</td>
+<td align="left">B</td>
+</tr>
+<tr>
+<td>C+C</td>
+<td align="left">C</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+<p>利用上述规则构造3轮AES区分器：输入为256个明文构成的集合(第一字节遍历，其它字节固定)</p>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211203162544274.png" alt="image-20211203162544274" style="zoom: 33%;" /></p>
+<p>即在输入满足第1字节为遍历集的时候，3轮区分器尾部16字节应该都是平衡集</p>
+<h3 id="_36">采样</h3>
+<p>选择明文攻击，选择满足输入集合的明文，按PPT的说法这里把每256个明文看作一个结构体</p>
+<h3 id="_37">恢复密钥</h3>
+<p>很显然可以利用上述3轮区分器做区分攻击，如果得到密文的128比特异或起来等于0的话，则判断为3轮AES(注意这里最后一轮有MC)</p>
+<h4 id="31">3+1轮密钥恢复</h4>
+<p>可以进一步在区分器之后加上一轮，进行密钥恢复攻击：</p>
+<ol>
+<li>
+<p>在区分器尾部加上1轮(SB，SR，AK，注意没有MC)，并把明文集合加密得到密文集合(<strong>256个密文</strong>)</p>
+</li>
+<li>
+<p>猜测<span class="arithmatex">\(K_{0}^4\)</span>，即第4轮、第1字节密文对应位置密钥；密文集合第1字节往上解密1轮到区分器尾部，并计算该字节求和(256个求和)</p>
+</li>
+<li>
+<p>如果求和<span class="arithmatex">\(s = 0\)</span>，则猜测的密钥作为一个候选，否则淘汰</p>
+</li>
+<li>
+<p>对正确的<span class="arithmatex">\(K_0^4\)</span>，<span class="arithmatex">\(Pr(s = 0) = 1\)</span></p>
+</li>
+<li>
+<p>对错误的<span class="arithmatex">\(K_0^4\)</span>，<span class="arithmatex">\(Pr(s = 0)\)</span>以随机概率<span class="arithmatex">\(\frac{1}{2^8}\)</span>(1 字节为0，即8个比特全为0)</p>
+</li>
+<li>
+<p>重新选一个结构体，重复上述过程，直到<span class="arithmatex">\(K_0^4\)</span>唯一确定</p>
+</li>
+<li><strong>成功率分析</strong>：经过上述一个结构体的过滤，正确密钥保留下来，错误密钥以<span class="arithmatex">\(1/2^8\)</span>概率被保留下来，因此错误密钥期望为1；</li>
+</ol>
+<p>经过N个结构体过滤：剩余错误<span class="arithmatex">\(K_0^4\)</span>的个数为<span class="arithmatex">\((2^8-1)\times (\frac{1}{2^8})^N\)</span>，在这个例子中，只需要N=2即可确定正确密钥，类似地可以恢复16字节的<span class="arithmatex">\(K^4\)</span></p>
+<p>若要恢复第4轮128比特(16字节)密钥：</p>
+<ul>
+<li>
+<p><strong>数据复杂度</strong>：<span class="arithmatex">\(2^8\times 2\)</span>；根据分析需要选2个结构体</p>
+</li>
+<li>
+<p><strong>时间复杂度</strong>：<span class="arithmatex">\(16\times (2^8\times 2^8+2^8\times 2)~\approx ~ 2^{20} S-Box = 2^{20}/(16\times 4)\approx 2^{14} enc\)</span></p>
+</li>
+</ul>
+<p>恢复16字节密钥，因此外层16，对于每个字节密钥：第1个结构体需要遍历猜测密钥，每个密钥<span class="arithmatex">\(2^8\)</span>明文，而第2个结构体只需要对筛剩下的2个密钥过滤1个即可；最后把S盒运算换成加密，每轮16次查S盒，一共4轮，故除以<span class="arithmatex">\((16\times 4)\)</span></p>
+<ul>
+<li><strong>存储复杂度：</strong><span class="arithmatex">\(2^8 \times 128 = 2^{15}\)</span></li>
+</ul>
+<h4 id="32">3+2轮密钥恢复</h4>
+<p>在3轮区分器之后加上两轮进行密钥恢复攻击：</p>
+<p>涉及到一个小技巧是==交换第四轮MC和AK的顺序==，从而减少了需要猜测的密钥长度: <span class="arithmatex">\(8~~byte\rightarrow 5~~byte\)</span></p>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211203172825833.png" alt="image-20211203172825833" style="zoom:50%;" /></p>
+<p>其它和3+1一样；建立了和5字节密钥有关的方程，结果1个结构体过滤，错误密钥以<span class="arithmatex">\(1/2^8\)</span>概率被保留下来，因此得到40比特密钥需要平均<span class="arithmatex">\(40\times (\frac{1}{2^8})^N&lt;1\Longrightarrow N = 6\)</span>个结构体</p>
+<p>若要恢复第5轮128比特(16字节)密钥：</p>
+<ul>
+<li>
+<p><strong>数据复杂度</strong>：<span class="arithmatex">\(2^8\times 6\)</span>；根据分析需要选6个结构体</p>
+</li>
+<li>
+<p><strong>时间复杂度</strong>：<span class="arithmatex">\(4\times 5\times (2^8\times 2^{40} + 2^8\times 2^{32}+\cdots +2^8\times 2)~\approx ~ 5\times 2^{50} S-Box = 2^{50}/(16)\approx 2^{46} ~~5-round-enc\)</span>；5</p>
+</li>
+</ul>
+<p>每次猜测40比特的密钥（<span class="arithmatex">\(K^5\)</span>32比特+<span class="arithmatex">\(K^4\)</span>8比特），需要4次能完全恢复恢复第5轮128比特(16字节)密钥，因此外层4X5，对于每个4字节密钥：第1个结构体需要遍历猜测密钥，每个密钥<span class="arithmatex">\(2^8\)</span>明文，而第2个结构体需对筛剩下的<span class="arithmatex">\(2^{32}\)</span>密钥继续过滤直到最后剩1个候选密钥即为结果；最后把S盒运算换成加密，每轮16次查S盒，一共5轮，故除以<span class="arithmatex">\((16\times 5)\)</span></p>
+<ul>
+<li><strong>存储复杂度</strong>：第1个结构体筛选后有<span class="arithmatex">\(2^{32}\)</span>种备选的40比特密钥需要存储</li>
+</ul>
+<h4 id="41">4+1轮密钥恢复</h4>
+<p>构造一个4轮区分器：考虑在3轮区分器头部添加一轮，这要求1轮加密后，第1字节是遍历集A。往上推<span class="arithmatex">\(MC^{-1}\)</span>发现这1字节关联到输入的4个字节，如果我们遍历这对应4个字节，则是<span class="arithmatex">\(2^{32}\)</span>明文量还要猜测密钥，但我们只要<span class="arithmatex">\(2^8\)</span>，显然浪费很多。转换一下思路，把这4个字节划分为一个集合，遍历这个集合，其实得到了<span class="arithmatex">\(2^{24}\)</span>个三轮区分器如下图所示：</p>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211203205753896.png" alt="image-20211203205753896" style="zoom: 33%;" /></p>
+<p>这个思路明确之后4+1与3+1没什么不同，只是选择明文的时候要选择的集合从仅第1字节变化的<span class="arithmatex">\(2^8\)</span>个明文组成的集合变成了有4个字节在变化的<span class="arithmatex">\(2^{32}\)</span>个明文组成的集合；</p>
+<p><strong>成功率分析：</strong>与3+1完全相同，虽然此时每个明文结构体对应的到<span class="arithmatex">\(2^{32}\)</span>个的密文，但是对于一个<span class="arithmatex">\(K_0^5\)</span>猜测，错误密钥保留下来的概率仍然是<span class="arithmatex">\(\frac{1}{2^8}\)</span>，故平均需要两个结构体可以确定1字节密钥，恢复剩余15字节同理</p>
+<p>若要恢复第5轮128比特(16字节)密钥：</p>
+<ul>
+<li>
+<p><strong>数据复杂度</strong>：<span class="arithmatex">\(2^{32}\times 2\)</span>；每次恢复1字节密钥，需2个结构体确定字节密钥；这里对比3+2中的<span class="arithmatex">\(2^8\times 6\)</span>增大了很多</p>
+</li>
+<li>
+<p><strong>时间复杂度</strong>：<span class="arithmatex">\(16\times (2^{32}\times 2^{8} + 2^{32}\times 2)~\approx ~ 2^{44} S-Box = 2^{44}/(16\times 5)\approx 2^{37.68} ~~5-round-enc\)</span></p>
+</li>
+</ul>
+<p>每次猜测8比特的密钥，需要16次能完全恢复恢复第5轮128比特(16字节)密钥，因此外层16，对于每个1字节密钥：第1个结构体需要遍历猜测密钥，每个密钥<span class="arithmatex">\(2^{32}\)</span>明文，而第2个结构体需对筛剩下的<span class="arithmatex">\(2\)</span>个密钥继续过滤得最终结果；最后把S盒运算换成加密，每轮16次查S盒，一共5轮，故除以<span class="arithmatex">\((16\times 5)\)</span></p>
+<ul>
+<li><strong>存储复杂度</strong>：1个结构体对应得到<span class="arithmatex">\(2^{32}\times 128\)</span>规模的密文需要存储</li>
+</ul>
+<h2 id="_38">广义生日攻击</h2>
+<p><code>AdHash</code>算法 $\Longrightarrow <span class="arithmatex">\(多个数求和(背包问题)\)</span>\Longrightarrow $广义生日攻击，遇到可以抽象成K-SUM问题的，可以使用广义生日攻击</p>
+<h3 id="2-sum">2-SUM</h3>
+<p>输入：2个列表<span class="arithmatex">\(L_1,L_2⊆S\)</span>, 每个<span class="arithmatex">\(L_i\)</span> 中的元素均匀独立随机的从<span class="arithmatex">\(S\)</span>中选取</p>
+<p>输出： <span class="arithmatex">\(x_1,x_2\)</span>, 满足$x_1⊕x_2=0, x_i∈L_i $</p>
+<p>过程：存两个表，把第一个做成<code>hashtable</code>(或者排序)，两个表大小分别是<span class="arithmatex">\(2^{\frac{n}{2}}\)</span>，遍历第2个表的每一项，看在表1中是否存在碰撞</p>
+<p>复杂度：时间：<span class="arithmatex">\(O(2^{n/2})\)</span>；数据：<span class="arithmatex">\(|L_1| = |L_2| = O(2^{n/2})\)</span></p>
+<p>分析：两个大小为<span class="arithmatex">\(O(2^{n/2})\)</span>的表可以产生<span class="arithmatex">\(|L_1|\times |L_2| = 2^n\)</span>种配对，而<span class="arithmatex">\(x_1 = x_2\)</span>，即每一bit都相等的概率为<span class="arithmatex">\(2^{-n}\)</span>，因此<span class="arithmatex">\(|L_1|\times |L_2| = 2^n\)</span>种配对中的解的个数恰好为1，即概率上存在一个解</p>
+<h3 id="4-tree">4-tree</h3>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211128161724423.png" alt="image-20211128161724423" style="zoom: 33%;" /></p>
+<p>整体思想就是分治:</p>
+<ul>
+<li>首先划成4个集合，每个集合大小设为<span class="arithmatex">\(2^x\)</span>（后续计算出x的下界）；</li>
+<li>然后两个一组，利用生日攻击让低<span class="arithmatex">\(l\)</span>比特相等，这一层复杂度是<span class="arithmatex">\(T_1 = O(2^x)\)</span>；</li>
+<li>筛选之后得到2个集合（集合中的元素是一对<span class="arithmatex">\(x\)</span>，满足低<span class="arithmatex">\(l\)</span>比特相等），集合大小均为<span class="arithmatex">\(O(2^{2x-l})\)</span>；</li>
+<li>再一次利用生日攻击，让高<span class="arithmatex">\(l\)</span>比特相等，这一层复杂度是<span class="arithmatex">\(T_2 = O(2^{2x-l})\)</span>；</li>
+</ul>
+<p>计算出最上层集合大小为<span class="arithmatex">\(O(2^{4x-l-n})\)</span>，要满足至少有一个解，即<span class="arithmatex">\(2^{4x-l-n}&gt;1\)</span>，且取时间复杂度相同<span class="arithmatex">\(T_1 = T_2\)</span>，得到最终复杂度在<span class="arithmatex">\(O(2^{n/3})\)</span></p>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211128163933660.png" alt="image-20211128163933660" style="zoom:50%;" /></p>
+<h3 id="k-tree">k-tree</h3>
+<p><span class="arithmatex">\((4,S)\)</span>背包问题可以利用4-tree算法把复杂度从<span class="arithmatex">\(O(2^{n})\)</span>降低到<span class="arithmatex">\(O(2^{n/3})\)</span>；推广到<span class="arithmatex">\((k,S)\)</span>背包问题，可以利用k-tree算法求解：</p>
+<ul>
+<li><strong>时间复杂度</strong>和数据复杂度：<span class="arithmatex">\(O(k2^{n/\lfloor\log{k}\rfloor})\)</span></li>
+<li>当<span class="arithmatex">\(k  =2^{2\sqrt{n}}\)</span>时，上式取最小值：<span class="arithmatex">\(k2^{n/\lfloor\log{k}\rfloor} = 2^{2\sqrt{n}}\)</span></li>
+<li>这要求，如果一个密码算法可以写成K-SUM问题，则要保证N-bit安全，则需要<span class="arithmatex">\(2\sqrt{n}\geq N\)</span>，即参数规模不小于<span class="arithmatex">\(n^2/4\)</span></li>
+</ul>
+<p><strong>攻击</strong><code>8-AdHash</code></p>
+<p>设<span class="arithmatex">\(M = M_1||M_2\cdots ||M_8\)</span>，<span class="arithmatex">\(AdHash(M) = h(1,M_1)+h(2,M_2)\cdots+h(8,M_8) = y\)</span></p>
+<p>该问题规约成8-SUM问题，共3层，故设<span class="arithmatex">\(y = y_1||y_2||y_3\)</span>，即<span class="arithmatex">\(L = l_1+l_2+l_3\)</span>，其中<span class="arithmatex">\(l_1 = l_2 = l_3 = L/3\)</span>分别是<span class="arithmatex">\(y_1,y_2,y_3\)</span>宽度</p>
+<ul>
+<li>根据<span class="arithmatex">\(O(k2^{n/(1+\lfloor\log{k}\rfloor)})\)</span>，从明文空间均匀选取8个大小为<span class="arithmatex">\(O(2^{n/4})\)</span>规模的集合</li>
+<li>8个集合划为4组，利用生日攻击令每一组的低<span class="arithmatex">\(l_1\)</span>比特的和模<span class="arithmatex">\(2^{l_1} = y_1\)</span>，得到4个集合<span class="arithmatex">\(L_{12},L_{34},L_{56},L_{78}\)</span></li>
+<li>再把4个集合划为2组，利用生日攻击令每一组的低<span class="arithmatex">\(l_1+l_2\)</span>比特的和模<span class="arithmatex">\(2^{l_1+l_2} = y_1||y_2\)</span>，得到2个集合</li>
+<li>同上</li>
+</ul>
+<p>如果没找到，重复；时间和存储复杂度均在<span class="arithmatex">\(O(2^{n/4})\)</span></p>
+<h2 id="_39">中间相遇攻击</h2>
+<p>和Square攻击一样是通过追踪集合特性的分析方式</p>
+<ul>
+<li>中间整体相遇：分别从加密和解密两侧推到中将状态，令b比特全部碰撞，复杂度计算如下：</li>
+</ul>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211203214638437.png" alt="image-20211203214638437" style="zoom:50%;" /></p>
+<ul>
+<li>中间部分相遇：分别从加密和解密两侧推到中将状态，令b中m比特碰撞，复杂度计算如下：</li>
+</ul>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211204152335673.png" alt="image-20211204152335673" style="zoom:50%;" /></p>
+<h3 id="aes3_1">AES3轮区分器</h3>
+<p>根据活跃集的传播特性可以构造3轮区分器，与Square攻击类似：在Square攻击中，如果<span class="arithmatex">\(a_{11}\)</span>是活跃集，那么三轮之后得到<span class="arithmatex">\(C_{11}\)</span>是平衡集；而在这里，保证<span class="arithmatex">\(a_{11}\)</span>是活跃集，则三轮之后可知<span class="arithmatex">\(C_{11}^{(3)}\)</span>至多与中间状态的9个字节有关。故<span class="arithmatex">\(a_{11}\rightarrow C_{11}^{(3)}\)</span>2字节之间存在<span class="arithmatex">\(2^{8\times 9} = 2^{72}\)</span>种映射，而对于随机置换来说映射数为<span class="arithmatex">\((2^{8})^{256} = 2^{2048}\)</span>(不要求满射、单射等)，由此区分随机置换</p>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211204153022892.png" alt="image-20211204153022892" style="zoom: 50%;" /></p>
+<p><strong>进行区分攻击：</strong>预计算<span class="arithmatex">\(2^{72}\)</span>张表，每张表大小<span class="arithmatex">\(8bit\times 2^8 entry\)</span>；然后选择明文输入(保证第一字节活跃集)，得到密文输出，从而得到<span class="arithmatex">\(a_{11},C_{11}^{3}\)</span>的一张映射表，看这个表是否在预计算的<span class="arithmatex">\(2^{72}\)</span>张表中，如果在，说明为AES算法，否则是随机置换</p>
+<h3 id="31_1">3+1密钥恢复</h3>
+<ul>
+<li>在3轮区分器后加一轮(如果考虑MC则利用交换AK和MC顺序的<code>trick</code>)；</li>
+<li>选择一个结构体(第一个字节为活跃集A，其它字节为C)</li>
+<li>猜测1字节的密钥<span class="arithmatex">\(K^4_0\)</span>，把密文回推到区分器尾部得到映射表是<span class="arithmatex">\(a_{11}\rightarrow C_{11}^{(3)}\)</span></li>
+<li>看映射表是否在预计算表集合中即可</li>
+</ul>
+<h3 id="5">5轮区分器</h3>
+<p>在4轮之后加1轮，与中间状态26字节有关</p>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211204171157770.png" alt="image-20211204171157770" style="zoom:50%;" /></p>
+<h3 id="41_1">4+1密钥恢复</h3>
+<p>针对AES256</p>
+<p>同理得到4轮区分器，此时<span class="arithmatex">\(a_{11}\rightarrow C_{11}^{(3)}\)</span>的映射与中间状态的25个字节有关，因此存在<span class="arithmatex">\(2^{25\times 8} = 2^{200}\)</span>种映射(这意味着我们要穷举<span class="arithmatex">\(2^{200}\)</span>，把表都预计算出来)，虽然随机置换有<span class="arithmatex">\(2^{2048}\)</span>种可能的映射，但是<span class="arithmatex">\(2^{200}\)</span>还是过于大了，对于<code>AES128</code>甚至<code>AES192</code>来说，都不如穷举密钥空间的复杂度，因此这样一来只能分析<code>AES256</code>，其它与3+1相同</p>
+<h3 id="142">1+4+2密钥恢复</h3>
+<p>针对AES256</p>
+<p>在4轮区分器头部加1轮，尾部加2轮(最后一轮没有MC)，与Square的3+2类似；</p>
+<p><strong>预计算：</strong>利用的是4轮区分器，因此仍然是 预计算<span class="arithmatex">\(a_{11}\rightarrow C_{11}^{(3)}\)</span>映射表共<span class="arithmatex">\(2^{200}\)</span>个表</p>
+<p><strong>在线计算：</strong></p>
+<ul>
+<li>猜测<span class="arithmatex">\(K_{init}\)</span>的4个字节和<span class="arithmatex">\(K_{11}^{(1)}\)</span>，共5字节密钥；为保证一轮加密后第1字节是活跃集，这里使用小技巧是，先确定<span class="arithmatex">\(a_{11}\)</span>遍历，然后根据猜测的密钥解密上去，得到需要选择的明文</li>
+</ul>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211204163849869.png" alt="image-20211204163849869" style="zoom: 33%;" /></p>
+<ul>
+<li>猜测第6轮的1字节等价密钥(使用交换MC和AK的技巧)和第7轮的4字节密钥，共5字节；并解密两轮到区分器尾部，得到映射表<span class="arithmatex">\(C_{11}^{(1)}\rightarrow C_{11}^{(5)}\)</span></li>
+</ul>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211204164008773.png" alt="image-20211204164008773" style="zoom:33%;" /></p>
+<ul>
+<li>
+<p>若映射表在预计算集合中，则判断猜测的10字节密钥正确；</p>
+</li>
+<li>
+<p>用类似的方法，映射表改为<span class="arithmatex">\(C_{11}^{(1)}\rightarrow C_{21}^{(5)}\)</span>、<span class="arithmatex">\(C_{11}^{(1)}\rightarrow C_{31}^{(5)}\)</span>、<span class="arithmatex">\(C_{11}^{(1)}\rightarrow C_{41}^{(5)}\)</span>，选取明文集合不变，再依次恢复6、7轮的15字节密钥</p>
+</li>
+</ul>
+<h4 id="_40">复杂度分析</h4>
+<ul>
+<li><strong>时间复杂度：</strong>预计算，4个表<span class="arithmatex">\(2^{208}\times 4~~byte\)</span>；~~在线部分：<span class="arithmatex">\(4\times 2^{80}\times 256 = 2^{90}\)</span>次部分加解密~~</li>
+<li><strong>存储复杂度：</strong>预计算表大小为<span class="arithmatex">\(2^{200}\times 2^8\times 4= 2^{210}~~byte\)</span></li>
+<li><strong>数据复杂度：</strong><span class="arithmatex">\(2^{32}\)</span>个选择明文(尽管一个结构体<span class="arithmatex">\(2^8\)</span>，但是对于每个密钥选的明文不一样···明文4个字节至多<span class="arithmatex">\(2^{32}\)</span>)</li>
+</ul>
+<p><strong>一点改进：</strong></p>
+<p>映射表后面的项(255)与第一项异或，可以消掉一个中间变量，从<span class="arithmatex">\(2^{200}\)</span>张表降低到<span class="arithmatex">\(2^{192}\)</span>张</p>
+<h2 id="hash">Hash函数</h2>
+<table>
+<thead>
+<tr>
+<th>安全属性</th>
+<th>攻击复杂度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>抗原象(单向性)</td>
+<td><span class="arithmatex">\(2^n\)</span></td>
+</tr>
+<tr>
+<td>抗第二原像(抗弱碰撞)</td>
+<td><span class="arithmatex">\(2^n\)</span></td>
+</tr>
+<tr>
+<td>抗碰撞(抗强碰撞)</td>
+<td><span class="arithmatex">\(2^{n/2}\)</span></td>
+</tr>
+<tr>
+<td>抗长度扩展</td>
+<td><span class="arithmatex">\(2^n\)</span></td>
+</tr>
+</tbody>
+</table>
+<h3 id="md">MD结构第二原象攻击</h3>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211202202154569.png" alt="image-20211202202154569" style="zoom: 50%;" /></p>
+<p>即找一个值和任意一个中间连接变量碰撞即可</p>
+<p>在强化MD结构中，因为最后填充了消息长度信息<span class="arithmatex">\(|M|\)</span>，而这种攻击构造出来的消息大概率长度不一样(除非找到<span class="arithmatex">\(x_1\)</span>的碰撞？)，因此这种攻击无法成功</p>
+<h3 id="md_1">强MD结构多碰撞</h3>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211202202005041.png" alt="image-20211202202005041" style="zoom:67%;" /></p>
+<h3 id="mdmac">强MD结构密钥前缀MAC安全</h3>
+<ol>
+<li><strong>长度扩展</strong>：已知<span class="arithmatex">\(H(M) = h\)</span>，求<span class="arithmatex">\(H(M||Z) = h'\)</span>，只需要令<span class="arithmatex">\(Z = 00\cdots 0~||~|M|~||x\)</span>，即先填充到和原来消息一致就可以在之后随意填充了···</li>
+<li><strong>易于二次碰撞</strong>：只要找到一对碰撞，就可以在其后无限级联消息构造多次碰撞</li>
+</ol>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211202205109053.png" alt="image-20211202205109053" style="zoom: 67%;" /></p>
+<h3 id="md4">比特追踪法—MD4为例</h3>
+<p>步骤如下：</p>
+<ul>
+<li>寻找合适的消息差分（消息扩展向量）</li>
+</ul>
+<p>选择一对明文消息的差分$∆M=M^′-M $，要使得保证碰撞路线成立的充分条件、尤其是后几步的充分条件尽可能的少</p>
+<ul>
+<li>构造碰撞路线</li>
+</ul>
+<p>对于碰撞攻击，合适的明文差分要使得保证差分特征成立的充分条件，尤其是后几轮的充分条件尽可能少。对于第二原像攻击，合适的明文差分要使得所有的充分条件尽可能少，这样，才能保证不经过明文修改过程，差分特征也以高概率成立。</p>
+<ul>
+<li>确定碰撞路线成立的充分条件</li>
+</ul>
+<p>推导碰撞路线成立的充分条件</p>
+<ul>
+<li>使用消息修改技术提高差分路线成立的概率</li>
+</ul>
+<p>通过消息修改技术，满足充分条件。基本明文修改技术可以通过修改明文，从而保证第一轮的充分条件都满足；高级明文修改技术可以通过修改明文，使得第二轮的前几步的条件都满足。</p>
+<ul>
+<li>运行碰撞攻击算法，产生碰撞</li>
+</ul>
+<p>穷举搜索：随机选择一个明文<em>M</em>，利用明文修改技术进行修改，测试<span class="arithmatex">\(M\)</span>和<span class="arithmatex">\(M^′=M+∆M\)</span>是否是一对碰撞。重复以上过程，直到找到一对碰撞。重复次数和充分条件的个数直接相关。</p>
+<p><code>MD4</code>结构：</p>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211202213308192.png" alt="image-20211202213308192" style="zoom:50%;" /></p>
+<ul>
+<li>一个压缩函数共48步，每16步称为一轮（一共三轮，每轮使用的F函数不一样）<img src="https://github.com/cat538/images-auto/raw/main/img/image-20211202213421518.png" alt="image-20211202213421518" style="zoom:33%;" />，第1，2，3轮使用的F函数依次为<code>F、G、H</code>，需要注意的是加法是模<span class="arithmatex">\(2^{32}\)</span>加法</li>
+<li>其中<code>a,b,c,d</code>是128比特连接变量分成的4个32比特字</li>
+<li>每一步处理一个明文块，每一轮(16步)恰好处理512比特消息(16个32比特字)；</li>
+<li>每一步处理一个链接变量中的32比特字(第一步处理a，第二步d，第三步c，第四步b)</li>
+</ul>
+<p><strong>差分的定义</strong>：</p>
+<ul>
+<li>
+<p>传统差分中：1表示该比特不同，0表示该比特相同</p>
+</li>
+<li>
+<p>带符号的差分：由于是模加运算，因此引入带符号的差分；每一步的差分刻画包括差分对应的不同比特的位置和符号</p>
+</li>
+</ul>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211202220036023.png" alt="image-20211202220036023" style="zoom:50%;" /></p>
+<p>其中正号表示0变1；负号表示1变0</p>
+<p>差分过布尔函数传播特性：</p>
+<ul>
+<li><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211205191501138.png" alt="image-20211205191501138" style="zoom:50%;" /></li>
+</ul>
+<blockquote>
+<p><code>e.g.</code></p>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211205191613021.png" alt="image-20211205191613021" style="zoom:50%;" /></p>
+<p><span class="arithmatex">\(b_0[31] = c_0[31]\)</span>；因为根据F函数第1条性质，要使得d1无差分，则F输出无差分，则有<span class="arithmatex">\(y = z\)</span>即<span class="arithmatex">\(b_0[31] = c_0[31]\)</span></p>
+</blockquote>
+<p>差分过模加运算传播特性：</p>
+<blockquote>
+<p><code>e.g.</code></p>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211205192828730.png" alt="image-20211205192828730" style="zoom:33%;" /></p>
+<p><span class="arithmatex">\(b_0[31] = c_0[31]\oplus 1\)</span>；<span class="arithmatex">\(m_1\Longrightarrow m_1' = 0\Longrightarrow 1\)</span>，因此要使得<span class="arithmatex">\(d_1\)</span>无差分，F函数输出需得有差分(注意这里m1是最高位，不考虑进位，因此不需要控制<span class="arithmatex">\(F\Longrightarrow F' = 1\Longrightarrow 0\)</span>保证不进位)，因此条件只需要令<span class="arithmatex">\(b_0[31] 和 c_0[31]\)</span>相反即可</p>
+<p>同理，如果让<span class="arithmatex">\(d_1 = d_1'\)</span>，则应该F输出无差分，即和上一题类似</p>
+</blockquote>
+<p>一个MD4的例子：</p>
+<ol>
+<li>
+<p>寻找合适的消息差分（消息扩展向量）：<img src="https://github.com/cat538/images-auto/raw/main/img/image-20211205210358199.png" alt="image-20211205210358199" style="zoom:33%;" />；</p>
+</li>
+<li>
+<p>确定差分路径(差分特征)：<img src="https://github.com/cat538/images-auto/raw/main/img/image-20211205210442568.png" alt="image-20211205210442568" style="zoom: 50%;" /></p>
+</li>
+<li>
+<p>确定碰撞路线成立的充分条件：</p>
+</li>
+</ol>
+<p><img src="https://github.com/cat538/images-auto/raw/main/img/image-20211205200451452.png" alt="image-20211205200451452" style="zoom:50%;" /></p>
+<p>类似上述过程，最终推导出122个比特方程，已经远大于生日攻击的<span class="arithmatex">\(2^{64}\)</span>复杂度，如何降？</p>
+<ol>
+<li>使用消息修改技术提高差分路线成立的概率</li>
+</ol>
+<p>简单明文修改技术：</p>
+<ul>
+<li>对round 1的充分条件，可通过直接将链接变量上的条件转换为消息字上的条件来实现</li>
+<li>第一轮条件全部修改后，只剩25个充分条件</li>
+</ul>
+<p>高级明文修改技术：</p>
+<ul>
+<li>同时修改多个消息，满足第二轮需要的充分条件</li>
+<li>注意，此时的修改要保证第一轮已修改好的条件仍能满足，可借助于局部碰撞来实现</li>
+<li>
+<p>通过消息修改技术，基本可满足第一轮、第二轮的充分条件</p>
+</li>
+<li>
+<p>运行碰撞攻击算法，产生碰撞</p>
+</li>
+</ul>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.sections", "navigation.indexes"], "search": "../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.fac441b0.min.js"></script>
+      
+        <script src="../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

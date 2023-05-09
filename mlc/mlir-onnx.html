@@ -1,0 +1,1775 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="mlir-toy.html">
+      
+      
+        <link rel="next" href="mlir-iree.html">
+      
+      <link rel="icon" href="../images/favicon.ico">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.11">
+    
+    
+      
+        <title>mlir-onnx - Cat538's Blog</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.85bb2934.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.a6bdf11c.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#compiling-onnx-neural-network-models-using-mlir" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="Cat538&#39;s Blog" class="md-header__button md-logo" aria-label="Cat538's Blog" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Cat538's Blog
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              mlir-onnx
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+            
+              <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+              </label>
+            
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+            
+              <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+              </label>
+            
+          
+        </form>
+      
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="Cat538&#39;s Blog" class="md-nav__button md-logo" aria-label="Cat538's Blog" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Cat538's Blog
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        Prologue
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plan.html" class="md-nav__link">
+        Exercise
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          Cpp
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Cpp
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/toolchain.html" class="md-nav__link">
+        toolchain
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/move.html" class="md-nav__link">
+        move
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/align.html" class="md-nav__link">
+        align
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/ranges.html" class="md-nav__link">
+        ranges
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/benchmark.html" class="md-nav__link">
+        benchmark
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/profiler.html" class="md-nav__link">
+        profiler
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/IO-multiplexing.html" class="md-nav__link">
+        IO-multiplexing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/epoll.html" class="md-nav__link">
+        epoll
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/signal.html" class="md-nav__link">
+        signal
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/fork-safe.html" class="md-nav__link">
+        fork-safe
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          Rust
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Rust
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-toolchain.html" class="md-nav__link">
+        rust-toolchain
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-study.html" class="md-nav__link">
+        rust-study
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-attributes.html" class="md-nav__link">
+        rust-attributes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-modules.html" class="md-nav__link">
+        rust-modules
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-macro.html" class="md-nav__link">
+        rust-macro
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-network.html" class="md-nav__link">
+        rust-network
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-option.html" class="md-nav__link">
+        rust-optin
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-str.html" class="md-nav__link">
+        rust-str
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          Tools
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Tools
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/cmake.html" class="md-nav__link">
+        cmake
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/docker.html" class="md-nav__link">
+        docker
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/git.html" class="md-nav__link">
+        git
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/powershell.html" class="md-nav__link">
+        powershell
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/regex.html" class="md-nav__link">
+        regex
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/mkdocs.html" class="md-nav__link">
+        mkdocs
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+          Courses
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          Courses
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/%E5%AF%86%E7%A0%81%E5%88%86%E6%9E%90%E5%AD%A6%E5%A4%8D%E4%B9%A0.html" class="md-nav__link">
+        密码分析学
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/%E5%AF%86%E7%A0%81%E5%AD%A6%E5%BC%95%E8%AE%BA%E5%A4%8D%E4%B9%A0.html" class="md-nav__link">
+        密码学引论
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/algorithm.html" class="md-nav__link">
+        算法设计与分析
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86.html" class="md-nav__link">
+        编译原理
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+          Crypto
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          Crypto
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crypto/ecdsa-pk-recovery.html" class="md-nav__link">
+        ecdsa-pk-recovery
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crypto/algo-rsa.html" class="md-nav__link">
+        algo-rsa
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crypto/algo-fft%26ntt.html" class="md-nav__link">
+        algo-fft&ntt
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crypto/algo-reduction.html" class="md-nav__link">
+        algo-reduction
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+          Mlc
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_8">
+          <span class="md-nav__icon md-icon"></span>
+          Mlc
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="dlc-survey.html" class="md-nav__link">
+        dlc-survey
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tvm-install.html" class="md-nav__link">
+        tvm-install
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tvm-ffi.html" class="md-nav__link">
+        tvm-ffi
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tvm-type.html" class="md-nav__link">
+        tvm-type
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tvm-tensorIR.html" class="md-nav__link">
+        tvm-tensorIR
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tvm-lowering.html" class="md-nav__link">
+        tvm-lowering
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tvm-autotvm.html" class="md-nav__link">
+        tvm-autotvm
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tvm-ansor.html" class="md-nav__link">
+        tvm-ansor
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="mlir.html" class="md-nav__link">
+        mlir
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="mlir-toy.html" class="md-nav__link">
+        mlir-toy
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          mlir-onnx
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="mlir-onnx.html" class="md-nav__link md-nav__link--active">
+        mlir-onnx
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#0" class="md-nav__link">
+    0. 摘要
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-intro" class="md-nav__link">
+    1. Intro
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-conclusion" class="md-nav__link">
+    5. Conclusion
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-background" class="md-nav__link">
+    2. Background
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Background">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-onnx" class="md-nav__link">
+    2.1. ONNX
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-mlir" class="md-nav__link">
+    2.2. MLIR
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-compiling-onnx-models" class="md-nav__link">
+    3. Compiling ONNX Models
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Compiling ONNX Models">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-overview" class="md-nav__link">
+    3.1. Overview
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-onnx-dialect" class="md-nav__link">
+    3.2. onnx dialect
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-krnl-dialect" class="md-nav__link">
+    3.3. krnl dialect
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-optimization-passes" class="md-nav__link">
+    3.4. Optimization Passes
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-preliminary-experiments" class="md-nav__link">
+    4. Preliminary Experiments
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Preliminary Experiments">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-onnx-operation-support-and-testcases" class="md-nav__link">
+    4.1. ONNX operation support and testcases
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="mlir-iree.html" class="md-nav__link">
+        mlir-iree
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="paper-torch.fx.html" class="md-nav__link">
+        paper-torch.fx
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="paper-nimble.html" class="md-nav__link">
+        paper-nimble
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="paper-disc.html" class="md-nav__link">
+        paper-disc
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="paper-cortex.html" class="md-nav__link">
+        paper-cortex
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="paper-freetensor.html" class="md-nav__link">
+        paper-freetensor
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../about.html" class="md-nav__link">
+        About
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#0" class="md-nav__link">
+    0. 摘要
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-intro" class="md-nav__link">
+    1. Intro
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-conclusion" class="md-nav__link">
+    5. Conclusion
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-background" class="md-nav__link">
+    2. Background
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Background">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-onnx" class="md-nav__link">
+    2.1. ONNX
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-mlir" class="md-nav__link">
+    2.2. MLIR
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-compiling-onnx-models" class="md-nav__link">
+    3. Compiling ONNX Models
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Compiling ONNX Models">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-overview" class="md-nav__link">
+    3.1. Overview
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-onnx-dialect" class="md-nav__link">
+    3.2. onnx dialect
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-krnl-dialect" class="md-nav__link">
+    3.3. krnl dialect
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-optimization-passes" class="md-nav__link">
+    3.4. Optimization Passes
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-preliminary-experiments" class="md-nav__link">
+    4. Preliminary Experiments
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Preliminary Experiments">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-onnx-operation-support-and-testcases" class="md-nav__link">
+    4.1. ONNX operation support and testcases
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="compiling-onnx-neural-network-models-using-mlir">Compiling ONNX Neural Network Models Using MLIR</h1>
+<p>IBM 于 20年8月 挂在 Arxiv。 onnx-mlir 现在作为 ONNX 的子项目之一： <a href="https://github.com/onnx/onnx-mlir">ONNX-MLIR</a></p>
+<h2 id="0">0. 摘要</h2>
+<p>本文对 onnx-mlir 编译器的做初步 high-level 报告。 Onnx-mlir 是一个开源编译器，使用 MLIR 基础架构实现。 Onnx-mlir 依赖 MLIR 的方言概念来实现其功能。 我们在这里提出两种新的方言：（1）一种 ONNX 特定方言，它对 ONNX 标准语义进行编码（2）一种基于循环的方言，为所有 ONNX 方言操作提供一个共同的降低点。 每个中间表示分别促进其自身的图级和基于循环优化的特征集。 我们通过提出的表示遵循几个模型来说明我们的方法，并且我们包括一些早期的优化工作和性能结果。</p>
+<h2 id="1-intro">1. Intro</h2>
+<p>首先 diss 了依赖于第三方加速库的方法： </p>
+<blockquote>
+<ol>
+<li>可以重写的模型数量受到库中提供的函数的限制</li>
+<li>通常情况下，用户需要安装附加包才能使库正常运行</li>
+<li>它缺乏针对不同问题定制代码的能力</li>
+</ol>
+</blockquote>
+<p>接着提出了 ONNX-MLIR compiler： 使用编译器长期发展过程中开发的许多成熟优化技术，例如针对特定问题定制代码的能力、内存优化和并行化。 选择了开放神经网络交换 (ONNX) [1] 作为表示编译器输入模型的格式。 使用 MLIR [5] 编写——这是一种用于多级中间表示的现代开源编译器基础架构。 尽管它仍处于开发阶段，但它已经可以将一些流行的模型（如 MNIST 和 ResNet50）编译为 x86 机器、IBM Power Systems 和 IBM System Z 上的本地代码。</p>
+<p>文章从 4 个方面介绍这个编译器：</p>
+<ol>
+<li>介绍编译器的总体设计和架构，</li>
+<li>引入的两种新方言： <code>onnx</code> 方言编码 ONNX 标准语义， <code>krnl</code> 方言为所有 ONNX 方言操作提供一个共同的降低点。</li>
+<li>优化 passes ，例如图重写、常量传播和内存管理</li>
+<li>讨论为不同架构生成代码时遇到的一些问题。</li>
+</ol>
+<p>章节2讨论了 ONNX 和 MLIR。 章节3介绍编译器的设计原理和架构， 还在本节中讨论了两种新方言，即 <code>onnx</code> 和 <code>krnl</code> ，以及一些优化pass。 章节4，展示 IBM Power Systems 上 MNIST 和 ResNet50 模型的一些初步实验结果。 章节5总结论文并讨论了未来的工作。</p>
+<h2 id="5-conclusion">5. Conclusion</h2>
+<p>onnx-mlir 开源编译器用于将 ONNX 模型编译成 native code。 MLIR 被用作构建编译器的基础设施，并引入了 onnx 和 krnl 两种方言。值得注意的是，由于使用 MLIR 基础设施，新的优化可以很容易地集成到 onnx-mlir 中。 未来将添加更多优化，例如多面体优化、循环融合、SIMD 优化，并为加速器代码生成添加支持。</p>
+<h2 id="2-background">2. Background</h2>
+<h3 id="21-onnx">2.1. ONNX</h3>
+<p>ONNX 定义了一个可扩展的计算图模型、算子和标准数据类型，为不同的框架提供了一个通用的 IR。 有两种 ONNX 变体：
+1. the neural-network-only ONNX 仅将张量识别为输入和输出类型
+2. the classic machine learning ONNX-ML 也识别序列和映射。 ONNX-ML 使用不基于神经网络的机器学习算法扩展了 ONNX 算子集。 </p>
+<p>在本文中，我们关注仅神经网络的 ONNX 变体，并将其简称为 ONNX。</p>
+<h3 id="22-mlir">2.2. MLIR</h3>
+<p>MLIR [5] 是一种可重用和可扩展的现代编译器基础架构。 它通过 facilitating the design and implementation of 不同抽象级别的代码生成器、翻译器和优化器，降低了构建特定领域编译器的成本。在本节中，我们简要回顾了用于构建我们的编译器的 MLIR 中的一些特性。</p>
+<p>与 LLVM 类似，MLIR 中的 IR 是基于静态单一分配 (SSA) 的 三地址码，其中值在使用前定义，并且具有由它们的支配关系定义的范围。 操作可能会产生零个或多个结果，并且每个操作都是一个不同的 SSA 值，具有由类型系统定义的自己的类型。 MLIR 中的类型系统是开放的，可以定义特定于应用程序的类型。 有许多基本类型，例如 <code>integers</code>，以及用于表示张量和内存缓冲区的聚合类型，例如 <code>Tensor</code> 和 <code>MemRef</code>。 <code>Tensor</code> 类型是较为高阶的抽象，没有指向数据的指针，<code>MemRef</code> 类型是较低级的表示，指向特定的内存区域。 在 MLIR 中，<code>Tensor</code> 和 <code>MemRef</code> 类型在语法上表示为 <code>tensor&lt;D1×D2× ... ×DN×dtype&gt;</code> 和 <code>memref&lt;D1×D2× ... ×DN×dtype&gt;</code>, 其中 D1, D2, ... , DN 是表示 tensor 或 memref 维度的整数，dtype 是张量或 memref 中元素的类型，例如，f32 表示 float32。<code>&lt;D1×D2× ... ×DN&gt;</code>称为 <code>tensor</code> 或 <code>memref</code> 的形状。 <code>Tensor</code> 和 <code>MemRef</code> 类型在形状未知时可以被标记为 unranked 。 在 MLIR 中，unranked Tensor 和 MemRef 类型在语法上分别表示为 <code>tensor&lt;∗×dtype&gt;</code> 和 <code>memref&lt;∗×dtype&gt;</code>。</p>
+<p>MLIR 的operation 提供了对于 嵌套区域(nested regions) 的一流支持， 这对于表示模型中的控制流比较友好。</p>
+<p>使用 MLIR 二次开发，需要自定义 dialects and optimization passes 。 MLIR 中有现成可用的方言，例如 llvm、std、scf 和 affine。 llvm方言是一种低级方言。 它将 LLVM IR 类型和指令包装到 MLIR 类型和操作中。 std 方言包括标准操作，如 load、store、addi、addf、absf 和 call。 scf 方言定义了控制流操作，例如 for 和 if。 affine 方言为 affine 操作和分析提供了抽象。</p>
+<h2 id="3-compiling-onnx-models">3. Compiling ONNX Models</h2>
+<p>本节介绍 onnx-mlir 。 首先讨论它的整体架构。 然后介绍两种新方言 onnx 和 krnl。 最后，介绍用于执行优化的 MLIR passes。</p>
+<h3 id="31-overview">3.1. Overview</h3>
+<p>图 2 显示了 onnx-mlir 的整体架构。 输入是一个 ONNX 模型，输出是一个包含编译代码的库。 输出库包含一个名为 "_dyn_entry_point_main_graph" 的入口函数， 其输入和输出分别类似于 ONNX 模型的输入和输出。 为了使用输出库进行推理，用户编写程序通过将输入传递给函数来调用入口函数并获得结果。</p>
+<div class="autocb" style="text-align:center;"><img src="./mlir.assets\autocb_10.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
+
+<p>onnx-mlir 中有五种主要方言： onnx、krnl、affine、std 和 llvm，分为四个抽象级别。
+1. 第一个抽象级别是 ONNX 操作的高级表示。 由 onnx 和 std 方言中的 operation 组成，其中 onnx 方言是通过 importer 自动生成的。 
+2. 第二个抽象级别包括 krnl、affine 和 std 方言。 krnl dialect 提供了一种适用于循环优化的表示，能够轻松地进行 tiling、 skew、 和 permutation 等变换。 它充当中间方言，有效地将 onnx 方言降级为更低级方言（例如，affine、std 和 llvm）。 
+3. 第三个抽象级别包括 affine 和 std 方言，其中可以自由应用 MLIR 中现有的优化 pass。 
+4. 第四个抽象级别仅包括真正生成 bitcode 的 llvm 方言。</p>
+<p>MLIR passes 用于将一种方言转换为另一种方言，以及针对特定方言进行优化。 onnx 方言通过 pass <code>--convert-onnx-to-krnl</code> 转换为 krnl 方言。 然后通过 pass <code>--convert-krnl-to-affine</code> 将 krnl 方言（except some of its operations）转换为 affine 和 std 方言。 krnl dialect 中的剩余操作和 affine 和 std dialect 中的操作通过 pass <code>--convert-krnl-to-llvm</code> 直接转换为 llvm 中的指令。 图 2 的右侧显示了可以在每个抽象级别执行的优化过程(我们在这里只列举了重要的优化)。</p>
+<p>在详细讨论方言和优化过程之前，我们给出一个简短的运行示例，并在 onnx-mlir 中介绍方言。 此示例是 ONNX 中的一个测试用例模型，它执行逐元素加法。 图 3 显示了测试用例的这个 ONNX 模型。 add 操作接受两个 <code>&lt;3x4x5xf32&gt;</code> 类型的 tensor 并返回相同类型的结果，即 <code>sum</code>。 清单 3、4 和 5 分别显示了在 onnx、krnl、affine 方言中的程序。 限于篇幅省略了llvm中的程序。</p>
+<div class="autocb" style="text-align:center;"><img src="./mlir.assets\autocb_11.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
+
+<div class="autocb" style="text-align:center;"><img src="./mlir.assets\autocb_12.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
+
+<p>在 onnx 方言中，操作的表示类似于它们在 ONNX 中的描述。 ONNX模型转化为函数 <code>main_graph</code> 。 为了生成接收用户输入的入口点函数，我们在 onnx 方言中创建了一个辅助操作，即 <code>onnx.EntryPoint</code>，它将元数据保存在操作的属性中，例如要调用的函数名称和输入的数量以及输出。</p>
+<p>在 krnl 方言中，<code>onnx.Add</code> 操作被翻译成基于循环的计算，由 krnl 方言中的操作表示，其中标量计算由 affine 和 std 方言中的原始操作表示。 我们可以将循环优化（例如 tiling、 skew 或 tranpose）应用于基于循环的计算。 <strong>在此级别，我们为输出张量分配内存，并可以执行内存管理</strong>。</p>
+<p>在 affine 方言中，krnl 方言中优化的基于循环的计算被转换为 <code>affine.for</code> 循环。 在这一层，我们在 krnl 中还有一个操作，即 <code>krnl.entry_point</code>。 这样的操作与主计算无关，会直接转为 llvm。 在降低为 llvm 方言中的指令之前， affine 方言中的操作将转换为 std 和 scf 方言中的操作。</p>
+<h3 id="32-onnx-dialect">3.2. onnx dialect</h3>
+<p>onnx 方言是 onnx-mlir 中的第一个抽象级别。 我们编写了一个 python 脚本来自动将 ONNX 操作导入到 MLIR 中基于 TableGen 的操作定义中。 这些导入的操作被组织到 onnx 方言中。 多亏了 tablegen，onnx 方言中的操作定义与 ONNX 中的操作描述非常相似，我们能够将所有必要的信息（例如输入、输出、属性和描述）以人类可读的文本形式定义表示到一个基于 tablegen 的表中。</p>
+<p>我们还在 onnx 方言中创建了一个新操作，即 <code>onnx.EntryPoint</code> 以保存与 ONNX 模型中的 dynamic list of inputs 相关的信息。 这个操作会被降级生成生成库的入口函数 <code>dyn_entry_point_main_graph</code>。</p>
+<p>清单 6 显示了通过 onnx-mlir 导入 relu 操作的定义。 所有输入和输出都将作为 MLIR 中的张量导入。 importer 自动推断输入、属性和输出的元素类型。 然而，张量的形状将通过 <code>--shape-inference-pass</code> 推断出来， 这是 LeakyRelu 操作（第 2 行）中的一个 trait 。 MLIR 从其 Tablegen-based definition  中为 operation 生成 C++ 类定义。 如果用户想在类中定义自定义声明，可以通过"ex-traClassDeclaration" 字段（第 7 行）来完成。</p>
+<h3 id="33-krnl-dialect">3.3. krnl dialect</h3>
+<p>神经网络工作负载中的计算内核具有局部结构简单性，其中循环嵌套通常很简单，例如，超矩形和语句带有非常简单的算术语义。 这种特性非常适合在多面体模型中表示以进行优化 [8]。 krnl 方言旨在于单一表示中同时托管 循环优化 和 标量语义优化 。 它有望提供可解释性，不仅多面体表示可读，而且还使程序语义（或执行什么）和程序调度（如何以及何时执行）独立。 换句话说，<strong>我们的目标不仅是优化程序，还优化各个调度的组合，这是其他现有系统通常缺乏的功能。</strong></p>
+<div class="admonition warning">
+<p class="admonition-title">疑问</p>
+<p>Halide 和 TVM 中的计算调度分离？</p>
+</div>
+<p>下面是一个在 krnl 中定义嵌套循环的例子：</p>
+<div class="highlight"><pre><span></span><code><span class="o">%</span><span class="n">ii</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="n">jj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">krnl</span><span class="p">.</span><span class="n">define_loops</span><span class="w"> </span><span class="mi">2</span>
+<span class="n">krnl</span><span class="p">.</span><span class="n">iterate</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="o">%</span><span class="n">ii</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="n">jj</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="n">with</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="o">%</span><span class="n">ii</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="o">%</span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="n">jj</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="o">%</span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="mi">10</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="o">%</span><span class="n">foo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">addi</span><span class="w"> </span><span class="o">%</span><span class="n">i</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="n">j</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">index</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>其中 <code>krnl.define_loops</code> 定义了两个循环，称为 <code>ii</code> 和 <code>jj</code>。 这些循环变量将用于表达程序语义和调度。 操作 <code>krnl.iterate</code> 在语义上接受两种类型的循环变量：原始循环的变量和预定循环的变量。 在语法糖形式中，我们通过关键字 <code>with</code> 将两种类型的循环分开，即 (scheduled loops) <code>with</code> (original loops)。 归纳变量，例如上例中的 i 和 j，将使用原始循环定义。 如果没有调度（例如 block, skew 等），调度循环类似于原始循环。</p>
+<p>接下来是一个 block(或 称为tiling) 调度的例子：</p>
+<div class="highlight"><pre><span></span><code><span class="o">%</span><span class="n">ii</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">krnl</span><span class="p">.</span><span class="n">define_loops</span><span class="w"> </span><span class="mi">1</span>
+<span class="o">%</span><span class="n">ib</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="n">il</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">krnl</span><span class="p">.</span><span class="n">block</span><span class="w"> </span><span class="o">%</span><span class="n">ii</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">krnl</span><span class="p">.</span><span class="n">loop</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="p">(</span><span class="o">!</span><span class="n">krnl</span><span class="p">.</span><span class="n">loop</span><span class="p">,</span><span class="w"> </span><span class="o">!</span><span class="n">krnl</span><span class="p">.</span><span class="n">loop</span><span class="p">)</span>
+<span class="n">krnl</span><span class="p">.</span><span class="n">iterate</span><span class="w"> </span><span class="p">(</span><span class="o">%</span><span class="n">ib</span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="n">il</span><span class="p">)</span><span class="w"> </span><span class="n">with</span><span class="w"> </span><span class="p">(</span><span class="o">%</span><span class="n">ii</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="o">%</span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="mi">10</span><span class="p">){</span>
+<span class="w">  </span><span class="o">%</span><span class="n">foo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="p">.</span><span class="n">addi</span><span class="w"> </span><span class="o">%</span><span class="n">i</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="n">i</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">index</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Operation <code>krnl.block</code>（第 2 行）将循环和整数作为输入，其中整数是tile size（即一个tile块的大小）。 结果是内外层两个循环变量。 这两个循环将用作调度的结果并传递给 <code>krnl.iterate</code>（第 3 行）。 值得注意的是，在插入调度时， <code>krnl.iterate</code> 中的原始循环和计算保持不变，这正是我们在 krnl 方言中分离程序语义和调度所需要的。</p>
+<p><code>--convert-krnl-to-affine</code> 过程自动生成优化的 <code>affine.for</code> 循环，如下所示。</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#map0 = affine_map &lt;(d0) -&gt; (d0)&gt;</span>
+<span class="cp">#map1 = affine_map &lt;(d0) -&gt; (d0 + 2)&gt;</span>
+<span class="n">affine</span><span class="p">.</span><span class="k">for</span><span class="w"> </span><span class="o">%</span><span class="n">arg0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">step</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">affine</span><span class="p">.</span><span class="k">for</span><span class="w"> </span><span class="o">%</span><span class="n">arg1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">#</span><span class="n">map0</span><span class="w"> </span><span class="p">(</span><span class="o">%</span><span class="n">arg0</span><span class="p">)</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="err">#</span><span class="n">map1</span><span class="w"> </span><span class="p">(</span><span class="o">%</span><span class="n">arg0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="o">%</span><span class="mi">0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">addi</span><span class="w"> </span><span class="o">%</span><span class="n">arg1</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="o">%</span><span class="n">arg1</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">index</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>外层 <code>affine.for</code> 迭代步长为 2，即 tile size， 内部 <code>affine.for</code> 迭代一个 <code>tile</code> 中的元素。</p>
+<p>以类似的方式使用其他调度，例如偏斜和排列。 所有计划都是可组合的并且可以嵌套。</p>
+<h3 id="34-optimization-passes">3.4. Optimization Passes</h3>
+<p>本节讨论 onnx-mlir 中的一些优化 pass。 由于 MLIR 的表达能力，许多优化可以通过声明重写规则 (DRR) 使用 tablegen 轻松表达</p>
+<ol>
+<li>
+<p><strong><u>Operation Decomposition</u></strong></p>
+<p>ONNX 中许多操作可用其他基本操作表示。 如，向量 x 上的 ReduceL1(即L1范数) 即为对 x 中元素的绝对值求和。 换句话说，我们有</p>
+<div class="arithmatex">\[\texttt{ReduceL1} (x) = \texttt{ReduceSum} (\texttt{Abs} (x))\]</div>
+<p>我们只需将 onnx 方言中的操作子集降低到 krnl 方言中，而onnx方言中的其余操作将分解为子集中的操作。</p>
+<p>使用 MLIR 中的 DRR，操作分解简明地写成以下模式：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">ReduceL1Pattern</span><span class="p">:</span> <span class="n">Pat</span><span class="o">&lt;</span>
+    <span class="p">(</span><span class="n">ReduceL1Op</span> <span class="err">$</span><span class="n">x</span><span class="p">,</span> <span class="err">$</span><span class="n">axes</span><span class="p">,</span> <span class="err">$</span><span class="n">keepdims</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">ReduceSumOp</span> <span class="p">(</span><span class="n">AbsOp</span> <span class="err">$</span><span class="n">x</span><span class="p">),</span> <span class="err">$</span><span class="n">axes</span><span class="p">,</span> <span class="err">$</span><span class="n">keepdims</span><span class="p">)</span>
+<span class="o">&gt;</span><span class="p">;</span>
+</code></pre></div>
+<p>其中 <code>ReduceL1Op</code>、<code>ReduceSumOp</code> 和 <code>AbsOp</code> 分别是 onnx.ReduceL1、onnx.ReduceSum 和 onnx.Abs 的可编程操作形式。 变量 x、axes 和 keepdims 用于保存操作 ReduceL1Op 的输入值。 重写模式 <code>ReduceL1Pattern</code> 将会匹配 <code>ReduceL1Op</code> 替换为 <code>ReduceSumOp</code> 和 <code>AbsOp</code>。</p>
+</li>
+<li>
+<p><strong><u>Shape Inference</u></strong></p>
+<p><code>--shape-inference</code> pass 尝试在 onnx 的程序中推断所有张量的形状。 pass 遍历程序中的所有操作，推断具有 unranked shape 的张量的形状（即 <span class="arithmatex">\(\texttt{tensor}\langle * \times f32\rangle\)</span>），将 ranked shape 传播到 consuming operations ， 并在所有张量具有 ranked shapes 后终止。 对于一个操作，如果其输入具有静态形状，则 <code>--shape-inference</code> pass 很可能能够为其输出推断静态形状。 如果输入具有动态形状 (如 <span class="arithmatex">\(\texttt{tensor} \langle ?\times ?\times ?\times f32\rangle\)</span>)， 则输出也将具有动态形状(除了一些在操作属性中指定输出张量形状的操作)。</p>
+</li>
+<li>
+<p><strong><u>Graph Rewriting</u></strong></p>
+<p>在 MLIR 中，图重写规则可以方便地使用 DRR 表示。例如，下面的规则是在 <code>MatMulOp</code> 的结果只被 <code>AddOp</code> 消费的条件下，将 onnx.Add 和 onnx.MatMul 融合为一个onnx.Gemm 的操作：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">MulAddToGemmPattern</span><span class="p">:</span> <span class="n">Pat</span><span class="o">&lt;</span>
+  <span class="p">(</span><span class="n">AddOp</span><span class="p">(</span><span class="n">MatMulOp</span><span class="p">:</span> <span class="err">$</span><span class="n">res</span> <span class="err">$</span><span class="n">m1</span><span class="p">,</span> <span class="err">$</span><span class="n">m2</span><span class="p">),</span> <span class="err">$</span><span class="n">m3</span><span class="p">),</span>
+  <span class="p">(</span><span class="n">GemmOp</span> <span class="err">$</span><span class="n">m1</span><span class="p">,</span> <span class="err">$</span><span class="n">m2</span><span class="p">,</span> <span class="err">$</span><span class="n">m3</span><span class="p">),</span>
+  <span class="p">[(</span><span class="n">HasOneUse</span> <span class="err">$</span><span class="n">res</span><span class="p">)]</span>
+<span class="o">&gt;</span><span class="p">;</span>
+</code></pre></div>
+<p>另一个例子是通过将其输入直接传递给它的消费操作来删除 IdentityOp 操作。</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">IdentityEliminationPattern</span><span class="p">:</span> <span class="n">Pat</span><span class="o">&lt;</span>
+  <span class="p">(</span><span class="n">ONNXIdentityOp</span> <span class="err">$</span><span class="n">arg</span><span class="p">),</span>
+  <span class="p">(</span><span class="n">replaceWithValue</span> <span class="err">$</span><span class="n">arg</span><span class="p">)</span>
+<span class="o">&gt;</span><span class="p">;</span>
+</code></pre></div>
+</li>
+<li>
+<p><strong><u>Constant propagation</u></strong></p>
+<p>常量传播有两个关键思想：（1）如果一个操作的所有输入都是常量，则在编译期间计算其输出并删除该操作，（2）如果存在常量和非常量的混合， normalize the operation。 归一化是为了增加不断传播的可能性，并且在很大程度上取决于操作的数学属性。 以下是 onnx-mlir 中 onnx.Add 操作的一些规范化规则，其属性是 associative and communicative。 Normalization rules 同样使用 DRR 表示。</p>
+<p>(1) <span class="arithmatex">\(c + x \Rightarrow x + c\)</span></p>
+<p>(2) <span class="arithmatex">\((x + c_1) + c_2 \Rightarrow x + (c_1 + c_2)\)</span></p>
+<p>(3) <span class="arithmatex">\((x + c) + y \Rightarrow (x + y) + c\)</span></p>
+<p>(4) <span class="arithmatex">\(x + (y + c) \Rightarrow (x + y) + c\)</span></p>
+<p>(5) <span class="arithmatex">\((x + c_1) + (y + c_2) \Rightarrow (x + y) + (c_1 + c_2)\)</span></p>
+</li>
+</ol>
+<h2 id="4-preliminary-experiments">4. Preliminary Experiments</h2>
+<h3 id="41-onnx-operation-support-and-testcases">4.1. ONNX operation support and testcases</h3>
+<p>ONNX 为每个操作提供了一组测试用例。 当我们支持 onnx-mlir 中的任何操作时，我们启用它的 ONNX 测试用例来检查操作是否正确运行并产生正确的结果。 在撰写本文时（2020年），onnx-mlir 支持 ONNX 中 139 个操作中的 51 个操作，包括卷积、池化、Gemm 和 LSTM 等。 这些足以编译和执行 MNIST 和 ResNet50 等主要网络。 </p>
+<blockquote>
+<p>2023 年 3月 11日， 172 models from ONNX Model Zoo: 120 passed, 19 failed, 33 skipped</p>
+</blockquote>
+<ul>
+<li>
+<p>MNIST 是一个小型模型，具有两个卷积运算、一个最大池化运算和一个矩阵乘法，然后是逐元素加法。 编译 MNIST 模型并进行推理的速度相当快，不到一秒即可完成。 在 MNIST 模型中，图重写规则 <code>MulAddToGemm-Pattern</code> 。 </p>
+</li>
+<li>
+<p>ResNet50 是一个复杂的深度模型，由 50 层卷积和池化等操作组成。 该模型大约有 100MB， 包括学习的权重。 <strong>对于 ResNet50，当前版本的 onnx-mlir 在编译期间没有对模型应用任何优化</strong>。 但是，我们认为编译时间看起来合理，推理时间也没有那么慢。 我们希望一旦我们在不久的将来集成重要的优化，如多面体优化、SIMD 优化和循环融合，推理时间将显着减少。</p>
+</li>
+</ul>
+<p>虽然 onnx-mlir 完全建立在广泛使用的开源软件（如 ONNX 和 MLIR）之上，但我们发现了一个与支持不同系统相关的问题。 我们无法在 IBM System Z (s390-linux) 上的 Linux 上运行 ONNX 模型，因为大端格式在 ONNX 和 MLIR 中没有得到很好的支持。 出现这样的问题有两个原因。 首先，ONNX 中大量的 public 输入数据和模型都是以小端格式存储的。 因此，在大端系统中使用它们之前，必须将它们转换为大端格式。 其次，我们发现 ONNX 模型中的常量值未正确加载到 MLIR 中。 LLVM 在 big-endian 中得到了很好的支持，但 MLIR 却没有。 我们创建了两个补丁来解决这个问题：一个在 ONNX 中，一个在 MLIR 中，它们现在可以在 ONNX 和 MLIR 的主分支上使用。 因此，onnx-mlir 现在支持 Linux on x86 (x86-Linux)、Linux on Power Systems (ppc64le-Linux)、Linux on IBM Z (s390-Linux) 和 Windows。</p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.sections", "navigation.indexes"], "search": "../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.fac441b0.min.js"></script>
+      
+        <script src="../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

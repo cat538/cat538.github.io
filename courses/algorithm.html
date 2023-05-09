@@ -1,0 +1,2058 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="%E5%AF%86%E7%A0%81%E5%AD%A6%E5%BC%95%E8%AE%BA%E5%A4%8D%E4%B9%A0.html">
+      
+      
+        <link rel="next" href="%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86.html">
+      
+      <link rel="icon" href="../images/favicon.ico">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.11">
+    
+    
+      
+        <title>算法设计与分析 - Cat538's Blog</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.85bb2934.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.a6bdf11c.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="Cat538&#39;s Blog" class="md-header__button md-logo" aria-label="Cat538's Blog" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Cat538's Blog
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              算法设计与分析
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+            
+              <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+              </label>
+            
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+            
+              <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+              </label>
+            
+          
+        </form>
+      
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="Cat538&#39;s Blog" class="md-nav__button md-logo" aria-label="Cat538's Blog" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Cat538's Blog
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        Prologue
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plan.html" class="md-nav__link">
+        Exercise
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          Cpp
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Cpp
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/toolchain.html" class="md-nav__link">
+        toolchain
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/move.html" class="md-nav__link">
+        move
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/align.html" class="md-nav__link">
+        align
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/ranges.html" class="md-nav__link">
+        ranges
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/benchmark.html" class="md-nav__link">
+        benchmark
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/profiler.html" class="md-nav__link">
+        profiler
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/IO-multiplexing.html" class="md-nav__link">
+        IO-multiplexing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/epoll.html" class="md-nav__link">
+        epoll
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/signal.html" class="md-nav__link">
+        signal
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/fork-safe.html" class="md-nav__link">
+        fork-safe
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          Rust
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Rust
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-toolchain.html" class="md-nav__link">
+        rust-toolchain
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-study.html" class="md-nav__link">
+        rust-study
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-attributes.html" class="md-nav__link">
+        rust-attributes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-modules.html" class="md-nav__link">
+        rust-modules
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-macro.html" class="md-nav__link">
+        rust-macro
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-network.html" class="md-nav__link">
+        rust-network
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-option.html" class="md-nav__link">
+        rust-optin
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-str.html" class="md-nav__link">
+        rust-str
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          Tools
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Tools
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/cmake.html" class="md-nav__link">
+        cmake
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/docker.html" class="md-nav__link">
+        docker
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/git.html" class="md-nav__link">
+        git
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/powershell.html" class="md-nav__link">
+        powershell
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/regex.html" class="md-nav__link">
+        regex
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/mkdocs.html" class="md-nav__link">
+        mkdocs
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+          Courses
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          Courses
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="%E5%AF%86%E7%A0%81%E5%88%86%E6%9E%90%E5%AD%A6%E5%A4%8D%E4%B9%A0.html" class="md-nav__link">
+        密码分析学
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="%E5%AF%86%E7%A0%81%E5%AD%A6%E5%BC%95%E8%AE%BA%E5%A4%8D%E4%B9%A0.html" class="md-nav__link">
+        密码学引论
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          算法设计与分析
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="algorithm.html" class="md-nav__link md-nav__link--active">
+        算法设计与分析
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    算法的数学基础
+  </a>
+  
+    <nav class="md-nav" aria-label="算法的数学基础">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    渐近的界
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    求解递推方程
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dynamic-programing" class="md-nav__link">
+    动态规划(Dynamic Programing)
+  </a>
+  
+    <nav class="md-nav" aria-label="动态规划(Dynamic Programing)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#lis" class="md-nav__link">
+    最长递增子序列(LIS)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mis" class="md-nav__link">
+    最大子段和(MIS)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    图像压缩
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chain-matrix-multiplication" class="md-nav__link">
+    Chain Matrix Multiplication
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optimal-binary-search-tree" class="md-nav__link">
+    Optimal Binary Search Tree
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#roi" class="md-nav__link">
+    投资回报(ROI)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#knapsack" class="md-nav__link">
+    背包问题(knapsack)
+  </a>
+  
+    <nav class="md-nav" aria-label="背包问题(knapsack)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#0-1" class="md-nav__link">
+    0-1背包
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    完全背包
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lcs" class="md-nav__link">
+    最长公共子序列(LCS)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#edit-distance" class="md-nav__link">
+    最小编辑距离(Edit distance)
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    计算复杂性理论
+  </a>
+  
+    <nav class="md-nav" aria-label="计算复杂性理论">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    选择问题
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ndtm-vs-tm" class="md-nav__link">
+    NDTM v.s. TM
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pnp" class="md-nav__link">
+    P和NP
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#np-complete" class="md-nav__link">
+    NP-Complete
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bpp" class="md-nav__link">
+    BPP
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86.html" class="md-nav__link">
+        编译原理
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+          Crypto
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          Crypto
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crypto/ecdsa-pk-recovery.html" class="md-nav__link">
+        ecdsa-pk-recovery
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crypto/algo-rsa.html" class="md-nav__link">
+        algo-rsa
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crypto/algo-fft%26ntt.html" class="md-nav__link">
+        algo-fft&ntt
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crypto/algo-reduction.html" class="md-nav__link">
+        algo-reduction
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+          Mlc
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_8">
+          <span class="md-nav__icon md-icon"></span>
+          Mlc
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/dlc-survey.html" class="md-nav__link">
+        dlc-survey
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/tvm-install.html" class="md-nav__link">
+        tvm-install
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/tvm-ffi.html" class="md-nav__link">
+        tvm-ffi
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/tvm-type.html" class="md-nav__link">
+        tvm-type
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/tvm-tensorIR.html" class="md-nav__link">
+        tvm-tensorIR
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/tvm-lowering.html" class="md-nav__link">
+        tvm-lowering
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/tvm-autotvm.html" class="md-nav__link">
+        tvm-autotvm
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/tvm-ansor.html" class="md-nav__link">
+        tvm-ansor
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/mlir.html" class="md-nav__link">
+        mlir
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/mlir-toy.html" class="md-nav__link">
+        mlir-toy
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/mlir-onnx.html" class="md-nav__link">
+        mlir-onnx
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/mlir-iree.html" class="md-nav__link">
+        mlir-iree
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/paper-torch.fx.html" class="md-nav__link">
+        paper-torch.fx
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/paper-nimble.html" class="md-nav__link">
+        paper-nimble
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/paper-disc.html" class="md-nav__link">
+        paper-disc
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/paper-cortex.html" class="md-nav__link">
+        paper-cortex
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/paper-freetensor.html" class="md-nav__link">
+        paper-freetensor
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../about.html" class="md-nav__link">
+        About
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    算法的数学基础
+  </a>
+  
+    <nav class="md-nav" aria-label="算法的数学基础">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    渐近的界
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    求解递推方程
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dynamic-programing" class="md-nav__link">
+    动态规划(Dynamic Programing)
+  </a>
+  
+    <nav class="md-nav" aria-label="动态规划(Dynamic Programing)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#lis" class="md-nav__link">
+    最长递增子序列(LIS)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mis" class="md-nav__link">
+    最大子段和(MIS)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    图像压缩
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chain-matrix-multiplication" class="md-nav__link">
+    Chain Matrix Multiplication
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optimal-binary-search-tree" class="md-nav__link">
+    Optimal Binary Search Tree
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#roi" class="md-nav__link">
+    投资回报(ROI)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#knapsack" class="md-nav__link">
+    背包问题(knapsack)
+  </a>
+  
+    <nav class="md-nav" aria-label="背包问题(knapsack)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#0-1" class="md-nav__link">
+    0-1背包
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    完全背包
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lcs" class="md-nav__link">
+    最长公共子序列(LCS)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#edit-distance" class="md-nav__link">
+    最小编辑距离(Edit distance)
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    计算复杂性理论
+  </a>
+  
+    <nav class="md-nav" aria-label="计算复杂性理论">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    选择问题
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ndtm-vs-tm" class="md-nav__link">
+    NDTM v.s. TM
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pnp" class="md-nav__link">
+    P和NP
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#np-complete" class="md-nav__link">
+    NP-Complete
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bpp" class="md-nav__link">
+    BPP
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  <h1>算法设计与分析</h1>
+
+<h2 id="_1">算法的数学基础</h2>
+<h3 id="_2">渐近的界</h3>
+<p>在算法分析中，我们关心当输入规模无限增加时，在极限中，算法的运行时间如何随着输入规模的变大而增加，即算法的<strong>渐近</strong>效率。</p>
+<p>5种渐进的界以及渐进记号：</p>
+<p>对于函数<span class="arithmatex">\(f(n)\)</span></p>
+<ol>
+<li><span class="arithmatex">\(O\)</span>记号标记<span class="arithmatex">\(f(n)\)</span>的渐近的<strong>上界</strong>(upper bound)：存在正数<span class="arithmatex">\(c\)</span>和<span class="arithmatex">\(n_0\)</span>，使得对于一切<span class="arithmatex">\(n\geq n_0\)</span>，有<span class="arithmatex">\(0\leq f(n)\leq cg(n)\)</span>成立，则称<span class="arithmatex">\(f(n)\)</span>渐近上界为<span class="arithmatex">\(g(n)\)</span>，记作<span class="arithmatex">\(f(n) = O(g(n))\)</span></li>
+<li><span class="arithmatex">\(o\)</span>记号标记<span class="arithmatex">\(f(n)\)</span>的<strong>非紧上界</strong>(non-tight upper bound)：对于<strong>任意</strong>正数<span class="arithmatex">\(c\)</span>和<span class="arithmatex">\(n_0\)</span>，对于一切<span class="arithmatex">\(n\geq n_0\)</span>，有<span class="arithmatex">\(0\leq f(n)&lt; cg(n)\)</span>成立，记作<span class="arithmatex">\(f(n) = o(g(n))\)</span></li>
+<li><span class="arithmatex">\(\Omega\)</span>记号标记<span class="arithmatex">\(f(n)\)</span>的渐近的<strong>下界</strong>(lower bound)：存在正数<span class="arithmatex">\(c\)</span>和<span class="arithmatex">\(n_0\)</span>，使得对于一切<span class="arithmatex">\(n\geq n_0\)</span>，有<span class="arithmatex">\(0\leq cg(n)\leq f(n)\)</span>成立，则称<span class="arithmatex">\(f(n)\)</span>渐近下界为<span class="arithmatex">\(g(n)\)</span>，记作<span class="arithmatex">\(f(n) = \Omega(g(n))\)</span></li>
+<li><span class="arithmatex">\(\omega\)</span>记号标记<span class="arithmatex">\(f(n)\)</span>的<strong>非紧下界</strong>(non-tight lower bound)：对于<strong>任意</strong>正数<span class="arithmatex">\(c\)</span>和<span class="arithmatex">\(n_0\)</span>，对于一切<span class="arithmatex">\(n\geq n_0\)</span>，有<span class="arithmatex">\(0\leq cg(n)&lt; f(n)\)</span>成立，记作<span class="arithmatex">\(f(n) = \omega(g(n))\)</span></li>
+<li><span class="arithmatex">\(\Theta\)</span>记号标记<span class="arithmatex">\(f(n)\)</span>的渐近的上界和渐近的下界(即<span class="arithmatex">\(f(n)\)</span>的阶)：对于<span class="arithmatex">\(f(n) = \Theta(g(n))\)</span>称<span class="arithmatex">\(g(n)\)</span>为<span class="arithmatex">\(f(n)\)</span>的渐近的<strong>紧的界</strong>(tight bound)</li>
+</ol>
+<p>其中大<span class="arithmatex">\(O\)</span>和小<span class="arithmatex">\(o\)</span>区别在于前者在极限<span class="arithmatex">\(\frac{f(n)}{g(n)}\)</span>可能为1，即可能同阶，但是后者在极限时<span class="arithmatex">\(\frac{f(n)}{g(n)} = 0\)</span>，即<span class="arithmatex">\(f(n)\)</span>的阶一定小于<span class="arithmatex">\(g(n)\)</span>；大<span class="arithmatex">\(\Omega\)</span>和小<span class="arithmatex">\(\omega\)</span>同理，对于<span class="arithmatex">\(f(n) = \omega(g(n))\)</span>，<span class="arithmatex">\(g(n)\)</span>的阶一定小于<span class="arithmatex">\(f(n)\)</span>，而<span class="arithmatex">\(f(n) = \Omega(g(n))\)</span>来说，<span class="arithmatex">\(g(n)\)</span>的阶可能和<span class="arithmatex">\(f(n)\)</span>相等</p>
+<p><img src="Algorithm.assets/image-20220511164155399.png" alt="image-20220511164155399" style="zoom:67%;" /></p>
+<p>一个算法的上界<span class="arithmatex">\(O(f(n))\)</span>：在所有最坏输入情况下，算法运行时间不会超过<span class="arithmatex">\(f(n)\)</span></p>
+<p>最坏情况(worst case)时间复杂度: 算法求解输入规模为n的实例所需要的最长时间<span class="arithmatex">\(W(n)\)</span>
+最好情况(best case)时间复杂度：算法求解输入规模为n的实例所需要的最短时间<span class="arithmatex">\(W(n)\)</span></p>
+<p>一般我们对于一个算法分析会说(一般来说我们更关心worst case)：</p>
+<ul>
+<li>对于best case，算法的 lower/upper (tight) bound 是<span class="arithmatex">\(\Theta(f(n))\)</span></li>
+<li>对于worst case，算法的 lower/upper (tight) bound 是<span class="arithmatex">\(\Theta(f(n))\)</span></li>
+</ul>
+<p>以快排和朴素的素性检测算法为例进行对比，对于素性检测，以输入的数字<span class="arithmatex">\(n\)</span>作为输入：</p>
+<ul>
+<li>对于快排输入规模为<span class="arithmatex">\(n\)</span>的数组：worst case 下 tight bound <span class="arithmatex">\(\Theta(n^2)\)</span>，best case 下 tight bound <span class="arithmatex">\(\Theta(n \log n)\)</span></li>
+<li>对于素性检测：对于一个输入的数字<span class="arithmatex">\(n\)</span>，总是会在确定步数内终止算法，因此对于任何输入<span class="arithmatex">\(n\)</span>，best case 和 worst case都相同，复杂度取决于数字是否有小因子。因此该算法best case 的lower bound 为<span class="arithmatex">\(\Omega(1)\)</span>，upper bound 为<span class="arithmatex">\(O(\sqrt{n})\)</span>；worst case 的lower bound 为<span class="arithmatex">\(\Omega(1)\)</span>，upper bound 为<span class="arithmatex">\(O(\sqrt{n})\)</span>；</li>
+</ul>
+<h3 id="_3">求解递推方程</h3>
+<p>求解递推方程：</p>
+<ul>
+<li>关于阶乘函数：</li>
+</ul>
+<div class="arithmatex">\[
+n! = o(n^n),\qquad n!=\omega(2^n),\qquad \log(n!) = \Theta (n\log n)
+\]</div>
+<ul>
+<li>求和公式：
+  $$
+  \sum_{k=1}^n \frac{1}{k} = \ln n+O(1)
+  $$</li>
+</ul>
+<p>$$
+  \sum n^2 = \frac{n(n+1)(2n+1)}{6}
+  $$</p>
+<ul>
+<li>主定理：</li>
+</ul>
+<p>设<span class="arithmatex">\(a\geq 1,b&gt;1\)</span>为常数，<span class="arithmatex">\(f(n)\)</span>为函数，<span class="arithmatex">\(T(n)\)</span>为非负整数，且有<span class="arithmatex">\(T(n) = aT(n/b)+f(n)\)</span></p>
+<ol>
+<li>若<span class="arithmatex">\(f(n) = O(n^{\log_ba-\epsilon}),\epsilon &gt;0\)</span>，那么<span class="arithmatex">\(T(n)=\Theta(n^{\log_ba})\)</span>；</li>
+<li>若<span class="arithmatex">\(f(n) = \Theta(n^{\log_ba})\)</span>，那么<span class="arithmatex">\(T(n) = \Theta(n^{\log_ba}\log n)\)</span></li>
+<li>若<span class="arithmatex">\(f(n) = \Omega(n^{\log_ba+\epsilon}),\epsilon &gt;0\)</span>，且对于某个<strong>常数<span class="arithmatex">\(c&lt;1\)</span></strong>和所有充分大的<span class="arithmatex">\(n\)</span>，有<span class="arithmatex">\(af(n/b)\leq cf(n)\)</span>，那么<span class="arithmatex">\(T(n)=\Theta(f(n))\)</span>；</li>
+</ol>
+<p>在主定理中，<span class="arithmatex">\(n^{\log_ba}\)</span>可以看作 total costs of all dividing and merging steps；</p>
+<p>如果<span class="arithmatex">\(n^{\log_ba -\epsilon}\)</span>(<strong>注意这里<span class="arithmatex">\(n^{\log_ba-\epsilon}\)</span>与<span class="arithmatex">\(n^{\log_ba}\)</span>阶是不同的</strong>)是<span class="arithmatex">\(f(n)\)</span>的上界，则整体复杂度就在<span class="arithmatex">\(n^{\log_ba}\)</span>；</p>
+<p>如果<span class="arithmatex">\(n^{\log_ba+\epsilon}\)</span>是<span class="arithmatex">\(f(n)\)</span>的下界，则整体复杂度在<span class="arithmatex">\(f(n)\)</span>（<strong>不过还需要一些额外条件，尤其注意其中r&lt;1</strong>）；</p>
+<p>使用主定理尤其注意两个<span class="arithmatex">\(\epsilon\)</span>，例如<span class="arithmatex">\(n^{\log_ba}=n\)</span>，<span class="arithmatex">\(f(n)=n\log n\)</span>，这种情况下虽然<span class="arithmatex">\(f(n)\)</span>阶更高，但是不存在<span class="arithmatex">\(\epsilon\)</span>使得<span class="arithmatex">\(f(n)=\Omega (n^{1+\epsilon})\)</span>，因此对于类似<span class="arithmatex">\(T(n)=2T(n/2)+n\log n\)</span>形式的递推关系，只能使用递归树求解，结果为</p>
+<p><img src="Algorithm.assets/image-20220511175249294.png" alt="image-20220511175249294" style="zoom: 50%;" /></p>
+<p><img src="Algorithm.assets/image-20220511175811428.png" alt="image-20220511175811428" style="zoom:67%;" /></p>
+<h2 id="dynamic-programing">动态规划(Dynamic Programing)</h2>
+<h3 id="lis">最长递增子序列(LIS)</h3>
+<p>1维动态规划。最优子结构：输入的数组记为<span class="arithmatex">\(L\)</span>，前<span class="arithmatex">\(k\)</span>位子串中最长递增子序列长度记作<span class="arithmatex">\(f(k)\)</span> ，则在已知前<span class="arithmatex">\(j\)</span>位子串LIS长度<span class="arithmatex">\(f(j)\)</span>情况下，其中<span class="arithmatex">\(j\in [1,k)\)</span>，尝试将第<span class="arithmatex">\(k\)</span>位加到第<span class="arithmatex">\(j\)</span>位结尾的最长子串后面，计算<span class="arithmatex">\(f(k)\)</span>；即<span class="arithmatex">\(f(k) = \max\{f(j)\}+1\)</span>，其中<span class="arithmatex">\(j\in[1,k)\)</span>且有<span class="arithmatex">\(L[k]&gt;L[j]\)</span>；考虑递推边界：<span class="arithmatex">\(f(1) = 1\)</span>，从<span class="arithmatex">\(k = 2\)</span>开始递推即可；</p>
+<p>第<span class="arithmatex">\(k\)</span>个状态由前<span class="arithmatex">\(k-1\)</span>个状态转移来，==时间复杂度==<span class="arithmatex">\(O(n^2)\)</span></p>
+<p><strong>track解</strong>: 更新<code>dp</code>数组过程中额外记录一下每个位置的前驱位置(若有多个前驱任选一个即可)，时间复杂度<span class="arithmatex">\(O(n)\)</span></p>
+<p><strong>原始的LIS问题可以使用贪心+二分查找来做</strong>，时间复杂度<span class="arithmatex">\(O(n\log n)\)</span> <a href="https://leetcode-cn.com/problems/longest-increasing-subsequence/solution/zui-chang-shang-sheng-zi-xu-lie-by-leetcode-soluti/">最长上升子序列-LeetCode</a></p>
+<blockquote>
+<p>考虑一个简单的贪心，如果我们要使上升子序列尽可能的长，则我们需要让序列上升得尽可能慢，因此我们希望每次在上升子序列最后加上的那个数尽可能的小。</p>
+<p>基于上述思路，维护一个数组<span class="arithmatex">\(d[i]\)</span>表示<strong>长度为<span class="arithmatex">\(i\)</span>的递增子序列结尾最小值</strong>，可证<span class="arithmatex">\(d\)</span>是单调递增的；因此对于第<span class="arithmatex">\(k\)</span>个位置的数字，先比较<span class="arithmatex">\(v_k\)</span>和<span class="arithmatex">\(d[len]\)</span>，其中<span class="arithmatex">\(len\)</span>表示当前LIS长度，如果<span class="arithmatex">\(v_K&gt;d[len]\)</span>，说明当前的数字比LIS结尾数字更大，在LIS结尾追加<span class="arithmatex">\(v_k\)</span>，并且更新<span class="arithmatex">\(len = len+1\)</span>；否则如果<span class="arithmatex">\(v_k&lt;d[len]\)</span>，我们看<span class="arithmatex">\(v_k\)</span>是否会影响递增子序列结尾最小值：扫描<span class="arithmatex">\(d\)</span>，如果<span class="arithmatex">\(d[j+1]&gt;v_k&gt;d[j]\Longrightarrow d[j] = v_k\)</span>；因为已知<span class="arithmatex">\(d\)</span>是严格递增的，因此扫描可以使用二分查找，每次扫描复杂度在<span class="arithmatex">\(O(\log len)\)</span>，整体时间复杂度在<span class="arithmatex">\(O(n\log n)\)</span></p>
+</blockquote>
+<h3 id="mis">最大子段和(MIS)</h3>
+<p>1维动态规划。最优子结构：记包含第<span class="arithmatex">\(k\)</span>个数的最大子段和为<span class="arithmatex">\(f(k)\)</span>，则可以根据<strong>包含第<span class="arithmatex">\(k-1\)</span>个数的最大子段和</strong><span class="arithmatex">\(f(k-1)\)</span>计算出<span class="arithmatex">\(f(k)\)</span>。输入的数组记为<span class="arithmatex">\(A\)</span>，递推关系如下：</p>
+<div class="arithmatex">\[
+f(k) =
+ \left\{
+ \begin{align*}
+&amp;f(k-1)+A[k] &amp; f(k-1) &gt;0\\
+&amp;A[k]   &amp;f(k-1)\leq0
+ \end{align*}
+\right.
+\]</div>
+<p>递推边界<span class="arithmatex">\(f(0) = 0\)</span></p>
+<p>第<span class="arithmatex">\(k\)</span>个状态由第<span class="arithmatex">\(k-1\)</span>个状态转移而来，==时间复杂度==<span class="arithmatex">\(O(n)\)</span></p>
+<p>分治算法求解MIS问题：类似线段树，时间复杂度<span class="arithmatex">\(O(n\log n)\)</span> <a href="https://leetcode-cn.com/problems/maximum-subarray/solution/zui-da-zi-xu-he-by-leetcode-solution/">最大子序和-LeetCode</a></p>
+<h3 id="_4">图像压缩</h3>
+<p>1维动态规划。最优子结构：记对包含前k个灰度值的子序列进行压缩的最低存储开销为<span class="arithmatex">\(f(k)\)</span>，则可以根据<span class="arithmatex">\(f(k-1),f(k-2),\cdots\)</span>最多前256个值计算出<span class="arithmatex">\(f(k)\)</span>。输入的灰度值数组记为<span class="arithmatex">\(A\)</span>，递推关系如下：
+$$
+f(k)=\min{f(j)+h(A[j+1..k])}  \qquad \qquad \max{0,k-256}&lt;j&lt;k
+$$
+递推边界为<span class="arithmatex">\(f(0) = 0\)</span></p>
+<p>第k个状态由前<span class="arithmatex">\(\min\{k-1,256\}\)</span>个状态转移而来，因此虽然常数比较大，但==时间复杂度==仍在<span class="arithmatex">\(O(n)\)</span></p>
+<h3 id="chain-matrix-multiplication">Chain Matrix Multiplication</h3>
+<p>2维动态规划。最优子结构：因为我们在计算两个矩阵需要的乘法次数时，依赖于左右两个矩阵的大小，因此求解一个问题需要先求解左右两个子问题。设输入的矩阵链为<span class="arithmatex">\(A\)</span>，记对于矩阵链区间<span class="arithmatex">\([i,j]\)</span>确定乘法次序需要的最少乘法次数为<span class="arithmatex">\(f(i,j)\)</span>，则假定最后一次乘法发生在第<span class="arithmatex">\(k\)</span>个位置(<span class="arithmatex">\(i\leq k&lt; j\)</span>)，则有<span class="arithmatex">\(f(i,k),f(k,j)\)</span>也是最优解。因此递推关系如下：
+$$
+f(i,j) = \min{f(i,k)+f(k,j)+P_{i-1}P_kP_j}\qquad\qquad i\leq k&lt;j
+$$
+递推边界为<span class="arithmatex">\(f(i,j) = 0~~\mathbf{if}~~i=j\)</span></p>
+<p>状态<span class="arithmatex">\(f(i,j)\)</span>由2k个状态转移而来，其中<span class="arithmatex">\(i\leq k&lt; j\)</span>，因此==时间复杂度==<span class="arithmatex">\(O(n^3)\)</span></p>
+<h3 id="optimal-binary-search-tree">Optimal Binary Search Tree</h3>
+<p>2维动态规划。最优子结构：如果树是一个最优二分检索树，则左子树和右子树分别是一个最优二分检索树。</p>
+<p>与矩阵链乘法类似，对于一个区间<span class="arithmatex">\([i,j]\)</span>，<span class="arithmatex">\(f(i,j)\)</span>表示该区间内的所有数据点和空隙点构成的二分检索树最小搜索期望，在其中选一个数据点作为根节点，<span class="arithmatex">\(f(i,j) = f(i,k-1)+f(k+1,j)+h(i,j)\)</span>，其中<span class="arithmatex">\(i\leq k\leq j\)</span>时间复杂度<span class="arithmatex">\(O(n^3)\)</span>，</p>
+<h3 id="roi">投资回报(ROI)</h3>
+<p>2维动态规划。其实相当于完全背包的变种，可以把完全背包看成有特殊回报函数的ROI问题——在完全背包中，对于物品<span class="arithmatex">\(k\)</span>的选择，其回报函数为<span class="arithmatex">\(f_k(x) = x\cdot v_k\)</span>，也正是由于回报函数的特殊性质，在完全背包中我们可以写出递推关系：
+$$
+F_k(y) = \max{F_{k-1}(y),F_{k}(y-w_k)+v_k}
+$$
+然而在ROI中，因为对于每种项目的回报函数不是简单的<span class="arithmatex">\(f(x) = kx\)</span>，因此ROI问题的递推关系如下：</p>
+<div class="arithmatex">\[
+\begin{align*}
+F_k(y) &amp;= \max\{F_{k-1}(y),F_{k-1}(y-w_k)+f(w_k)~~|~~w_k\in[1,y]\}\\
+&amp;= \max\{F_{k-1}(y-w_k)+f(w_k) ~~|~~w_k\in[0,y]\}
+\end{align*}
+\]</div>
+<p>完全背包中对于状态<span class="arithmatex">\(F_k(y)\)</span>的计算只需要1次比较，而ROI需要<span class="arithmatex">\(y\)</span>次比较(类似设计的比较差的那种完全背包的复杂度)。其原因在于ROI中回报函数不是严格单调递增的，因此我们无法确定对于当前状态要对第<span class="arithmatex">\(k\)</span>个项目投资多少才更好，只能尝试所有y种可能。<span class="arithmatex">\(F_k(y)\)</span>由前<span class="arithmatex">\(y\)</span>个状态转移而来，因此对于n个项目，m资本的ROI问题，==时间复杂度==：
+$$
+\sum_{k=2}^n\sum_{x=1}^m(x+1) = \frac{1}{2}(n-1)m(m+3) = O(nm^2)
+$$</p>
+<p><strong>track解</strong>：需要<span class="arithmatex">\(O(mn)\)</span>的空间复杂度，每一格记录对于第k个项目投资了多少钱即可，时间复杂度<span class="arithmatex">\(O(n)\)</span></p>
+<div class="highlight"><pre><span></span><code><span class="n">i</span> <span class="o">=</span> <span class="n">n</span> <span class="c1"># n个项目</span>
+<span class="n">j</span> <span class="o">=</span> <span class="n">m</span> <span class="c1"># m个硬币</span>
+<span class="k">while</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">G</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">S</span> <span class="err">∪</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span><span class="n">G</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]}</span>
+        <span class="n">j</span> <span class="o">=</span> <span class="n">j</span><span class="o">-</span><span class="n">G</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">i</span><span class="o">-</span><span class="mi">1</span>
+</code></pre></div>
+<h3 id="knapsack">背包问题(knapsack)</h3>
+<h4 id="0-1">0-1背包</h4>
+<p>N种物品，物品重量记为w，价值记为v；限重W；每个物品选1次；求最大价值。记<span class="arithmatex">\(F_k(y)\)</span>为只装前k物品限重y时最大价值，递推关系如下
+$$
+F_k(y) = \max{F_{k-1}(y), F_{k-1}(y-w_k)+v_k}\qquad y\geq w_k
+$$
+<strong>空间复杂度优化：</strong></p>
+<p>如果做实现，最简单的是开一个<span class="arithmatex">\(N\cdot W\)</span>的二维数组，但是注意到上面的递推关系中第k行只和第k-1行有关，因此可以做一些空间优化，变成只需要两个<span class="arithmatex">\(W\)</span>长的数组。</p>
+<p>更进一步地，可以压缩成1个数组，只需要逆序迭代，且初始置为全0，则计算<span class="arithmatex">\(F_k(y)\)</span>时，数组中<span class="arithmatex">\(A[y],A[y-w_k]\)</span>恰好表示<span class="arithmatex">\(F_{k-1}(y), F_{k-1}(y-w_k)\)</span></p>
+<blockquote>
+<p><strong>如果要求恰好装满，即变为子集和问题，则应当把<span class="arithmatex">\(A[0]\)</span>置0，其它全置为<span class="arithmatex">\(-\infty\)</span></strong></p>
+</blockquote>
+<p>时间复杂度<span class="arithmatex">\(O(NW)\)</span>，空间复杂度<span class="arithmatex">\(O(W)\)</span></p>
+<p><strong>track解</strong>：时间复杂度<span class="arithmatex">\(O(W)\)</span>，只需要在二维表格<span class="arithmatex">\(G\)</span>中记录下是否选择了第k个物品即可，时间复杂度<span class="arithmatex">\(O(N)\)</span>；</p>
+<div class="highlight"><pre><span></span><code><span class="n">i</span> <span class="o">=</span> <span class="n">N</span> <span class="c1"># N种物品</span>
+<span class="n">j</span> <span class="o">=</span> <span class="n">w</span> <span class="c1"># W限重</span>
+<span class="k">while</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">G</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">S</span> <span class="err">∪</span> <span class="p">{</span><span class="n">i</span><span class="p">}</span>
+        <span class="n">j</span> <span class="o">=</span> <span class="n">j</span><span class="o">-</span><span class="n">w_i</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">i</span><span class="o">-</span><span class="mi">1</span>
+</code></pre></div>
+<h4 id="_5">完全背包</h4>
+<p>N种物品，每个物品重量记为w，价值记为v；限重W；每个物品不限次选；求最大价值
+$$
+F_k(y) = \max {F_{k-1}(y), F_k(y-w_k)+v_k}
+$$
+其中<span class="arithmatex">\(F_k(y)\)</span>表示只装前k种物品，限重为y时的最大价值。</p>
+<p>如果按照0-1背包的思路，考虑选第k种物品和不选第k种物品：</p>
+<ul>
+<li>如果不选第k种物品，则限重不变，转化为<span class="arithmatex">\(F_{k-1}(y)\)</span></li>
+<li>如果选第k种物品，则第k种物品至多选<span class="arithmatex">\(\lfloor W/w_i\rfloor\)</span>件，但每多选一件第k种物品，意味着选前k-1种物品时限重要多减去一个<span class="arithmatex">\(w_i\)</span>，因此为了计算<span class="arithmatex">\(F_k(y)\)</span>事实上必须计算所有的<span class="arithmatex">\(F_{k-1}(y-x_i\cdot w_k)+x_i\cdot v_k\)</span>其中<span class="arithmatex">\(x_i\in [0,\lfloor W/w_i\rfloor]\)</span>，然后取<span class="arithmatex">\(\lfloor W/w_i\rfloor+1\)</span>个值中的最大值</li>
+</ul>
+<p><img src="Algorithm.assets/image-20220502140506573.png" alt="image-20220502140506573" style="zoom:50%;" /></p>
+<p>但这样一来计算每个<span class="arithmatex">\(F_{k-1}(y)\)</span>需要做<span class="arithmatex">\(\lfloor W/w_i\rfloor+1\)</span>次比较，时间复杂度<span class="arithmatex">\(O(NW\sum{\lfloor W/w_i\rfloor+1})\)</span></p>
+<p><strong>可以换一种思路：</strong></p>
+<ul>
+<li>如果不选第k种物品，则限重不变，转化为<span class="arithmatex">\(F_{k-1}(y)\)</span></li>
+<li>如果选第k种物品，则转化为<span class="arithmatex">\(F_k(y-w_k)\)</span>，注意这里的下标是<span class="arithmatex">\(k\)</span>而不是<span class="arithmatex">\(k-1\)</span>。与0-1不同的原因就在于完全背包允许无限选</li>
+</ul>
+<p>因此在对完全背包做<strong>空间复杂度优化</strong>的时候，与0-1也略有不同：</p>
+<p>0-1背包的空间复杂度优化需要逆序遍历数组，这是因为在0-1背包中让限重递减：<span class="arithmatex">\(y = W,W-1,\cdots 1\)</span>是为了保证第k次循环中的状态<span class="arithmatex">\(F_k(y)\)</span>是由<span class="arithmatex">\(F_{k-1}(y-w_k)\)</span>递推来，也就是说保证在考虑“<strong>选入第 k 件物品</strong>”这种策略时依据的是一个没有选入第 k 件物品的子结果<span class="arithmatex">\(F_{k-1(y-w_k)}\)</span>；然而完全背包则不同，完全背包中在考虑“<strong>加选一件第 k 件物品</strong>”这种策略时要依赖一个可能已经选入第 k 件物品的子结果<span class="arithmatex">\(F_k(y-w_k)\)</span>，所以需要让限重递增：<span class="arithmatex">\(y = 1,2,\cdots W-1,W\)</span></p>
+<p><strong>track解</strong>：</p>
+<h3 id="lcs">最长公共子序列(LCS)</h3>
+<p>2维动态规划。最优子结构：输入两个串记为<span class="arithmatex">\(X,Y\)</span>，长度分别为<span class="arithmatex">\(m,n\)</span>，两者的LCS记为<span class="arithmatex">\(Z\)</span>；设<span class="arithmatex">\(f(i,j)\)</span>表示<span class="arithmatex">\(X\)</span>的前<span class="arithmatex">\(i\)</span>位与<span class="arithmatex">\(Y\)</span>的前<span class="arithmatex">\(j\)</span>位的LCS长度，<span class="arithmatex">\(Z_p\)</span>表示两个子串的LCS：</p>
+<ol>
+<li>如果<span class="arithmatex">\(X_i = Y_j\)</span>，则<span class="arithmatex">\(Z_{p-1}\)</span>是<span class="arithmatex">\(X_{i-1},Y_{j-1}\)</span>的LCS</li>
+<li>如果<span class="arithmatex">\(X_i \neq Y_j\)</span>：<ul>
+<li>若<span class="arithmatex">\(X_i = Z_p\)</span>，则<span class="arithmatex">\(Z_{p-1}\)</span>是<span class="arithmatex">\(X_{i-1},Y_{j}\)</span>的LCS</li>
+<li>若<span class="arithmatex">\(Y_j = Z_p\)</span>，则<span class="arithmatex">\(Z_{p-1}\)</span>是<span class="arithmatex">\(X_{i},Y_{j-1}\)</span>的LCS</li>
+</ul>
+</li>
+</ol>
+<p>由此可建立递推关系:</p>
+<div class="arithmatex">\[
+f(i,j) =
+ \left\{
+ \begin{align*}
+&amp;f(i-1,j-1)+1 &amp; X_i = Y_j\\
+&amp;\max\{f(i-1,j),f(i,j-1)\}  &amp;X_i \neq Y_j
+ \end{align*}
+\right.
+\]</div>
+<p>递推边界<span class="arithmatex">\(f(0,j) = f(i,0) = 0\)</span></p>
+<p>状态<span class="arithmatex">\(f(i,j)\)</span>至多由前两个状态转移来，时间复杂度<span class="arithmatex">\(O(mn)\)</span>，空间复杂度可以使用两个数组优化到<span class="arithmatex">\(O(\min\{m,n\})\)</span></p>
+<p><a href="https://leetcode-cn.com/problems/longest-common-subsequence/">1143. 最长公共子序列 - 力扣</a></p>
+<h3 id="edit-distance">最小编辑距离(Edit distance)</h3>
+<p>2维动态规划。最优子结构：输入两个串记为<span class="arithmatex">\(X,Y\)</span>，长度分别为<span class="arithmatex">\(m,n\)</span>；可知删除和插入的操作是等价的，因此只考虑插入和替换两个操作即可。设<span class="arithmatex">\(f(i,j)\)</span>表示<span class="arithmatex">\(X\)</span>的前<span class="arithmatex">\(i\)</span>位与<span class="arithmatex">\(Y\)</span>的前<span class="arithmatex">\(j\)</span>位的<strong>最小</strong>编辑距离：</p>
+<ol>
+<li>如果<span class="arithmatex">\(X_i = Y_j\)</span>，则当前步不需要对两个串进行编辑，<span class="arithmatex">\(f(i,j) = f(i-1,j-1)\)</span></li>
+<li>如果<span class="arithmatex">\(X_i \neq Y_j\)</span>：则当前需要对其中一个串进行编辑，<span class="arithmatex">\(f(i,j) = f(i-1,j-1)+1\)</span></li>
+<li>如果<span class="arithmatex">\(X_i=\bot\)</span>或<span class="arithmatex">\(Y_j=\bot\)</span>：则需要执行相应的插入操作，<span class="arithmatex">\(f(i,j) = \min\{f(i-1,j)+1,f(i,j-1)+1\}\)</span></li>
+</ol>
+<p>因此递推关系：<span class="arithmatex">\(f(i,j) = \min\{f(i-1,j)+1,f(i,j-1)+1,diff(X_i,Y_j)+f(i-1,j-1)\}\)</span></p>
+<p>递推边界<span class="arithmatex">\(f(0,j) = j,f(i,0) = i\)</span></p>
+<p>当前状态<span class="arithmatex">\(f(i,j)\)</span>依赖3个子状态，时间复杂度<span class="arithmatex">\(O(n^2)\)</span>，空间复杂度<span class="arithmatex">\(O(\min\{m,n\})\)</span></p>
+<p><a href="https://leetcode-cn.com/problems/edit-distance/">72. 编辑距离 - 力扣</a></p>
+<h2 id="_6">计算复杂性理论</h2>
+<h3 id="_7">选择问题</h3>
+<p>识别出<span class="arithmatex">\(X\)</span>的一个子集<span class="arithmatex">\(L\)</span></p>
+<ul>
+<li><span class="arithmatex">\(X\)</span>：一个string集合</li>
+<li><span class="arithmatex">\(x\)</span>：<span class="arithmatex">\(X\)</span>中的一个元素</li>
+<li><span class="arithmatex">\(L\)</span>：语言(language)满足特定属性的<span class="arithmatex">\(X\)</span>的一个子集</li>
+</ul>
+<p><img src="Algorithm.assets/image-20220509165756167.png" alt="image-20220509165756167" style="zoom:50%;" /></p>
+<h3 id="ndtm-vs-tm">NDTM v.s. TM</h3>
+<p>NDTM与标准图灵机类似，除了：</p>
+<p><img src="Algorithm.assets/image-20220509164019078.png" alt="image-20220509164019078" style="zoom: 50%;" /></p>
+<h3 id="pnp">P和NP</h3>
+<p>We say a TM <span class="arithmatex">\(M\)</span> accepts (“1” signify acceptance) a language <span class="arithmatex">\(L\)</span>，if
+$$
+x\in L\Longleftrightarrow M(x)=1
+$$
+<span class="arithmatex">\(L\)</span> is decidable by <span class="arithmatex">\(M\)</span>(<span class="arithmatex">\(M\)</span> solves <span class="arithmatex">\(L\)</span>)</p>
+<p>P类语言和NP类语言由 <span class="arithmatex">\(M\)</span> 是确定性图灵机还是非确定性图灵机进行分类：</p>
+<p><img src="Algorithm.assets/image-20220509170553823.png" alt="image-20220509170553823" style="zoom:50%;" /></p>
+<ul>
+<li>P类语言: 一个语言L属于P类——如果存在<u>确定型多项式时间图灵机</u>接受L</li>
+</ul>
+<p><img src="Algorithm.assets/image-20220509170614957.png" alt="image-20220509170614957" style="zoom:50%;" /></p>
+<ul>
+<li>NP类语言: <u>非确定性图灵机</u>在多项式时间求解<span class="arithmatex">\(x\in L\)</span></li>
+</ul>
+<p>poly-time：最多执行<span class="arithmatex">\(p(n)\)</span>步，其中<span class="arithmatex">\(P(\cdot)\)</span>表示一个多项式，<span class="arithmatex">\(n\)</span>是输入纸带的长度</p>
+<p><img src="Algorithm.assets/image-20220509171037538.png" alt="image-20220509171037538" style="zoom:50%;" /></p>
+<p>NP问题的modern定义:</p>
+<p><img src="Algorithm.assets/image-20220509171400400.png" alt="image-20220509171400400" style="zoom:50%;" /></p>
+<ul>
+<li>即NP语言: 确定性图灵机在多项式时间内验证一个解(即定义中的 witness <span class="arithmatex">\(w\)</span>)</li>
+</ul>
+<p><strong>NP Language的几个例子：</strong></p>
+<ol>
+<li>
+<p><span class="arithmatex">\(L=\)</span> 合数(同时这也是一个P language)</p>
+</li>
+<li>
+<p>SAT: 对于给定的合取范式(CNF)，判断是否有一组输入使表达式值为true</p>
+</li>
+</ol>
+<p>3-SAT: 对于一个子句长度限定为3的合取范式(CNF)，判断是否有一组输入使表达式值为true</p>
+<p><img src="Algorithm.assets/image-20220509173626221.png" alt="image-20220509173626221" style="zoom:50%;" /></p>
+<ol>
+<li>哈密顿路径: 无重复访问无向图上每个节点</li>
+</ol>
+<p>一个不是NP问题的例子：<strong>一个图中是否不存在Hamilton回路</strong>，注意到这个问题无法在多项式时间内验证；</p>
+<p><img src="Algorithm.assets/image-20220509174213790.png" alt="image-20220509174213790" style="zoom:50%;" /></p>
+<h3 id="np-complete">NP-Complete</h3>
+<ul>
+<li>一个语言L是<strong>NP-Hard</strong>——如果所有的NP语言L' 都能通过一个确定性多项式时间归约算法R归约到L：</li>
+</ul>
+<blockquote>
+<p>L is said to be NP-hard if for every NP-language L', there is a deterministic poly-time algorithm (a reduction) R:
+$$
+x\in L' \Longleftrightarrow R(x)\in L
+$$</p>
+</blockquote>
+<p>所有的NP类中的问题难度不会超过NP-hard类中的问题，但注意NP-hard中的问题不一定属于NP</p>
+<ul>
+<li>一个语言L是<strong>NP-Complete</strong>——如果它是NP-hard且它属于NP类()</li>
+</ul>
+<blockquote>
+<p>L is NP-complete if it is NP-hard, and is itself in NP</p>
+</blockquote>
+<p>NP-Complete 代表了NP问题中最难的一类问题；换句话说，如果我们找到了一个解决NPC问题的多项式时间算法，那么我们就可以在多项式时间解决所有NP问题(从而也说明了P=NP)：</p>
+<blockquote>
+<p>Suppose Y ∈ N P-complete, then Y ∈ P ⇐⇒ P = N P：</p>
+<ul>
+<li>必要性：根据NPC定义，NPC问题是NP问题，又因为P=NP，因此<span class="arithmatex">\(Y\in P\)</span></li>
+<li>充分性：根据NPC定义，<span class="arithmatex">\(\forall X\in NP,X\leq_p Y\)</span>，又因为<span class="arithmatex">\(Y\in P\)</span>，因此<span class="arithmatex">\(NP\in P\)</span>，而已知<span class="arithmatex">\(P\in NP\)</span>，因此<span class="arithmatex">\(P=NP\)</span></li>
+</ul>
+</blockquote>
+<p>P, NP, NP-Hard, NP-Complete的关系：</p>
+<p><img src="Algorithm.assets/image-20220517185930556.png" alt="image-20220517185930556" style="zoom: 33%;" /></p>
+<h3 id="bpp">BPP</h3>
+<ul>
+<li>概率多项式图灵机：</li>
+</ul>
+<p><img src="Algorithm.assets/image-20220517200021883.png" alt="image-20220517200021883" style="zoom:50%;" /></p>
+<ul>
+<li>一个语言L属于<strong>BPP</strong>类——当且仅当存在一个概率多项式时间图灵机M使得：
+  $$
+  \forall x\in L: Pr[M(x)=1]\geq \alpha\
+  \forall x\notin L: Pr[M(x)=1]\leq \beta
+  $$
+  <strong>B</strong>ounded-error <strong>P</strong>robabilistic <strong>P</strong>olynomial Time</li>
+</ul>
+<p>显然<span class="arithmatex">\(P\in BPP\)</span>因为确定型图灵机是一类特殊的概率图灵机</p>
+<p>许多问题属于BPP但不属于P，不过这类问题正在逐渐减少，有猜想<span class="arithmatex">\(P=BPP\)</span>：比方说AKS算法出现之前，素性检测被认为属于BPP而不属于P</p>
+<ul>
+<li>降低错误(Reduce error)：</li>
+</ul>
+<p>只要错误的概率小于1/2，就可以通过重复多次后，取majority结果作为最终结果来降低错误概率，理论依据是切尔诺夫界(Chernoff bound):</p>
+<ul>
+<li>BPP 和 ZPP：</li>
+</ul>
+<p><img src="Algorithm.assets/image-20220517222824435.png" alt="image-20220517222824435" style="zoom:33%;" /></p>
+<p>有效的拉斯维加斯算法又称<strong>ZPP</strong>类；有效的蒙特卡洛算法称为<strong>BPP</strong>类；</p>
+<p>前者是零错误概率多项式时间期望的概率算法；</p>
+<p>而后者是错误概率有界的多项式时间算法，又分为单侧错误和双侧错误，单侧错误可分为弃真和存伪：</p>
+<ul>
+<li>
+<p>其中有效的弃真型单侧错误随机算法又称为<strong>RP</strong>类；宣布接受<span class="arithmatex">\(\Longrightarrow\)</span>一定正确，宣布拒绝<span class="arithmatex">\(\Longrightarrow\)</span>有可能错误</p>
+<p>重复多次，有一次接受就是正确</p>
+</li>
+<li>
+<p>其中有效的存伪型单侧错误随机算法又称为<strong>co-RP</strong>类；宣布拒绝<span class="arithmatex">\(\Longrightarrow\)</span>一定正确，宣布接受<span class="arithmatex">\(\Longrightarrow\)</span>有可能错误</p>
+<p>重复多次，有一次拒绝就是错误</p>
+</li>
+</ul>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.sections", "navigation.indexes"], "search": "../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.fac441b0.min.js"></script>
+      
+        <script src="../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

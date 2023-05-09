@@ -1,0 +1,1840 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="paper-torch.fx.html">
+      
+      
+        <link rel="next" href="paper-disc.html">
+      
+      <link rel="icon" href="../images/favicon.ico">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.11">
+    
+    
+      
+        <title>paper-nimble - Cat538's Blog</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.85bb2934.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.a6bdf11c.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#nimble-efficiently-compiling-dynamic-neural-networks-for-model-inference" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="Cat538&#39;s Blog" class="md-header__button md-logo" aria-label="Cat538's Blog" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Cat538's Blog
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              paper-nimble
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+            
+              <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+              </label>
+            
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+            
+              <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+              </label>
+            
+          
+        </form>
+      
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="Cat538&#39;s Blog" class="md-nav__button md-logo" aria-label="Cat538's Blog" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Cat538's Blog
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        Prologue
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plan.html" class="md-nav__link">
+        Exercise
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          Cpp
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Cpp
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/toolchain.html" class="md-nav__link">
+        toolchain
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/move.html" class="md-nav__link">
+        move
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/align.html" class="md-nav__link">
+        align
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/ranges.html" class="md-nav__link">
+        ranges
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/benchmark.html" class="md-nav__link">
+        benchmark
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/profiler.html" class="md-nav__link">
+        profiler
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/IO-multiplexing.html" class="md-nav__link">
+        IO-multiplexing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/epoll.html" class="md-nav__link">
+        epoll
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/signal.html" class="md-nav__link">
+        signal
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/fork-safe.html" class="md-nav__link">
+        fork-safe
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          Rust
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Rust
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-toolchain.html" class="md-nav__link">
+        rust-toolchain
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-study.html" class="md-nav__link">
+        rust-study
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-attributes.html" class="md-nav__link">
+        rust-attributes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-modules.html" class="md-nav__link">
+        rust-modules
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-macro.html" class="md-nav__link">
+        rust-macro
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-network.html" class="md-nav__link">
+        rust-network
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-option.html" class="md-nav__link">
+        rust-optin
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-str.html" class="md-nav__link">
+        rust-str
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          Tools
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Tools
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/cmake.html" class="md-nav__link">
+        cmake
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/docker.html" class="md-nav__link">
+        docker
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/git.html" class="md-nav__link">
+        git
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/powershell.html" class="md-nav__link">
+        powershell
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/regex.html" class="md-nav__link">
+        regex
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/mkdocs.html" class="md-nav__link">
+        mkdocs
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+          Courses
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          Courses
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/%E5%AF%86%E7%A0%81%E5%88%86%E6%9E%90%E5%AD%A6%E5%A4%8D%E4%B9%A0.html" class="md-nav__link">
+        密码分析学
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/%E5%AF%86%E7%A0%81%E5%AD%A6%E5%BC%95%E8%AE%BA%E5%A4%8D%E4%B9%A0.html" class="md-nav__link">
+        密码学引论
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/algorithm.html" class="md-nav__link">
+        算法设计与分析
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86.html" class="md-nav__link">
+        编译原理
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+          Crypto
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          Crypto
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crypto/ecdsa-pk-recovery.html" class="md-nav__link">
+        ecdsa-pk-recovery
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crypto/algo-rsa.html" class="md-nav__link">
+        algo-rsa
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crypto/algo-fft%26ntt.html" class="md-nav__link">
+        algo-fft&ntt
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crypto/algo-reduction.html" class="md-nav__link">
+        algo-reduction
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+          Mlc
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_8">
+          <span class="md-nav__icon md-icon"></span>
+          Mlc
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="dlc-survey.html" class="md-nav__link">
+        dlc-survey
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tvm-install.html" class="md-nav__link">
+        tvm-install
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tvm-ffi.html" class="md-nav__link">
+        tvm-ffi
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tvm-type.html" class="md-nav__link">
+        tvm-type
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tvm-tensorIR.html" class="md-nav__link">
+        tvm-tensorIR
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tvm-lowering.html" class="md-nav__link">
+        tvm-lowering
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tvm-autotvm.html" class="md-nav__link">
+        tvm-autotvm
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tvm-ansor.html" class="md-nav__link">
+        tvm-ansor
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="mlir.html" class="md-nav__link">
+        mlir
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="mlir-toy.html" class="md-nav__link">
+        mlir-toy
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="mlir-onnx.html" class="md-nav__link">
+        mlir-onnx
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="mlir-iree.html" class="md-nav__link">
+        mlir-iree
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="paper-torch.fx.html" class="md-nav__link">
+        paper-torch.fx
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          paper-nimble
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="paper-nimble.html" class="md-nav__link md-nav__link--active">
+        paper-nimble
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#0" class="md-nav__link">
+    0. 摘要
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-conclusion" class="md-nav__link">
+    7. Conclusion
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-intro" class="md-nav__link">
+    1. Intro
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-challenges-and-our-approach" class="md-nav__link">
+    2. CHALLENGES AND OUR APPROACH
+  </a>
+  
+    <nav class="md-nav" aria-label="2. CHALLENGES AND OUR APPROACH">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-dlc" class="md-nav__link">
+    2.1. DLC 的局限
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22" class="md-nav__link">
+    2.2. 我们的方案
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-compiler-support-for-dynamism" class="md-nav__link">
+    3. COMPILER SUPPORT FOR DYNAMISM
+  </a>
+  
+    <nav class="md-nav" aria-label="3. COMPILER SUPPORT FOR DYNAMISM">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-typing" class="md-nav__link">
+    3.1. Typing
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-shape-function" class="md-nav__link">
+    3.2. Shape Function
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-memory-planning" class="md-nav__link">
+    3.3. Memory Planning
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-heterogeneous-device-placement" class="md-nav__link">
+    3.4. Heterogeneous Device Placement
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#35-symbolic-codegen" class="md-nav__link">
+    3.5. Symbolic Codegen
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-virtual-machine" class="md-nav__link">
+    4. VIRTUAL MACHINE
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-evaluation" class="md-nav__link">
+    5. EVALUATION
+  </a>
+  
+    <nav class="md-nav" aria-label="5. EVALUATION">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#53-microbenchmark" class="md-nav__link">
+    5.3. Microbenchmark
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-related-work" class="md-nav__link">
+    6. RELATED WORK
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="paper-disc.html" class="md-nav__link">
+        paper-disc
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="paper-cortex.html" class="md-nav__link">
+        paper-cortex
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="paper-freetensor.html" class="md-nav__link">
+        paper-freetensor
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../about.html" class="md-nav__link">
+        About
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#0" class="md-nav__link">
+    0. 摘要
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-conclusion" class="md-nav__link">
+    7. Conclusion
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-intro" class="md-nav__link">
+    1. Intro
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-challenges-and-our-approach" class="md-nav__link">
+    2. CHALLENGES AND OUR APPROACH
+  </a>
+  
+    <nav class="md-nav" aria-label="2. CHALLENGES AND OUR APPROACH">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-dlc" class="md-nav__link">
+    2.1. DLC 的局限
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22" class="md-nav__link">
+    2.2. 我们的方案
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-compiler-support-for-dynamism" class="md-nav__link">
+    3. COMPILER SUPPORT FOR DYNAMISM
+  </a>
+  
+    <nav class="md-nav" aria-label="3. COMPILER SUPPORT FOR DYNAMISM">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-typing" class="md-nav__link">
+    3.1. Typing
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-shape-function" class="md-nav__link">
+    3.2. Shape Function
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-memory-planning" class="md-nav__link">
+    3.3. Memory Planning
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-heterogeneous-device-placement" class="md-nav__link">
+    3.4. Heterogeneous Device Placement
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#35-symbolic-codegen" class="md-nav__link">
+    3.5. Symbolic Codegen
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-virtual-machine" class="md-nav__link">
+    4. VIRTUAL MACHINE
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-evaluation" class="md-nav__link">
+    5. EVALUATION
+  </a>
+  
+    <nav class="md-nav" aria-label="5. EVALUATION">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#53-microbenchmark" class="md-nav__link">
+    5.3. Microbenchmark
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-related-work" class="md-nav__link">
+    6. RELATED WORK
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="nimble-efficiently-compiling-dynamic-neural-networks-for-model-inference">Nimble: Efficiently Compiling Dynamic Neural Networks for Model  Inference</h1>
+<p>文章发表在2021 MLSys， 旨在解决模型编译中动态形状的问题（对应到 TVM 的代码里即 <code>Any</code> Expr），介绍了引入 <code>Any</code> 遇到的类型推断、代码生成，多后端支持等挑战以及相应的解决方法</p>
+<p>后续工作有 cortex， dietcode等</p>
+<h2 id="0">0. 摘要</h2>
+<p>现代深度神经网络越来越多地利用<strong>控制流、动态数据结构和动态张量形状</strong>。 现有的深度学习系统侧重于优化和执行静态神经网络， 优化动态神经网络比静态神经网络更具挑战性， 必须考虑所有可能的执行路径和张量形状。 本文提出了 Nimble，这是一种高性能且灵活的系统，<strong>用于在多个平台上优化、编译和执行动态神经网络</strong>。 Nimble 通过引入动态类型系统、一组面向动态的优化和轻量级虚拟机运行时来处理模型动态。 我们的评估表明，在 Intel CPU、ARM CPU 和 Nvidia GPU 等硬件平台上，<strong>Nimble 的性能比现有的动态神经网络解决方案高出 20 倍</strong>。</p>
+<h2 id="7-conclusion">7. Conclusion</h2>
+<p>本文提出了 Nimble，一种针对动态神经网络的端到端编译器和运行时解决方案。 <strong>Nimble 是第一个支持动态神经网络的 DLC</strong>，通过一个轻量级和可移植的基于 VM 的运行时在多个平台上执行编译模型。 实验结果表明，与最先进的技术相比，Nimble 在多个平台上有效地执行了流行的动态模型，具有更好的性能和更广泛的覆盖范围。 未来的工作包括在新兴 DL 加速器上启用动态模型推理和动态模型的高性能训练。</p>
+<h2 id="1-intro">1. Intro</h2>
+<p>随着基于深度学习的应用程序变得无处不在(ubiquitous)，用于优化、执行和部署此类应用程序的系统也变得无处不在。 许多系统研究项目专注于提高 DL 研究人员在各种平台上生成的预训练模型子集的性能。 这些模型表示为静态数据流图，其中每个输入和输出（即 tensor）的大小是先验已知的，确保执行路径在每次调用时保持不变，我们将这种称为静态模型。 神经网络，尤其是 NLP 的进步，在模型中引入了更多动态性： <strong>控制流、动态数据结构 和 动态形状</strong>。 我们将表现出这些行为的模型称为动态模型。</p>
+<p>随着动态模型的成熟并继续从研究转向生产，它需要一个<strong>高效的跨平台推理系统</strong>。 这对深度学习从业者提出了新的挑战，因为动态模型引入了依赖于输入的图拓扑结构，打破了现有的系统假设并使为纯静态数据流图设计的优化无效。 然而，没有现有的解决方案满足这些要求。</p>
+<p>一种解决方案是扩展现有的深度学习框架。 然而，框架针对训练做了很多优化，在推理方面有一定限制，且依赖第三方算子加速库(如 OpenBLAS、cuDNN 和 oneDNN)，算子库的发展无法适应动态模型需要的大量具有不同数据类型和形状的算子。</p>
+<p>另一种方案是使用 深度学习编译器(DLC) 对神经网络进行端到端优化，如 XLA(XLA 团队，2017 年)、 Glow(Rotem 等人, 2018)、 TVM(Chen 等人，2018) 和 MLIR(Lattner 等人，2021)。 DLC 不同于传统的 DL 框架，将执行分为编译阶段和运行时阶段。 编译阶段支持图形级别的整体模型优化，以及针对多个硬件平台的工作负载特定内核代码生成，而运行时执行编译后的模块。</p>
+<p>然而，由于缺乏对动态的支持， DLC 主要限于静态模型。 具体来说，为了编译和执行动态模型，系统需要 <strong>一个可以静态表示动态构造的 IR ， 一个可以为动态变化的数据形状生成 kernel 的代码生成器， 以及一个动态处理执行与 kernel dispatch 的运行时</strong>。 此外，动态特定的优化，例如动态内存规划，静态优化动态分配的过程，对于实现理想的性能是必要的。 当前的 DLC 中不存在这些功能。</p>
+<p>为此，我们提出 Nimble，这是一种高性能的便携式系统，用于在多个平台上编译、优化和执行动态神经网络。 据我们所知，这是第一次尝试从 compiler 的角度系统地处理动态模型。 首先，我们引入类型系统扩展来处理维度未知的数据，通过使用 Any 对形状执行类型检查和推理。 其次，我们设计了几种特定于动态模型的优化，包括动态形状感知代码生成、内存规划和设备放置。 第三，我们提出了一个基于虚拟机 (VM) 的运行时，它将独立于平台的控制逻辑和依赖于平台的内核实现分离，以实现可移植、轻量级，最重要的是，能够执行动态模型。 对 LSTM（Hochreiter &amp; Schmidhuber，1997）、Tree-LSTM（Tai 等人，2015）和 BERT（Devlin 等人，2018）的评估表明，与最佳解决方案相比，在云端（Intel CPU 和 Nvidia GPU）和边缘（ARM CPU）的主流硬件平台上， Nimble 将延迟降低了 1.05 倍至 19.9 倍 。</p>
+<p>综上所述，本文有以下三个核心贡献：</p>
+<ul>
+<li>提出并构建一个端到端系统，实现跨多个硬件平台的高效动态模型推理，包括对结果进行基准测试的实证研究；</li>
+<li>设计多种编译和优化技术，包括动态类型系统、内存规划 pass、用于放置计算和数据的异构放置机制，及符号内核代码生成和基于形状的调度算法；</li>
+<li>设计和实现基于张量的VM，具有独立于平台的指令集，以高效灵活地跨平台执行动态模型。</li>
+</ul>
+<p>剩余部分结构如下： 第 2 节回顾了现有 DLC 的局限性，并对 Nimble 进行了概述。 第 3 节介绍了 Nimble 编译流程的设计和实现，随后是第 4 节中基于 VM 的运行时。第 5 节提供了在不同硬件平台上使用各种模型的评估结果。 第 6 节涵盖相关工作，第 7 节总结本文。</p>
+<h2 id="2-challenges-and-our-approach">2. CHALLENGES AND OUR APPROACH</h2>
+<h3 id="21-dlc">2.1. DLC 的局限</h3>
+<p>由于缺少以下特定于动态的功能，当前的 DLC 无法很好地处理动态模型:</p>
+<ol>
+<li>
+<p><strong>An IR for representing dynamism</strong>. 对静态模型执行 data type and shape inference 非常简单，因为它们在编译期间已知并且在运行时保持不变。 然而，输入张量的形状在动态模型中的不同输入样本之间可能变化很大。 控制流结构的出现使这个问题进一步复杂化，因为不同的执行路径可以发出截然不同的数据。 因此，完全静态的 IR 不足以应对这些模型的动态特性。</p>
+</li>
+<li>
+<p><strong>A set of dynamic-oriented optimizations</strong>. 现有的 DLC ，例如 TVM (Chen et al., 2018a) 和 Glow (Rotem et al., 2018) 期望每次优化的静态输入。 每个张量的内存空间都是预先分配的，它们的生命周期是使用专用优化 pass 确定的。 它们还确保了整个模型的均匀执行，因为所有内核都在同一设备上执行。 然而，当出现动态时，控制流不同执行路径可能需要不同数量的内存，并且在运行前大小不确定。 因此，可能会引入某些 IR 节点来帮助运行时类型推断和内存分配。 <strong>这些节点中的操作本质上对 CPU 更友好，如果放置不当会导致严重的性能问题</strong> （对应文章中提的 "异构设备放置机制" ）。</p>
+<div class="admonition warning">
+<p class="admonition-title">疑问</p>
+<p>"The operations in these nodes are intrinsically more CPU friendly" 什么意思？</p>
+</div>
+</li>
+<li>
+<p><strong>A symbolic kernel code generator</strong>. 代码生成（codegen）负责为算子生成高性能的可执行内核。 最近的研究（TVM 2018; Flextensor 2020; Adams et al., 2019; Ansor 2020a）在多后端静态形状的内核性能方面取得了令人瞩目的成果。 尽管如此，<strong>具有符号形状的代码生成中的挑战仍在探索</strong>。 在应用同一组循环优化后，如果循环边界处理不当，使用符号形状生成的内核仍然可能表现不佳。 同时，随着搜索空间呈指数增长，符号形状设置下的内核调整变得更具挑战性。</p>
+<div class="admonition note">
+<p class="admonition-title">note</p>
+<p>关于<strong>具有符号形状的代码生成</strong>， TVM相关的后续工作有 CORTEX， CORA， DietCode 等。</p>
+</div>
+</li>
+<li>
+<p><strong>A light-weight and cross-platform runtime</strong>. 为了提高效率，静态模型的运行时可以简单地设计为一个顺序执行器，它按拓扑顺序遍历输入数据流图，一个一个地调用操作符。 然而，动态模型的执行路径可能只在运行时才知道，并且某些算子的内核必须根据运行时确定的数据形状进行调度，使得简单的图遍历运行时不够用。</p>
+</li>
+</ol>
+<h3 id="22">2.2. 我们的方案</h3>
+<p>Nimble 的设计目标：</p>
+<ol>
+<li><strong>支持动态模型</strong>. Nimble 的目标模型具有所有类型的动态性，包括控制流、动态数据结构和各种数据形状。</li>
+<li><strong>可移植且轻量</strong>. Nimble 生成的模块应该可以在云端（高端 CPU 和 GPU）和边缘（低功耗 CPU 和 GPU）的多个平台上执行。 运行时应该足够轻，以在具有最小计算能力和内存容量的设备上运行。</li>
+<li><strong>性能表现良好</strong>. Nimble 应该在跨平台动态的背景下表现出色。</li>
+</ol>
+<p>图 1 显示了 Nimble 架构。 由两个主要组件组成，即编译器和运行时。 Nimble 采用主流 DL 框架格式的模型，将其转换为统一的 IR ，然后将 IR 优化并编译为包含 <strong>平台无关字节码</strong> 和 <strong>平台相关内核代码</strong> 的可执行文件 ，最后加载可执行文件以在基于 VM 的运行时中执行。 <strong>字节码由 Nimble 的运行时解释器执行</strong>，可跨平台共享。 这种设计有效地使我们能够只维护一个版本的执行逻辑，而更多地关注性能关键的算子内核。 <strong>内核针对特定硬件平台进行了优化，以实现高性能</strong>。</p>
+<div class="autocb" style="text-align:center;"><img src="./paper-nimble.assets\autocb_0.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
+
+<p>为了提高性能，编译器中引入了各种分析和优化技术。 首先，设计了 <strong>a set of IR extensions 来表示动态形状 和 动态分配</strong>， 用于动态程序行为的静态优化（第 3.1 节）。 其次，<strong>形状函数附加到算子以动态计算输出形状并在运行时执行类型检查</strong>（第 3.2 节）。 第三，采用内存规划优化来减少内存消耗量（第 3.3 节）。 第四，异构设备放置机制旨在将 IR 节点放置在 "最佳" 设备上，以减少昂贵的跨设备数据传输和同步（第 3.4 节）。 最后，编译器具有一个能够专门化某些可能形状的代码生成器（第 3.5 节）。 一旦编译了具有动态行为的可执行文件，基于 VM 的运行时就可以使用 动态内核调度加载 和 解释它（第 4 节）。 我们将在后续部分详细介绍这些功能的设计和实现。</p>
+<h2 id="3-compiler-support-for-dynamism">3. COMPILER SUPPORT FOR DYNAMISM</h2>
+<p>阻止现有 DLC 处理 DYNAMISM 的一个关键挑战是缺乏统一的动态表示。 例如，现有 IR(如 TVM)的优化和运行时始终假定存在静态形状信息。 这些假设为动态优化带来了相当多的挑战。</p>
+<p>为了处理动态性，我们设计了一组 IR 扩展，它暴露优化动态程序所需的基本语义。 Nimble 在 TVM(0.6 版) 上实现，以利用其从各种 DL 框架到 TVM IR 的前端转换器。 TVM 的前端减轻了对前端特定细节的需求，使我们的工作能够专注于 IR 扩展 和 优化等贡献。 要使用 Nimble，只需为其提供一个预训练模型，进行编译，然后进行推理。 Nimble 适用于其他编译器工作。</p>
+<p>本节描述我们<strong>如何将标准 TVM 程序转换为我们的动态方言</strong>，以便轻松地将静态优化应用于动态程序，就像我们在传统编译器优化中所做的那样。 特别是，我们详细介绍了编译动态模型所需的三个关键组件：</p>
+<ol>
+<li>一个扩展的类型系统，可以对动态形状进行静态跟踪</li>
+<li>一系列使动态输出形状、分配和设备布局明确的优化过程</li>
+<li>一组代码生成技术，用于生成具有动态输入和输出形状的内核代码</li>
+</ol>
+<h3 id="31-typing">3.1. Typing</h3>
+<p>DLC 使用类型系统来表示、检查和推断张量的数据类型和形状。 在某些框架和编译器中，这分为两个步骤，形状推断和数据类型推断。 TVM 同时执行这两种形式，并将它们称为类型推断（Relay 2019），我们将在本节中使用这个术语。</p>
+<p><em>Tensor Type</em> 由 n 维形状（定义为描述张量维度的整数元组）和数据类型（例如 float32 或 int64）指定。 当前的深度学习 IR 仅在编译时知道张量形状的所有维度时才支持代码生成，即静态形状对于类型推断和检查是强制性的。</p>
+<p>在动态模型的上下文中，许多数据形状只能在运行时确定。 为了支持动态数据形状，Nimble 引入了一个名为 <code>Any</code> 的特殊维度来表示静态未知维度。 例如，我们可以将张量类型表示为 <code>Tensor[(1, 10, Any), float32]</code>，其中该张量中第三维的大小未知，而其他两个维度具有具体值。 JANUS (Jeong 等人，2019) 使用类似的表示法来表示动态维度，但仅用于类型统一，而 Nimble 扩展类型推断以处理 <code>Any</code>，如下所述:</p>
+<p><strong><u>Operator Type Relation</u></strong> 类型关系<strong>描述算子输入和输出类型之间的关系</strong>。 TVM 的类型系统依赖于类型关系(Relay的论文中有更详细的例子) 来推断和双向传播整个网络中算子的输入和输出之间的类型和形状关系。</p>
+<p>必须泛化类型关系才能正确处理动态形状。 例如，如果没有适当的类型系统支持，一个在每次循环迭代中改变 tensor形状 的程序（许多 NLP 模型的解码器中都存在这种情况）是不可能进行类型化和编译的。 通过 Any 的引入，我们能够改进现有的类型关系以支持动态模型。</p>
+<p>这里有两种动态类型关系的特定情况： 第一种是 输出 shape 取决于 输入 tensor 的算子，例如 <code>arange</code> 和 <code>unique</code> ， 将使用 Any 来描述这些形状。  另一种是，当输入形状包含 Any 维度时，类型关系需要将 Any 正确地传播到输出类型，并在必要时放宽静态情况下的类型约束。 例如，具有 Any 的两个维度之间的 <a href="https://numpy.org/doc/stable/user/basics.broadcasting">broadcast</a> 类型关系(在本例子中即 输入tensor shape 和输出 tensor shape)的规则定义如下：</p>
+<div class="autocb" style="text-align:center;"><img src="./paper-nimble.assets\autocb_2.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
+
+<p><strong>值得注意的是，由于动态形状的存在，这些类型关系规则不能再排除编译时的所有类型错误</strong>。 例如，对于上面显示的第二条规则，当 Any 在运行时既不是 1 也不是 d 时，它就违反了广播类型约束。 为了解决这个问题，我们采用渐进式类型（Siek &amp; Taha，2006）方法，并在 Any 被具体值实例化后<strong>在运行时保留某些类型检查</strong>（更多详细信息请参见第 3.2 节）。 可以使用更 advanced 的类型系统来消除这些错误，但会增加复杂性。</p>
+<p><strong><u>Type Inference</u></strong> <code>Any</code> 维度的一个警告是未知维度将在类型推断期间传播，从而减少形状特化的机会。 为了限制使用 Any 维度引入的精度损失，我们在类型系统中引入了 子类型 <em>sub-shaping</em> 。 与流行编程语言中使用的子类型非常相似 (Liskov &amp; Wing, 1994; Amadio &amp; Cardelli, 1993)，我们的类型系统扩展 <strong>使具有具体维度的值成为具有动态维度的张量类型的有效子类型</strong> 。 例如 <code>Tensor[(128, 128), f32]</code> 是 <code>Tensor[(any, 128), f32]</code> 的有效子类型。 此外，我们使用程序分析来检测和删除不必要的动态，通过传达可用于下游编译的额外形状信息。 我们在两个关键点上这样做：首先，我们使用二次形状分析用静态尺寸改进任何错误的动态尺寸； 其次，在 codegen 中， 我们使用单个变量维度作为等效的动态维度。</p>
+<h3 id="32-shape-function">3.2. Shape Function</h3>
+<p>Any 维度的引入使得现有 DLC 采用的预分配机制失效。 现在我们现在必须在计算的同时跟踪需要分配的内存。 此外，由于动态张量形状的引入，静态类型检查现在无法消除编译时的所有类型错误。 因此，我们定义了一个形状函数 <em>shape function</em> 来计算存储分配的输出形状，并根据每个算子的语义验证类型关系。 形状函数在结构上类似于 3.1 节中描述的类型关系，<strong>但存在于运行时而不是编译时</strong>。 它支持编译输出形状的计算并将其嵌入到程序中。</p>
+<p>根据算子的特点，我们将形状函数分为三种不同的模式：数据独立、数据相关和上界。 </p>
+<ol>
+<li><em>Data independent</em> 形状函数用于输出形状仅取决于输入形状的算子，例如普通二维卷积。 </li>
+<li><em>Data dependent</em> 形状函数需要具体的输入值来计算输出形状。 例如，arange 的输出形状取决于 start、stop 和 step 的值。 </li>
+<li>此外，还有某些算子，例如 Non Maximum Suppression (nms)，<strong>计算输出形状的复杂性与执行算子本身的复杂性相当</strong>。 为了避免冗余计算，我们使用 <em>upper bound</em> 形状函数来快速估计输出的上限形状。 <strong>我们要求此类算子将输出形状与输出值一起返回</strong>， 以便为输出张量确定输出形状和内存布局。</li>
+</ol>
+<p>值得注意的是，<strong>在存在动态形状函数的情况下，需要特别注意算子融合</strong>。 算子融合减少了不必要的内存副本并改善了缓存局部性，是性能优化的关键技术。 当所有形状函数都 Data independent 时，编译器可以将基本算子的形状函数连起来形成复合算子的形状函数。 然而，具有数据依赖或上限形状函数的基本算子不能与其他算子融合，即，将其他算子的输出作为其输入融合在一起，因为<strong>形状函数需要访问复合中的中间结果算子</strong>。 因此，<strong>我们明确定义了融合策略以防止这种情况发生</strong>。</p>
+<div class="admonition note">
+<p class="admonition-title">note</p>
+<p>为了引入动态形状需要改动的地方原来有这么多。不仅要引入运行时类型检查，类型（形状）推断，还要引入相应的动态内存分配机制，甚至算子融合策略都要因为动态的引入而受到限制。有一两个例子表示具体如何做吗（比方说哪些算子融合策略会受到具体怎么样的限制）？</p>
+</div>
+<h3 id="33-memory-planning">3.3. Memory Planning</h3>
+<p>许多 DLC 使用静态内存规划形式，将内存合并为连续的块并最大限度地减少分配。 对于 GPU 等设备，这些优化对于减少内存碎片和确保分配不会影响内核性能至关重要。 现有的 DLC IR 将内存分配隐藏在 函数式 接口后面，每个算子都在其中隐式分配其输出存储。 在<strong>执行前，系统会在数据流图上执行静态内存规划，从而实现输出缓冲区的高效预分配</strong>。 由于内存分配的这种 "out-of-band" 的性质，自定义、修改或与其他 pass 组合内存优化具有挑战性。 例如，如果需要为异构执行调整内存分配，则需要对运行时进行修改。 <strong>TVM 的 <code>graph_executor</code></strong> 就是静态内存规划的一个例子。 由于深度学习模型的粗粒度内存语义，与传统的编译器不同，内存优化必须在适当的高抽象级别进行。 现有工作没有提供对动态内存分配执行静态优化的明确途径。</p>
+<p>为了执行我们所说的“动态内存规划”，我们扩展了 TVM 以将其 IR 与隐式内存分配转换为 具有显式缓冲区分配和操作的 IR。 此转换的<strong>关键是函数调用约定的更改： 每个算子现在都明确地获取其输出</strong>。 这个转换使得跟踪和优化 IR 中的动态内存分配成为可能。 为了执行此优化，我们引入了四个新的 IR 构造:
+1. <code>invoke_mut(op, inputs, outputs)</code> <strong>将输出作为可变输入输出参数</strong>
+2. <code>alloc_storage(size, alignment, device)</code> 分配特定大小的内存区域
+3. <code>alloc_tensor(storage, offset, shape, dtype, attrs)</code> 在特定的存储偏移处分配一个具有形状和数据类型的张量
+4. <code>kill(tensor)</code> 在它的引用计数归零之前， 提前释放一个张量</p>
+<p>我们通过转换单个静态形状操作（例如广播加法）的示例来说明这是如何工作的。 代码示例中，<code>Tensor&lt;d1, ..., dn&gt;</code> 是形状为 <code>(d1, ..., dn)</code> 的包含浮点值的张量的简写。</p>
+<div class="autocb" style="text-align:center;"><img src="./paper-nimble.assets\autocb_1.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
+
+<p>该代码将 <code>add</code> 转换为以下动作： 首先从偏移量为零的后备存储中分配一个输出张量，然后调用 <code>invoke_mut</code>。 出于空间原因，我们在附录 A 中提供了一个更复杂的示例，它说明了当算子具有动态整形输入时如何处理内存分配。 <strong>关键的见解是将内存分配的概念内化到 IR 中</strong>，从而在存在 control 和动态形状的情况下实现静态和动态分配的静态优化。 现在所有分配在 IR 中都是显式的，我们可以在动态程序的静态情况下提供类似的优化，例如我们已经实现了存储合并 pass 以将存储分组到一个更大的区域，这允许将<strong>多个张量分配复用到单块存储</strong>。 可以使用如 liveness analysis and graph coloring algorithm 等更进一步的优化算法以重用存储。</p>
+<div class="admonition warning">
+<p class="admonition-title">疑问</p>
+<p>图着色算法在这里的应用？</p>
+</div>
+<h3 id="34-heterogeneous-device-placement">3.4. Heterogeneous Device Placement</h3>
+<p>如 <a href="#32-shape-function">3.2 节</a>所述，形状函数在运行时执行以计算算子的输出形状。 这些函数应该在 CPU 上执行，因为它们的输出用于计算分配内存的大小。 在异构执行的情况下（即 CPU 和 GPU），必须小心地将 IR 节点的执行放置到适当的设备上。 <strong>否则，如果形状函数和内核的输入需要从 GPU 复制或复制到 GPU，则数据传输和设备同步的大量开销将会发生</strong>。 为了最大限度地减少性能损失，<strong>我们分析程序以将子表达式放置在最合适的设备上</strong>。</p>
+<p>我们引入了 a unification based analysis ， 用于根据先前的计算内核调度计算正确的设备放置和分配。 我们设备分析的目标是正确分配每个 IR 节点，以最大限度地减少跨设备 copy 的数量。 我们引入 <code>DeviceDomain</code> 的概念来表示设备的域， 包括源和目标。 IR 中的每个表达式默认为空域，这意味着对其设备放置没有限制。 此外，引入了一个新的 IR 结构 <code>device_copy</code> 以促进 Nimble 运行时的异构执行。 它<strong>代表不同设备之间的数据传输，并在强制执行跨设备数据复制时插入</strong>。 我们的分析被制定为一组描述设备约束如何流动的设备放置规则(完整的规则集可以在附录 B 中找到)，然后我们使用 unification （一种类型推断和编译器中常见的技术）来计算精确的设备放置。 图 2 描述了分配和传播设备类型的规则的一些要点:</p>
+<ol>
+<li>shape function 的输入和输出都分配给 CPU</li>
+<li><code>device_copy</code> 的输出分配给复制到的设备</li>
+<li><code>invoke_mut</code> 的所有参数都应该有相同的设备域</li>
+</ol>
+<div class="autocb" style="text-align:center;"><img src="./paper-nimble.assets\autocb_3.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
+
+<p>基于这些规则，我们使用 并查集 来双向传播和统一每个 IR 节点的设备放置。 我们引入 <code>union(s, t)</code> 和 <code>find(s)</code> 两个操作来实现整个程序中 <code>DeviceDomain</code> 的统一。 <code>union(s,t)</code> 当设备类型匹配时，将 s 和 t 的等价设备域合并为一个等价域。 <code>find(s)</code> 返回 s 所属设备域的代表。 应用这两个操作，<strong>直到所有 IR 节点都被 annotated 为止</strong>。 如果对设备域没有约束，我们将 compilation target (i.e., GPU) 分配给它以支持更好的内核性能。 异构设备放置的结果由内存规划和形状函数插入组成，从而达到正确地放置分配。</p>
+<h3 id="35-symbolic-codegen">3.5. Symbolic Codegen</h3>
+<p>DLC 在多个平台上展示了与手动调整内核相比具有竞争力的性能。 最近的趋势是应用 ML-Based 搜索来进一步减少或消除复杂的手动性能调整，使用 template based（Auto-TVM，2018b；FlexTensor，2020b）或 search based (Halide auto-tuner，2019； Ansor，2020a) 方法。 然而，现有工作专注于静态形状，在 符号 或 动态形状 方面存在不足。 关于符号形状的代码生成，存在两个固有的挑战：</p>
+<ul>
+<li>在应用相同的调度时，如何使使用符号形状生成的内核与使用静态形状生成的内核具有相同的性能？</li>
+<li>如何扩展基于机器学习的方法来调整具有符号形状的内核？</li>
+</ul>
+<p>循环并行和循环分块(tiling)是常见的优化技术，它们通过实现数据访问模式来利用多核功能，这些模式对 CPU 和 GPU 都具有内存层次结构感知能力。 然而，这些技术的组合会<strong>导致复杂的 loop boundary conditions</strong>。 在静态情况下，我们可以证明这些 conditions 始终成立，从而消除阻碍进一步优化（如 unrolling）的检查。 但在执行符号代码生成时， 如果处理不当，限制条件（边界）检查将保留下来，导致性能不佳。</p>
+<p>为了解决这个问题，我们根据平铺因子的残差模生成多个内核，然后在运行时根据实际形状进行调度。 例如，假设符号维度 <span class="arithmatex">\(x\)</span> is tiled by a factor of 8，然后我们将生成的内核复制 8 次，并在每次复制中将符号变量 <span class="arithmatex">\(x\)</span> 替换为 <span class="arithmatex">\(8k+r\)</span>，其中 <span class="arithmatex">\(k = \lfloor x/8\rfloor\)</span> ， <span class="arithmatex">\(r \in [0..7]\)</span> 。 通过将此技术与增强的符号表达式简化 Pass 结合使用，我们可以消除大多数边界检查， 以实现与使用单个静态形状编译的内核几乎相同的性能。 最后，我们自动生成一个调度函数，根据残差调用相应的内核。 此外，调度功能可以扩展为调用编译器生成的内核或第三方库，以分析结果中速度更快的为准。 与整体深度学习模型相比，增加的内核大小相对较小。 在资源极其有限的情况下，我们可以生成比平铺因子更少的内核数，或者降低平铺因子以在代码大小和性能之间找到可接受的权衡。</p>
+<p><strong>基于机器学习的调优的一个已知问题是需要很长时间（通常是数小时）才能找到单个内核的最佳调度</strong>。 </p>
+<div class="admonition note">
+<p class="admonition-title">note</p>
+<p>这里后续工作有 MSRA 的 ROLLER OSDI-2022 等。</p>
+</div>
+<p>当涉及到符号形状时，如果我们简单地针对每个可能的形状进行 tuning， 调整时间可能会成倍增加。 在本文中，我们扩展了符号形状的基于模板的调整方法，使调整时间不那么长。 基于模板的调优方法采用人工定义的代码模板和搜索空间， 并使用机器学习算法在搜索空间内搜索最佳配置。 我们观察到， 一种形状的良好配置通常在其他形状上表现良好。 基于这一观察，我们设计了以下机制来调整内核的符号形状：</p>
+<ol>
+<li>首先用足够大的值（例如64）替换符号维度，以便搜索空间可以覆盖大多数可能性，并在静态形状上运行调整算法进行足够次数的迭代。</li>
+<li>选择前 k 个配置，将它们应用于其他形状的选择，并评估它们的性能。</li>
+<li>选择在先前评估的形状中平均表现最好的配置。</li>
+</ol>
+<p>根据经验，我们发现 k = 100 涵盖了其他形状的大部分最佳配置。 <strong>当前流行的动态模型通常只需要具有一个符号变量的内核</strong>。 因此，我们在其他形状的交叉评估中选择了至多 <span class="arithmatex">\(2^{256}\)</span>。 <strong>如果有多个符号变量，则可能需要一种更复杂的选择方法来限制 步骤 2 的评估时间</strong>。我们将此留给未来的工作。 此外，如果工作负载分布已知，我们可以在 步骤 3 中调整已知形状的权重。</p>
+<div class="admonition warning">
+<p class="admonition-title">疑问</p>
+<p>这几句没看懂？</p>
+</div>
+<h2 id="4-virtual-machine">4. VIRTUAL MACHINE</h2>
+<p>现有 DLC 的传统运行时 naively 按拓扑顺序逐个执行模型算子，这不适用于执行动态模型的编译模块。 需要一个更智能、更强大的执行引擎来<strong>处理 控制流 执行逻辑，并相应地调度不同的内核</strong>。 为了实现这些目标并可移植到不同的平台，我们设计并实现了一个基于虚拟机 (VM) 的运行时。</p>
+<p>在 Nimble 中，我们将一个动态模型编译成一个 VM 可执行文件，其中<strong>包含与平台无关的字节码 和 与平台相关的内核代码</strong>。 字节码由一系列指示内核调用顺序<strong>和控制流执行逻辑</strong>的指令组成。 这种设计补充了传统运行时执行高度优化内核但不直接处理内核之间编排的能力。</p>
+<p>VM 指令集的设计 is motivated by the simple observation that kernel execution dominates neural network execution time 。 <strong>它与传统语言虚拟机截然不同</strong>，传统语言虚拟机包含许多执行很少工作的指令，导致 profile 出来每条指令的执行时间都很高。 而我们的 ISA 由 CISC-style instructions 构成，<strong>每条指令对应于张量上的原始 IR 表达式，例如分配和内核调用</strong>， 这反过来可能对应于执行多个 "低级" 操作。 例如，<code>LoadConst idx, $reg</code> 具有多种寻址模式，因为它首先读取 <code>idx</code>，然后将数据从 常量池 加载到 <code>$reg</code>。 完整的指令集列表可以在附录 C 中找到。 我们自然地选择了基于寄存器的虚拟机设计以获得紧凑的字节码，便于用户阅读和修改。 我们提供了无限组虚拟寄存器的抽象，因为它显著简化了优化和分配（类似于 SSA），并最大限度地减少了快速原型设计和修改的概念障碍。</p>
+<p>指令使用包含操作码和数据有效负载的传统标记联合表示。 这种表示可以实现高效的序列化以及指令解码和分派。 由于在指令中包含可变大小的操作数（例如数据形状），Nimble 使用可变长度指令格式。</p>
+<p>在我们从编译阶段生成可执行文件后，可以创建一个解释器来加载它。 当执行开始时，解释器运行一个调度循环，检查操作码并执行适当的逻辑，然后重复。 由于我们的指令是粗粒度的（即，它们可以被视为超级指令）， 调度循环生成的分支数低于传统编程语言 VM， 与 AOT 相比，增加的开销可以忽略不计。</p>
+<p><strong>Discussion</strong> 运行时的替代解决方案是 AOT 以消除 dispatch 开销。 <strong>但是由于操作的粒度，调度时间在执行中只占很小的一部分</strong>。 更重要的是，我们的 VM 提供了传统上归因于虚拟机的灵活性以及清晰的 编译器/运行时划分。 我们看到了 VM 作为运行时模块集成到更大系统中的潜力。 例如，VM 可以提供资源隔离，其中多个推理实例在云中共享相同的硬件。 此外，服务质量 (QoS) 感知系统，例如（Kang 等人，2018 年；Yachir 等人，2009 年）， 可以利用 VM 暂停当前模型的执行，以获得更高优先级或时间关键的模型。 最后，由于 VM 设计的简单性，人们可以出于安全和隐私目的验证 VM 的实现。</p>
+<h2 id="5-evaluation">5. EVALUATION</h2>
+<p>本节旨在回答以下问题：</p>
+<ul>
+<li>与各种硬件平台上最先进的替代方案相比，Nimble 动态模型的整体性能如何？</li>
+<li>Nimble VM 在运行时为处理动态引入了多少开销？</li>
+<li>建议的优化技术（如内存规划和符号代码生成）的效果如何？</li>
+</ul>
+<p>在这个实验中选择了代表不同类别动态的三种流行模型，即。 <strong>LSTM (动态控制流)、 Tree-LSTM (动态数据结构) 和 BERT (动态数据形状)</strong>。 LSTM 和 Tree-LSTM 模型中使用的输入大小/隐藏大小分别为 300/512 和 300/150。 我们使用了 BERT 基础实现。 对于 LSTM 和 BERT，我们使用 Microsoft Research 的 Paraphrase Corpus (MRPC)作为我们的输入数据集，输入长度可变。</p>
+<p>我们将 Nimble 的整体性能与每个动态模型的 baseline 进行了比较。 Nimble 成功完成了所有平台上所有模型的推理。 然而，并非所有 baseline 系统都可以对这些模型进行推理。 例如，Tree-LSTM 只能在 PyTorch、DyNet 和 TensorFlow Fold 上运行，因为其他框架无法处理动态数据结构。 TensorFlow Fold 并非设计用于处理 BERT，因此无法获得任何结果。 我们在 DyNet 上找不到 BERT 实现。 最后，省略了 Tree-LSTM 在 Nvidia GPU 上的模型推理，因为由于过多的控制流和较小的内核大小，很难使 GPU 计算能力饱和，使得 GPU 不太适合部署目标。</p>
+<p>基线系统都使用第三方内核库，通过利用大量手动优化的算子来实现高性能，当特定目标不支持算子时，这是不利的。 但是，Nimble 可以选择自编译内核或第三方库提供的内核，以最大化性能。 它使用动态调度逻辑在运行时使用独立于平台的字节码调用选定的内核。</p>
+<h3 id="53-microbenchmark">5.3. Microbenchmark</h3>
+<p>TVM 在静态形状上比 Nimble 快 5% 到 25%，尽管绝对延迟差异很小。 开销来自两个方面：</p>
+<ol>
+<li>用符号形状生成的内核会导致索引计算中的额外开销；</li>
+<li>VM 中的其他指令需要处理动态执行，例如形状函数、动态内存分配、指令调度等。</li>
+</ol>
+<p>在 Nvidia GPU 上，由于 异构设备布局（第 3.4 节），因此其他指令的开销可以忽略不计。</p>
+<p><strong><u>Symbolic codegen</u></strong></p>
+<p>我们从 BERT 模型中选择了 3 个密集层，并比较了符号代码生成和静态代码生成在 ARM CPU 上的性能。 <strong>对于符号代码生成，我们在编译期间使用 Any 作为序列长度</strong>，并在运行时使用序列长度 128 评估内核。 对于静态codegen，我们在编译时直接将序列长度设置为128。 </p>
+<div class="autocb" style="text-align:center;"><img src="./paper-nimble.assets\autocb_4.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
+
+<p>图3 说明了使用符号形状生成的内核相对于基线的相对延迟——使用静态形状编译的内核。 自动调整算法在所有三个内核中将符号轴以 8 平铺。 如第 3.5 节所述，我们将符号代码生成期间要分派的生成内核的数量从 8（完全分派）到 1（无分派）。 我们观察到，具有完全分派的符号代码生成器可以实现与静态代码生成器几乎相同的性能，而减少内核数量会损害性能。 在具有不同形状的密集算子、其他算子和其他平台上也可以看到类似的趋势。</p>
+<h2 id="6-related-work">6. RELATED WORK</h2>
+<p>本节将 Nimble 与执行动态神经网络的现有解决方案进行对比。</p>
+<p><strong>DL 框架</strong> 一些框架通过在其 图 IR 中添加原语来支持动态控制流，例如 Tensor-Flow 中的切换和合并（Yu 等人，2018 年）以及 MXNet 中的 foreach、cond 和 while 循环(Zheng , 2018). 控制流的间接编码需要专门的数据流运行时来处理诸如切换之类的操作，或者需要将控制平面和数据平面的执行分开的混合运行时。 两者都严重侵入了框架代码库。 此外，还有许多框架扩展来支持不同类型的动态。TensorFlow Fold（Looks 等人，2017 年）对用户提供的计算图进行分析，以确定可以一起批处理的动态操作。 一旦找到这样的操作，就会生成一个批处理的 TensorFlow 图，它提供形状专用的子图。 虽然这可能会提供加速，但它会引入大量开销，因为每条路径都必须作为单独的子计算图执行，并且会限制进一步的优化。 郑等人。 （Jeong 等人，2018 年）和 JANUS（Jeong 等人，2019 年）也扩展了 TensorFlow 以提高动态模型的性能。 这些扩展是特定于框架的，与我们使用的编译技术没有直接关系。 speculative execution 的使用是对我们技术的补充。</p>
+<p>Dynet（Neubig 等人，2017 年）和 PyTorch（Paszke 等人，2019 年）使用 host 语言功能（即 Python 的控制流）来动态展开控制流以生成动态模型的静态trace。 基于trace的方法以提前优化为代价提供了灵活友好的编程模型。 此外，它需要为每个trace创建一个数据流图，引入控制流构造的开销并限制整个程序的优化，这是传统 trace JIT 编译中也面临的挑战。 JAX（Bradbury 等人，2018 年）也支持受限形式的动态网络，但其优化从根本上受到其底层编译器 XLA 的限制。 例如，JAX 的 JIT 模式中 dynamic value dependent control-flow is not supporte。 相比之下，Nimble 在不影响静态子集性能的情况下降低了动态行为的使用成本。</p>
+<p>此外，框架依赖于第三方库（Chetlur et al., 2014; Intel, 2020）来实现具有不同数据形状的算子，即只在特定硬件平台上表现较好。 因此，框架以及从它们派生的用于动态模型的运行时系统（Xu et al., 2018; Gao et al., 2018）通常在 ARM CPU 等 second tier of support 的设备上表现不佳，而在流行的基准测试中找不到算子和形状组合。 相比之下，Nimble 适用于所有平台，并且可以根据需要为新形状和新设备生成高性能代码（第 3.5 节）。</p>
+<p><strong>DLC</strong> 现有的 DLC ， 包括 XLA 、TVM 和 Glow，可以编译深度学习模型以在多个硬件上运行。 然而，在优化动态神经网络编译方面的工作很少。 <strong>MLIR (Lattner et al., 2021) 是一个很有前途的方向，其 IR 支持动态形状，但动态优化或端到端性能未知</strong>。 Nimble 的编译和 VM 设计在很大程度上受到 production compiler and VM 的启发，例如 LLVM（Lattner &amp; Adve，2004）、GCC（gcc，2019）和 JVM（jvm，2013），用于处理动态行为的通用解决方案，例如控制流和可变长度输入数组。</p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.sections", "navigation.indexes"], "search": "../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.fac441b0.min.js"></script>
+      
+        <script src="../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

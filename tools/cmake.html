@@ -1,0 +1,1937 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../rust/rust-str.html">
+      
+      
+        <link rel="next" href="docker.html">
+      
+      <link rel="icon" href="../images/favicon.ico">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.11">
+    
+    
+      
+        <title>cmake - Cat538's Blog</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.85bb2934.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.a6bdf11c.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#cmake" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="Cat538&#39;s Blog" class="md-header__button md-logo" aria-label="Cat538's Blog" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Cat538's Blog
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              cmake
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+            
+              <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+              </label>
+            
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+            
+              <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+              </label>
+            
+          
+        </form>
+      
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="Cat538&#39;s Blog" class="md-nav__button md-logo" aria-label="Cat538's Blog" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Cat538's Blog
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        Prologue
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plan.html" class="md-nav__link">
+        Exercise
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          Cpp
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Cpp
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/toolchain.html" class="md-nav__link">
+        toolchain
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/move.html" class="md-nav__link">
+        move
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/align.html" class="md-nav__link">
+        align
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/ranges.html" class="md-nav__link">
+        ranges
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/benchmark.html" class="md-nav__link">
+        benchmark
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/profiler.html" class="md-nav__link">
+        profiler
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/IO-multiplexing.html" class="md-nav__link">
+        IO-multiplexing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/epoll.html" class="md-nav__link">
+        epoll
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/signal.html" class="md-nav__link">
+        signal
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/fork-safe.html" class="md-nav__link">
+        fork-safe
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          Rust
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Rust
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-toolchain.html" class="md-nav__link">
+        rust-toolchain
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-study.html" class="md-nav__link">
+        rust-study
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-attributes.html" class="md-nav__link">
+        rust-attributes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-modules.html" class="md-nav__link">
+        rust-modules
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-macro.html" class="md-nav__link">
+        rust-macro
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-network.html" class="md-nav__link">
+        rust-network
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-option.html" class="md-nav__link">
+        rust-optin
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-str.html" class="md-nav__link">
+        rust-str
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          Tools
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Tools
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          cmake
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="cmake.html" class="md-nav__link md-nav__link--active">
+        cmake
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#path" class="md-nav__link">
+    常用path
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#flag" class="md-nav__link">
+    常用flag
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    常用命令
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#public-private-interface" class="md-nav__link">
+    PUBLIC  PRIVATE INTERFACE
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    依赖管理
+  </a>
+  
+    <nav class="md-nav" aria-label="依赖管理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#header-only-lib" class="md-nav__link">
+    header-only lib
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-pre-built-packages-with-find_package" class="md-nav__link">
+    Using Pre-built Packages With find_package()
+  </a>
+  
+    <nav class="md-nav" aria-label="Using Pre-built Packages With find_package()">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#find_package" class="md-nav__link">
+    find_package 的搜索模式
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#downloading-and-building-from-source-with-fetchcontent" class="md-nav__link">
+    Downloading And Building From Source With FetchContent
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fetchcontent-and-find_package-integration" class="md-nav__link">
+    FetchContent and find_package() Integration
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dependency-providers" class="md-nav__link">
+    Dependency Providers
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#windowscmake" class="md-nav__link">
+    Windows使用cmake
+  </a>
+  
+    <nav class="md-nav" aria-label="Windows使用cmake">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nmake" class="md-nav__link">
+    nmake
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#msbuild" class="md-nav__link">
+    MSBuild
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ninja" class="md-nav__link">
+    Ninja
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="docker.html" class="md-nav__link">
+        docker
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="git.html" class="md-nav__link">
+        git
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="powershell.html" class="md-nav__link">
+        powershell
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="regex.html" class="md-nav__link">
+        regex
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="mkdocs.html" class="md-nav__link">
+        mkdocs
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+          Courses
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          Courses
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/%E5%AF%86%E7%A0%81%E5%88%86%E6%9E%90%E5%AD%A6%E5%A4%8D%E4%B9%A0.html" class="md-nav__link">
+        密码分析学
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/%E5%AF%86%E7%A0%81%E5%AD%A6%E5%BC%95%E8%AE%BA%E5%A4%8D%E4%B9%A0.html" class="md-nav__link">
+        密码学引论
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/algorithm.html" class="md-nav__link">
+        算法设计与分析
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86.html" class="md-nav__link">
+        编译原理
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+          Crypto
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          Crypto
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crypto/ecdsa-pk-recovery.html" class="md-nav__link">
+        ecdsa-pk-recovery
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crypto/algo-rsa.html" class="md-nav__link">
+        algo-rsa
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crypto/algo-fft%26ntt.html" class="md-nav__link">
+        algo-fft&ntt
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crypto/algo-reduction.html" class="md-nav__link">
+        algo-reduction
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+          Mlc
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_8">
+          <span class="md-nav__icon md-icon"></span>
+          Mlc
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/dlc-survey.html" class="md-nav__link">
+        dlc-survey
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/tvm-install.html" class="md-nav__link">
+        tvm-install
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/tvm-ffi.html" class="md-nav__link">
+        tvm-ffi
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/tvm-type.html" class="md-nav__link">
+        tvm-type
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/tvm-tensorIR.html" class="md-nav__link">
+        tvm-tensorIR
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/tvm-lowering.html" class="md-nav__link">
+        tvm-lowering
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/tvm-autotvm.html" class="md-nav__link">
+        tvm-autotvm
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/tvm-ansor.html" class="md-nav__link">
+        tvm-ansor
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/mlir.html" class="md-nav__link">
+        mlir
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/mlir-toy.html" class="md-nav__link">
+        mlir-toy
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/mlir-onnx.html" class="md-nav__link">
+        mlir-onnx
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/mlir-iree.html" class="md-nav__link">
+        mlir-iree
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/paper-torch.fx.html" class="md-nav__link">
+        paper-torch.fx
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/paper-nimble.html" class="md-nav__link">
+        paper-nimble
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/paper-disc.html" class="md-nav__link">
+        paper-disc
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/paper-cortex.html" class="md-nav__link">
+        paper-cortex
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mlc/paper-freetensor.html" class="md-nav__link">
+        paper-freetensor
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../about.html" class="md-nav__link">
+        About
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#path" class="md-nav__link">
+    常用path
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#flag" class="md-nav__link">
+    常用flag
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    常用命令
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#public-private-interface" class="md-nav__link">
+    PUBLIC  PRIVATE INTERFACE
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    依赖管理
+  </a>
+  
+    <nav class="md-nav" aria-label="依赖管理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#header-only-lib" class="md-nav__link">
+    header-only lib
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-pre-built-packages-with-find_package" class="md-nav__link">
+    Using Pre-built Packages With find_package()
+  </a>
+  
+    <nav class="md-nav" aria-label="Using Pre-built Packages With find_package()">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#find_package" class="md-nav__link">
+    find_package 的搜索模式
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#downloading-and-building-from-source-with-fetchcontent" class="md-nav__link">
+    Downloading And Building From Source With FetchContent
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fetchcontent-and-find_package-integration" class="md-nav__link">
+    FetchContent and find_package() Integration
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dependency-providers" class="md-nav__link">
+    Dependency Providers
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#windowscmake" class="md-nav__link">
+    Windows使用cmake
+  </a>
+  
+    <nav class="md-nav" aria-label="Windows使用cmake">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nmake" class="md-nav__link">
+    nmake
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#msbuild" class="md-nav__link">
+    MSBuild
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ninja" class="md-nav__link">
+    Ninja
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="cmake">cmake</h1>
+<blockquote>
+<p>官方文档: <a href="https://cmake.org/cmake/help/latest/index.html">cmake documentation</a></p>
+</blockquote>
+<p>CMake 是一个管理源代码构建的工具。最初，CMake 被设计为一个生成各种 Makefile 方言(various dialects of Makefile)的生成器，如今 CMake 生成现代buildsystems（例如 Ninja）以及用于 IDE（例如 Visual Studio 和 Xcode）的项目文件。</p>
+<p>CMake 广泛用于 C 和 C++ 语言，但它也可以用于构建其他语言的源代码。</p>
+<h2 id="path">常用path</h2>
+<ul>
+<li><code>CMAKE_SOURCE_DIR</code> : <strong>顶级</strong><code>cmakelists.txt</code>的文件所在目录。</li>
+<li><code>CMAKE_CURRENT_SOURCE_DIR</code> : 一般来说，一个工程会有多个cmakelists.txt文件，对应当前文件目录。</li>
+<li><code>CMAKE_BINRAY_DIR</code> : 对应cmake的build的目录，主要是运行时生成的文件目录。</li>
+<li><code>CMAKE_CURRENT_BINARY_DIR</code> : 对应build里的目录。</li>
+<li><code>CMAKE_MODULE_PATH</code> : api(include/find_package)包含别的cmake文件时的搜索目录。</li>
+<li><code>CMAKE_PREFIX_PATH</code> : api(find_libray/path)包含模块时的搜索目录。</li>
+<li><code>CMAKE_INSTALL_PREFIX</code> : 调用install相关函数，要生成/保存的根目录路径。</li>
+<li><code>CMAKE_EXPORT_COMPILE_COMMANDS=TRUE</code> : 如果使用clangd，需要将该选项设为true(似乎默认值也是true)，指定生成<code>compile_commands.json</code>文件。clangd依赖该文件做静态分析。</li>
+<li><code>CMAKE_TOOLCHAIN_FILE</code> : 如果使用vcpkg，需要指定该路径(详见vcpkg文档)</li>
+<li><code>CMAKE_UNITY_BUILD</code>：new in <em>3.16</em>；<a href="https://cmake.org/cmake/help/latest/variable/CMAKE_UNITY_BUILD.html">CMAKE_UNITY_BUILD — CMake 3.25.1 Documentation</a></li>
+</ul>
+<!-- ## 常用命令
+
+- `target_compile_features`可以更细粒度的指定C++的特性，如`cxx_auto_type`，`cxx_lambda`等，如果某个子项目需要C++20，但是i项目整体是17，可以对项目设置`target_compile_features(<project name> INTERFACE cxx_std_20)` -->
+
+<h2 id="flag">常用flag</h2>
+<ul>
+<li><code>-G &lt;generator-name&gt;</code> 指定build system generator，如"Ninja"，“Unix Makefiles”</li>
+<li><code>-T &lt;toolset-spec&gt;</code> 为generator指定Toolset, if supported. 只有Visual Studio，Xcode等支持这一选项</li>
+</ul>
+<p>build flag</p>
+<ul>
+<li><code>--target &lt;tgt&gt;..., -t &lt;tgt&gt;...</code> 指定target；默认target是all；<code>--target clean</code> 执行clean动作</li>
+<li><code>--config &lt;cfg&gt;</code> 对于multi-configuration 工具链（VS Xcode）， 指定cfg，如<code>--config Debug/Release</code></li>
+</ul>
+<h2 id="_1">常用命令</h2>
+<ul>
+<li>
+<p><code>list</code>，用于对list进行增删改查等操作</p>
+<p>例如，如果某个库没有提供用于查找该库的官方<code>cmake</code>脚本(用于module mode 的module 或者 config mode 的configuration文件)，则需要自己编写查找该库的cmake脚本 or 使用第三方提供的脚本，然后将脚本所在的文件夹加入<code>CMAKE_MODULE_PATH</code>；cmake在执行<code>find_package</code>时会优先使用module mode，执行<code>CMAKE_MODULE_PATH</code>下的对应module搜索该库</p>
+<p>而<code>CMAKE_MODULE_PATH</code>是一个列表，这就需要我们把自定义的脚本路径添加到<code>CMAKE_MODULE_PATH</code>中，让cmake找到该脚本，此时使用<code>list(APPEND CMAKE_MODULE_PATH &lt;user-defined-module-path&gt;)</code></p>
+<div class="highlight"><pre><span></span><code><span class="nb">list</span><span class="p">(</span><span class="s">APPEND</span><span class="w"> </span><span class="s">CMAKE_MODULE_PATH</span><span class="w"> </span><span class="s2">&quot;${CMAKE_CURRENT_LIST_DIR}/CMake&quot;</span><span class="p">)</span>
+</code></pre></div>
+</li>
+<li>
+<p><code>set</code></p>
+</li>
+<li>
+<p><code>option</code></p>
+</li>
+<li>
+<p><code>include</code></p>
+</li>
+<li>
+<p><code>aux_source_directory</code></p>
+</li>
+<li>
+<p><code>find_library</code></p>
+</li>
+</ul>
+<h2 id="public-private-interface">PUBLIC  PRIVATE INTERFACE</h2>
+<p><code>target_*</code> 命令常用的有<code>target_link_libraries</code>，<code>target_include_directories</code>，<code>target_compile_definitions</code>等：</p>
+<div class="highlight"><pre><span></span><code><span class="nb">target_compile_definitions</span><span class="p">(</span><span class="s">say-hello</span><span class="w"> </span><span class="s">PUBLIC</span><span class="w"> </span><span class="s">VERSION=4</span><span class="p">)</span>
+</code></pre></div>
+<p>这条命令在预编译阶段之前插入宏 <code>#define VERSION 4</code>，其中<code>PUBLIC</code>表示这个宏对于<code>say-hello</code>这个库以<strong>及link了<code>say-hello</code>这个库的模块</strong>可见；如果是<code>PRIVATE</code>，则这个宏仅对<code>say-hello</code>可见；而<code>INTERFACE</code>与<code>PRIVATE</code>相反，设置为<code>INTERFACE</code>后，对于外部可见，而对于模块内部不可见。</p>
+<p>再举一个例子，对于<code>target_include_directories</code>命令来说：
+<div class="highlight"><pre><span></span><code><span class="c"># `PUBLIC` let all receivers accesss header files</span>
+<span class="nb">target_include_directories</span><span class="p">(</span>
+<span class="w">  </span><span class="o">${</span><span class="nv">LIB_NAME</span><span class="o">}</span><span class="w"> </span><span class="s">PUBLIC</span><span class="w"> </span>
+<span class="w">  </span><span class="o">${</span><span class="nv">PROJECT_SOURCE_DIR</span><span class="o">}</span><span class="s">/include</span>
+<span class="p">)</span>
+</code></pre></div></p>
+<ul>
+<li>设置为<code>PUBLIC</code>，会将<code>${PROJECT_SOURCE_DIR}/include</code>目录下的头文件暴露给引用该库的其它project；</li>
+<li>如果设置为<code>PRIVATE</code>，则该目录下的头文件对于引用该库的项目是不可见的；</li>
+<li>如果设置为<code>INTERFACE</code>，则该目录下的头文件对于该项目不可见，对于引用该项目的其它project可见。</li>
+</ul>
+<p>直观地来说<code>PUBLIC</code>会将某个属性向外"传播"，<code>PRIVATE</code>自己"独享"，<code>INTERFACE</code>只暴露给外部</p>
+<ul>
+<li><code>target_include_directories</code> 设置为<code>PUBLIC</code>常用于库文件向外export 头文件</li>
+<li><code>target_link_libraries</code> 通常设置为<code>PRIVATE</code>，使得开发该库时引用的第三方库对于引用该库的其它项目不可见(如开发一个库时用到的<code>Catch2</code>，<code>benchmark</code>，<code>fmt</code>等测试，调试用的库)</li>
+<li><code>target_add_definitions</code> 用于添加宏定义</li>
+<li><code>target_compile_options</code> 用于添加编译选项；例如<code>target_compile_options(${LIB_NAME} PRIVATE -maes)</code>，对于指定<code>target</code>在编译时使用aesni</li>
+</ul>
+<h2 id="_2">依赖管理</h2>
+<blockquote>
+<p>官方文档: <a href="https://cmake.org/cmake/help/latest/guide/using-dependencies/index.html#guide:Using%20Dependencies%20Guide">Using Dependencies Guide</a></p>
+</blockquote>
+<p>一个Project将经常依赖于其他 projects, assets, and artifacts。 CMake 提供了许多方法将依赖项引入构建。其中主要的方法是 <code>find_package()</code> 命令和 <code>FetchContent</code> 模块。</p>
+<h3 id="header-only-lib">header-only lib</h3>
+<p>如Boost，fmt等，这种库直接把头文件加入到当前工程头文件目录即可</p>
+<h3 id="using-pre-built-packages-with-find_package">Using Pre-built Packages With <code>find_package()</code></h3>
+<blockquote>
+<p><a href="https://cmake.org/cmake/help/latest/command/find_package.html">find_package — CMake Documentation</a></p>
+</blockquote>
+<p>项目所需的package可能已经在用户系统的某个位置构建并可用。这个package可能是用cmake构建的，也可能是用其它方式构建的，甚至有可能是一个根本不需要构建的文件集合。cmake为这些场景提供了<code>find_package()</code>命令。</p>
+<p><code>find_package()</code>搜索众所周知的位置，以及项目或用户提供的其他路径。 它还支持package components and packages being optional。 该命令提供结果变量以允许项目根据是否找到包或特定组件来自定义其自己的行为。
+<div class="highlight"><pre><span></span><code><span class="nb">find_package</span><span class="p">(</span><span class="s">Catch2</span><span class="p">)</span>
+<span class="nb">find_package</span><span class="p">(</span><span class="s">GTest</span><span class="w"> </span><span class="s">REQUIRED</span><span class="p">)</span><span class="w">    </span><span class="c"># REQUIRED: 如果没找到: abort cmake configure</span>
+<span class="nb">find_package</span><span class="p">(</span><span class="s">Boost</span><span class="w"> </span><span class="s">1.79</span><span class="w"> </span><span class="s">COMPONENTS</span><span class="w"> </span><span class="s">date_time</span><span class="p">)</span>
+</code></pre></div>
+关于<code>find_package</code>和<code>find_library</code>：</p>
+<blockquote>
+<p><a href="https://stackoverflow.com/questions/23832339/package-vs-library">cmake - Package vs Library - Stack Overflow</a></p>
+<p>Imagine you want to use zlib in your project, you need to find the header file <code>zlib.h</code>, and the library <code>libz.so</code> (on Linux). You can use the low-level cmake commands <code>find_path</code> and <code>find_library</code> to find them, or you can use <code>find_package(ZLIB)</code>. The later command will try to find out all what is necessary to use zlib. It can be extra macro definitions, or dependencies.</p>
+<p><strong>Update, more detail about <code>find_package</code></strong>: when the CMake command <code>find_package(SomeThing)</code> is called, <a href="https://cmake.org/cmake/help/v3.0/command/find_package.html">as in the documentation</a>, there are two possible modes that cmake can run:</p>
+<ul>
+<li>the module mode (that searches for a file <code>FindSomeThing.cmake</code>)</li>
+<li>or the config mode (that searches for a file named <code>SomeThingConfig.cmake</code>)</li>
+</ul>
+<p>For ZLIB, there is a module named <code>FindZLIB</code>, shipped with CMake itself (on my Linux machine that is the file <code>/usr/share/cmake/Modules/FindZLIB.cmake</code>). That module is a CMake script that uses the CMake API to search for ZLIB files in default locations, or ask the user for the location if it cannot be found automatically.</p>
+</blockquote>
+<h4 id="find_package">find_package 的搜索模式</h4>
+<ol>
+<li><strong>Module mode</strong></li>
+<li><strong>Config mode</strong></li>
+<li><strong>FetchContent redirection mode</strong>(3.24之后引入)</li>
+</ol>
+<h3 id="downloading-and-building-from-source-with-fetchcontent">Downloading And Building From Source With <code>FetchContent</code></h3>
+<blockquote>
+<p><a href="https://cmake.org/cmake/help/latest/module/FetchContent.html">FetchContent — CMake 3.24.2 Documentation</a></p>
+</blockquote>
+<p>依赖项不一定have to be pre-built才能被 CMake 调用。 依赖项也可以作为主项目的一部分从源代码构建。 <code>FetchContent</code> 模块提供下载依赖项源代码并将其添加到主项目buildsystem的功能。 The dependency's sources will be built along with the rest of the main-project, just as though the sources were part of the main-project's own sources.</p>
+<p>该模块主要包括以下几个命令：</p>
+<ol>
+<li>
+<p><code>FetchContent_Declare</code> 描述如何添加(下载)依赖库，其Signature如下</p>
+<div class="highlight"><pre><span></span><code><span class="nb">FetchContent_Declare</span><span class="p">(</span>
+<span class="w">  </span><span class="s">&lt;name&gt;</span>
+<span class="w">  </span><span class="s">&lt;contentOptions&gt;...</span>
+<span class="w">  </span><span class="s">[SYSTEM]</span>
+<span class="w">  </span><span class="s">[OVERRIDE_FIND_PACKAGE</span><span class="w"> </span><span class="s">|</span><span class="w"> </span><span class="s">FIND_PACKAGE_ARGS</span><span class="w"> </span><span class="s">args...]</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>主要用到的参数：<code>name</code> 声明下载库的名称，<code>contentOptions</code> 描述获取、更新外部库的方式（常用的有通过 Git 下载，通过 URL 下载等）</p>
+<div class="highlight"><pre><span></span><code><span class="c"># it is advisable to use a hash for GIT_TAG rather than a branch or tag name. A commit hash is more secure and helps to confirm that the downloaded contents are what you expected.</span>
+<span class="c"># eg:</span>
+<span class="nb">FetchContent_Declare</span><span class="p">(</span>
+<span class="w">  </span><span class="s">googletest</span><span class="w">    </span><span class="c"># 大小写不敏感</span>
+<span class="w">  </span><span class="s">GIT_REPOSITORY</span><span class="w"> </span><span class="s">https://github.com/google/googletest.git</span>
+<span class="w">  </span><span class="s">GIT_TAG</span><span class="w">        </span><span class="s">703bd9caab50b139428cea1aaff9974ebee5742e</span><span class="w"> </span><span class="c"># release-1.10.0</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>使用时需要注意以下几点</strong></p>
+<ul>
+<li><strong>多次调用<code>FetchContent_Declare</code></strong>：The <code>FetchContent_Declare()</code> function records the options that describe how to populate the specified content. If such details have already been recorded earlier in this project (regardless of where in the project hierarchy), this and all later calls for the same content <code>&lt;name&gt;</code> are ignored. This "first to record, wins" approach is what allows hierarchical projects to have parent projects override content details of child projects.</li>
+</ul>
+</li>
+<li>
+<p><code>FetchContent_MakeAvaliable</code> 让之前通过<code>FetchContent_Declare</code>声明的依赖变得可用（加入buildsystem中）</p>
+<p><strong>使用时需要注意以下几点</strong></p>
+<ul>
+<li>
+<p><strong>哪条命令会下载依赖</strong>：调用<code>FetchContent_Declare</code>不下载依赖；真正的下载动作发生在调用<code>FetchContent_MakeAvaliable</code>时。</p>
+</li>
+<li>
+<p><strong>离线（不通过下载）添加依赖</strong>：可以通过指定本地路径的方式来添加依赖；通过设置<code>FETCHCONTENT_SOURCE_DIR_&lt;uppercaseName&gt;</code>变量来指定依赖在local fs的位置。这样在调用<code>FetchContent_MakeAvailable</code>时，就不会再从<code>Declare</code>中指定的网络位置下载源码。</p>
+<ul>
+<li><code>FETCHCONTENT_FULLY_DISCONNECTED</code> 变量默认为<code>OFF</code>，设置为<code>ON</code>时，不会进行任何下载和更新动作，当确定依赖已经存在于指定位置且不需要更新，可以设置为<code>ON</code>加速configure过程；</li>
+<li><code>FETCHCONTENT_UPDATES_DISCONNECTED</code>类似，只跳过更新阶段，如果依赖不存在，会去下载</li>
+</ul>
+<p>效果有点类似于<code>add_subdirectory</code>（但是不需要指定binary source directory）</p>
+<div class="highlight"><pre><span></span><code><span class="nb">set</span><span class="p">(</span><span class="s">FETCHCONTENT_SOURCE_DIR_FMT</span><span class="w"> </span><span class="o">${</span><span class="nv">3RD_LIB_DIR</span><span class="o">}</span><span class="s">/fmt</span><span class="p">)</span><span class="w"> </span><span class="c"># spicify `fmt` dir at local fs</span>
+<span class="nb">FetchContent_Declare</span><span class="p">(</span>
+<span class="w">  </span><span class="s">fmt</span>
+<span class="w">  </span><span class="s">GIT_REPOSITORY</span><span class="w"> </span><span class="s">https://github.com/fmtlib/fmt.git</span>
+<span class="w">  </span><span class="s">GIT_TAG</span><span class="w">        </span><span class="s">48f525d025cadbedce0b2288ff8e19b6877341e4</span><span class="w"> </span><span class="c"># 9.1.0</span>
+<span class="p">)</span>
+<span class="nb">FetchContent_MakeAvailable</span><span class="p">(</span><span class="s">fmt</span><span class="p">)</span><span class="w"> </span><span class="c"># Won&#39;t download from github, add from local fs</span>
+</code></pre></div>
+</li>
+<li>
+<p><strong>Declare与MakeAvaliable顺序</strong>：第一次调用<code>FetchContent_MakeAvaliable</code>之后，再调用<code>FetchContent_Declare</code>会被忽略。因此，对于依赖的声明<code>FetchContent_Declare</code><strong>必须在第一次调用</strong><code>FetchContent_MakeAvaliable</code>之前。</p>
+<div class="highlight"><pre><span></span><code><span class="c"># WRONG: Should declare all details first</span>
+<span class="nb">FetchContent_Declare</span><span class="p">(</span><span class="s">uses_other</span><span class="w"> </span><span class="s">...</span><span class="p">)</span>
+<span class="nb">FetchContent_MakeAvailable</span><span class="p">(</span><span class="s">uses_other</span><span class="p">)</span>
+
+<span class="nb">FetchContent_Declare</span><span class="p">(</span><span class="s">other</span><span class="w"> </span><span class="s">...</span><span class="p">)</span><span class="w">    </span><span class="c"># Will be ignored, uses_other beat us to it</span>
+<span class="nb">FetchContent_MakeAvailable</span><span class="p">(</span><span class="s">other</span><span class="p">)</span><span class="w">  </span><span class="c"># Would use details declared by uses_other</span>
+<span class="c">#================================================================================</span>
+<span class="c"># CORRECT: All details declared first, so they will take priority</span>
+<span class="nb">FetchContent_Declare</span><span class="p">(</span><span class="s">uses_other</span><span class="w"> </span><span class="s">...</span><span class="p">)</span>
+<span class="nb">FetchContent_Declare</span><span class="p">(</span><span class="s">other</span><span class="w"> </span><span class="s">...</span><span class="p">)</span>
+<span class="nb">FetchContent_MakeAvailable</span><span class="p">(</span><span class="s">uses_other</span><span class="w"> </span><span class="s">other</span><span class="p">)</span>
+</code></pre></div>
+</li>
+</ul>
+</li>
+</ol>
+<p><strong>一般的使用模式如下：</strong></p>
+<ul>
+<li>first declare all the dependencies it wants to use <code>FetchContent_Declare</code></li>
+<li>then ask for them to be made available <code>FetchContent_MakeAvailable</code></li>
+</ul>
+<p><div class="highlight"><pre><span></span><code><span class="nb">FetchContent_Declare</span><span class="p">(</span>
+<span class="w">  </span><span class="s">catch2</span>
+<span class="w">  </span><span class="s">GIT_REPOSITORY</span><span class="w"> </span><span class="s">https://github.com/catchorg/Catch2.git</span>
+<span class="w">  </span><span class="s">GIT_TAG</span><span class="w">        </span><span class="s">0de60d8e7ead1ddd5ba8c46b901c122eac20bf94</span><span class="w"> </span><span class="c"># 3.1.0</span>
+<span class="p">)</span>
+<span class="nb">FetchContent_Declare</span><span class="p">(</span>
+<span class="w">  </span><span class="s">fmt</span>
+<span class="w">  </span><span class="s">GIT_REPOSITORY</span><span class="w"> </span><span class="s">https://github.com/fmtlib/fmt.git</span>
+<span class="w">  </span><span class="s">GIT_TAG</span><span class="w">        </span><span class="s">48f525d025cadbedce0b2288ff8e19b6877341e4</span><span class="w"> </span><span class="c"># 9.1.0</span>
+<span class="p">)</span>
+<span class="nb">FetchContent_MakeAvailable</span><span class="p">(</span><span class="s">catch2</span><span class="w"> </span><span class="s">fmt</span><span class="p">)</span><span class="w">  </span><span class="c"># 要求cmake 3.14以上</span>
+</code></pre></div>
+但是需要注意<code>FetchContent_MakeAvailable</code>是在3.14之后引入的，如果版本小于3.14，可以用如下命令手动populate依赖：</p>
+<div class="highlight"><pre><span></span><code><span class="nb">FetchContent_GetProperties</span><span class="p">(</span><span class="s">catch2</span><span class="p">)</span>
+<span class="nb">if</span><span class="p">(</span><span class="s">NOT</span><span class="w"> </span><span class="s">catch2_POPULATED</span><span class="p">)</span>
+<span class="w">  </span><span class="nb">FetchContent_Populate</span><span class="p">(</span><span class="s">catch2</span><span class="p">)</span>
+<span class="w">  </span><span class="nb">add_subdirectory</span><span class="p">(</span><span class="o">${</span><span class="nv">catch2_SOURCE_DIR</span><span class="o">}</span><span class="w"> </span><span class="o">${</span><span class="nv">catch2_BINARY_DIR</span><span class="o">}</span><span class="p">)</span>
+<span class="nb">endif</span><span class="p">()</span>
+</code></pre></div>
+<p>具体来说：</p>
+<ol>
+<li>
+<p><code>FetchContent_Populate(&lt;name&gt;)</code></p>
+<p><code>FetchContent_MakeAvailable</code> 会先检查依赖是否已经构建完成，因此不会重复构建，但 <code>FetchContent_Populate</code> 并不会，重复构建会报错，因此， 使用 <code>FetchContent_Populate</code> 前，必须按照上述示例，使用 <code>FetchContent_GetProperties</code> 获取变量 <code>&lt;lowercaseName&gt;_POPULATED</code>，检测是否需要构建该依赖。</p>
+</li>
+<li>
+<p><code>FetchContent_GetProperties(&lt;name&gt; [SOURCE_DIR &lt;srcDirVar&gt;] [BINARY_DIR &lt;binDirVar&gt;] [POPULATED &lt;doneVar&gt;])</code></p>
+</li>
+</ol>
+<h3 id="fetchcontent-and-find_package-integration"><code>FetchContent</code> and <code>find_package()</code> Integration</h3>
+<p>某些依赖项支持通过both <code>find_package()</code> and <code>FetchContent</code>两种方式添加到project。</p>
+<p>项目可以通过使用 <code>FetchContent_Declare()</code> 的 <code>FIND_PACKAGE_ARGS</code> option 来表明it is happy to accept a dependency by either method(<code>FetchContent</code> and <code>find_package()</code>)。 这允许 FetchContent_MakeAvailable() 首先尝试通过调用 <code>find_package()</code> 来满足依赖关系，如果<code>find_package()</code>找到了的话，使用 FIND_PACKAGE_ARGS 关键字后面的参数。 如果没有找到依赖项，则它是从源代码构建，如前所述。
+<div class="highlight"><pre><span></span><code><span class="nb">include</span><span class="p">(</span><span class="s">FetchContent</span><span class="p">)</span>
+<span class="nb">FetchContent_Declare</span><span class="p">(</span>
+<span class="w">  </span><span class="s">googletest</span>
+<span class="w">  </span><span class="s">GIT_REPOSITORY</span><span class="w"> </span><span class="s">https://github.com/google/googletest.git</span>
+<span class="w">  </span><span class="s">GIT_TAG</span><span class="w">        </span><span class="s">703bd9caab50b139428cea1aaff9974ebee5742e</span><span class="w"> </span><span class="c"># release-1.10.0</span>
+<span class="w">  </span><span class="s">FIND_PACKAGE_ARGS</span><span class="w"> </span><span class="s">NAMES</span><span class="w"> </span><span class="s">GTest</span>
+<span class="p">)</span>
+<span class="nb">FetchContent_MakeAvailable</span><span class="p">(</span><span class="s">googletest</span><span class="p">)</span>
+
+<span class="nb">add_executable</span><span class="p">(</span><span class="s">ThingUnitTest</span><span class="w"> </span><span class="s">thing_ut.cpp</span><span class="p">)</span>
+<span class="nb">target_link_libraries</span><span class="p">(</span><span class="s">ThingUnitTest</span><span class="w"> </span><span class="s">GTest::gtest_main</span><span class="p">)</span>
+</code></pre></div>
+上面这个例子将会首先调用 <code>find_package(googletest NAMES GTest)</code>。 CMake 提供了一个 <code>FindGTest</code> Module，因此如果它发现某个地方安装了 GTest package，它将直接使其可用，并且不会从源代码构建依赖项(<strong>也不会去下载源码了</strong>)。如果没有找到 GTest 包，它将从下载源码，并从源代码构建。</p>
+<h3 id="dependency-providers">Dependency Providers</h3>
+<blockquote>
+<p><a href="https://cmake.org/cmake/help/latest/command/cmake_language.html#dependency-providers">dependency provider</a></p>
+</blockquote>
+<p>开发人员可能对how a dependency is provided to the project更感兴趣。您可能希望使用自己构建的特定版本的包。您可能想要使用第三方包管理器。出于安全或性能原因，您可能希望将某些请求重定向到您控制的系统上的不同 URL。 CMake 通过 Dependency Providers 支持这些场景。</p>
+<p>A dependency provider can be set to intercept <code>find_package()</code> and <code>FetchContent_MakeAvailable()</code> calls</p>
+<h2 id="windowscmake">Windows使用cmake</h2>
+<p>在Windows平台下，<code>cl.exe</code>是visual c++的编译器，对应*nix平台下常见的<code>gcc</code> or <code>clang</code>；windows下的<code>link.exe</code>对应<code>ld</code>；通常在安装Visual Studio后，电脑上会有多个<code>cl.exe</code>，他们分别对应不同host架构和target架构：</p>
+<figure><img src="./cmake-study.assets/image-20220730190848346.png" alt="image-20220730190848346" style="zoom:50%;" /></figure>
+
+<p>但是如果从外部终端直接使用<code>cl.exe main.cpp</code>无法直接编译，因为<code>cl.exe</code>需要通过命令，或通过环境变量设置<code>include dir</code>。使用windows下这套编译链接工具最简单的方法是打开 X64 Native Tool Command Prompt for VS 2022，这个shell 预设置了这套工具运行所需要的环境变量（其它架构同理）。</p>
+<p>如果想要从外部终端使用这套环境变量可以执行脚本 如：<code>vcvarsall.bat x64</code>(脚本的位置需要自己寻找)。</p>
+<blockquote>
+<p>需要注意的是如果从powershell运行<code>.bat</code>脚本，则不会正确设置环境变量，这是因为powershell执行<code>.bat</code>脚本是通过开一个<code>cmd</code>子进程再执行脚本，执行完毕后<code>cmd</code>subprocess退出，设置的环境变量随之消失。</p>
+<p>如果想要在powershell中调用该脚本，一个方案是使用cmd启动<code>vcvars64.bat</code>脚本，再从cmd中启动powershell... </p>
+<p><a href="https://stackoverflow.com/questions/65773728/run-vcvarsall-but-cl-and-other-still-unavailable">run vcvarsall, but cl and other still unavailable</a></p>
+</blockquote>
+<h3 id="nmake">nmake</h3>
+<p>nmake是Microsoft Visual Studio中的附带命令行工具。<strong>使用namke编译奇慢无比</strong>，原因是namke不支持多任务编译，如非必要(openssl文档中指定使用nmake)，尽量不用这个工具。如果要使用<code>nmake</code>可以在cmake构建buildsystem 时指定使用<code>-G</code>参数指定generator为nmake：<code>cmake -G "NMake Makefiles"</code></p>
+<figure><img src="./cmake-study.assets/image-20220730194727781.png" alt="image-20220730190848346" style="zoom:70%;" /></figure>
+
+<p>关于其它的构建系统可以使用<code>cmake --help</code>查看：</p>
+<figure><img src="cmake-study.assets/image-20220730195434113.png" alt="image-20220730195434113" style="zoom: 50%;" /></figure>
+
+<p>如图所示可以看到现在默认的generators是 <strong>MSBuild</strong>，这意味着我在<code>/build</code>下使用<code>cmake ..</code>时默认会生成<code>.sln</code>等我们熟悉的VS工程文件。</p>
+<h3 id="msbuild">MSBuild</h3>
+<p>MSBuild 是 Visual Studio 中所有项目（包括 C++ C# 项目）的native build system。 在 Visual Studio IDE 中构建项目时，它会调用 msbuild.exe，该工具又会使用 <code>.vcxproj</code> 项目文件以及各种 <code>.targets</code> 和 <code>.props</code> 文件。Visual Studio 依赖MSBuild，但是MSBuild不依赖Visual Studio。<strong>MSBuild是nmake的替代品</strong>。MSBuild所管理的工程文件（<code>.sln</code>，<code>.vcxprj</code>）使用的是xml语法。</p>
+<p>如前文所述，在Windows上，cmake默认会选择MSBuild作为默认的build system generator，在命令行使用MSBuild的步骤：</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd </span><span class="n">build</span>
+<span class="n">cmake</span> <span class="p">..</span>
+<span class="n">cmake</span> <span class="p">-</span><span class="n">-build</span> <span class="p">.</span> <span class="p">-</span><span class="n">-config</span> <span class="n">Release</span><span class="p">(</span><span class="n">默认是Debug</span><span class="p">)</span>
+</code></pre></div>
+<p>我们经常看到的步骤是<code>cmake ..</code>之后<code>make</code>；这里使用<code>cmake --build .</code> 命令代替，这样即使是使用Ninja 或者 MSBuild 或者NMake Makefiles等不同generators生成的build tree 都可以被正确构建。</p>
+<p>而我们常见的在<code>cmake ..</code>之后使用<code>make</code>其实是假设了使用<code>Unix Make</code>生成<code>build tree</code>，此时project files 主要是Makefile等，需要使用make去build。</p>
+<h3 id="ninja">Ninja</h3>
+<div class="highlight"><pre><span></span><code><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>build
+<span class="w"> </span>cmake<span class="w"> </span>-G<span class="w"> </span><span class="s2">&quot;Ninja&quot;</span><span class="w"> </span>-DCMAKE_C_COMPILER<span class="o">=</span>cl<span class="w"> </span>-DCMAKE_CXX_COMPILER<span class="o">=</span>cl<span class="w"> </span>..
+<span class="w"> </span>cmake<span class="w"> </span>--build<span class="w"> </span>.<span class="w"> </span>--config<span class="w"> </span>release
+</code></pre></div>
+<p>注意与nmake一样，这条命令执行必须要在有cl环境变量的shell中。一个直接的做法是使用 X64 Native Tool Command Prompt for VS 2022（其它版本，其它架构同理，下载VS后有对应的shell）；</p>
+<figure><img src="cmake-study.assets/image-20220730204145599.png" alt="image-20220730204145599" style="zoom:50%;" /></figure>
+
+<p>在windows上使用ninja+clang：</p>
+<div class="highlight"><pre><span></span><code><span class="n">cmake</span> <span class="n">-DCMAKE_EXPORT_COMPILE_COMMANDS</span><span class="p">=</span><span class="n">TRUE</span><span class="p">`</span>
+<span class="n">-DCMAKE_BUILD_TYPE</span><span class="p">=</span><span class="n">Release</span><span class="p">`</span>
+<span class="n">-DCMAKE_C_COMPILER</span><span class="p">=</span><span class="n">clang</span><span class="p">`</span>
+<span class="n">-DCMAKE_CXX_COMPILER</span><span class="p">=</span><span class="n">clang</span><span class="p">++`</span>
+<span class="n">-S</span><span class="p">.</span> <span class="n">-Bbuild</span> <span class="n">-GNinja</span>
+</code></pre></div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.sections", "navigation.indexes"], "search": "../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.fac441b0.min.js"></script>
+      
+        <script src="../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

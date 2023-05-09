@@ -1,0 +1,1890 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="tvm-autotvm.html">
+      
+      
+        <link rel="next" href="mlir.html">
+      
+      <link rel="icon" href="../images/favicon.ico">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.11">
+    
+    
+      
+        <title>tvm-ansor - Cat538's Blog</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.85bb2934.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.a6bdf11c.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#ansor-generating-high-performance-tensor-programs-for-deep-learning" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="Cat538&#39;s Blog" class="md-header__button md-logo" aria-label="Cat538's Blog" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Cat538's Blog
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              tvm-ansor
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+            
+              <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+              </label>
+            
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+            
+              <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+              </label>
+            
+          
+        </form>
+      
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="Cat538&#39;s Blog" class="md-nav__button md-logo" aria-label="Cat538's Blog" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Cat538's Blog
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        Prologue
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plan.html" class="md-nav__link">
+        Exercise
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          Cpp
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Cpp
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/toolchain.html" class="md-nav__link">
+        toolchain
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/move.html" class="md-nav__link">
+        move
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/align.html" class="md-nav__link">
+        align
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/ranges.html" class="md-nav__link">
+        ranges
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/benchmark.html" class="md-nav__link">
+        benchmark
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/profiler.html" class="md-nav__link">
+        profiler
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/IO-multiplexing.html" class="md-nav__link">
+        IO-multiplexing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/epoll.html" class="md-nav__link">
+        epoll
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/signal.html" class="md-nav__link">
+        signal
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/fork-safe.html" class="md-nav__link">
+        fork-safe
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          Rust
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Rust
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-toolchain.html" class="md-nav__link">
+        rust-toolchain
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-study.html" class="md-nav__link">
+        rust-study
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-attributes.html" class="md-nav__link">
+        rust-attributes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-modules.html" class="md-nav__link">
+        rust-modules
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-macro.html" class="md-nav__link">
+        rust-macro
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-network.html" class="md-nav__link">
+        rust-network
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-option.html" class="md-nav__link">
+        rust-optin
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-str.html" class="md-nav__link">
+        rust-str
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          Tools
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Tools
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/cmake.html" class="md-nav__link">
+        cmake
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/docker.html" class="md-nav__link">
+        docker
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/git.html" class="md-nav__link">
+        git
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/powershell.html" class="md-nav__link">
+        powershell
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/regex.html" class="md-nav__link">
+        regex
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/mkdocs.html" class="md-nav__link">
+        mkdocs
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+          Courses
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          Courses
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/%E5%AF%86%E7%A0%81%E5%88%86%E6%9E%90%E5%AD%A6%E5%A4%8D%E4%B9%A0.html" class="md-nav__link">
+        密码分析学
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/%E5%AF%86%E7%A0%81%E5%AD%A6%E5%BC%95%E8%AE%BA%E5%A4%8D%E4%B9%A0.html" class="md-nav__link">
+        密码学引论
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/algorithm.html" class="md-nav__link">
+        算法设计与分析
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86.html" class="md-nav__link">
+        编译原理
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+          Crypto
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          Crypto
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crypto/ecdsa-pk-recovery.html" class="md-nav__link">
+        ecdsa-pk-recovery
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crypto/algo-rsa.html" class="md-nav__link">
+        algo-rsa
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crypto/algo-fft%26ntt.html" class="md-nav__link">
+        algo-fft&ntt
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crypto/algo-reduction.html" class="md-nav__link">
+        algo-reduction
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+          Mlc
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_8">
+          <span class="md-nav__icon md-icon"></span>
+          Mlc
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="dlc-survey.html" class="md-nav__link">
+        dlc-survey
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tvm-install.html" class="md-nav__link">
+        tvm-install
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tvm-ffi.html" class="md-nav__link">
+        tvm-ffi
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tvm-type.html" class="md-nav__link">
+        tvm-type
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tvm-tensorIR.html" class="md-nav__link">
+        tvm-tensorIR
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tvm-lowering.html" class="md-nav__link">
+        tvm-lowering
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tvm-autotvm.html" class="md-nav__link">
+        tvm-autotvm
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          tvm-ansor
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="tvm-ansor.html" class="md-nav__link md-nav__link--active">
+        tvm-ansor
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#0-abstract" class="md-nav__link">
+    0. Abstract
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-conclusion" class="md-nav__link">
+    10. Conclusion
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-intro" class="md-nav__link">
+    1. Intro
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-background" class="md-nav__link">
+    2. Background
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-design-overview" class="md-nav__link">
+    3. Design Overview
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-program-sampling" class="md-nav__link">
+    4. Program Sampling
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Program Sampling">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-sketch-generation" class="md-nav__link">
+    4.1. Sketch Generation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-random-annotation" class="md-nav__link">
+    4.2. Random Annotation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-gpu-support" class="md-nav__link">
+    4.3. GPU Support
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-performance-fine-tuning" class="md-nav__link">
+    5. Performance Fine-tuning
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Performance Fine-tuning">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-evolutionary-search" class="md-nav__link">
+    5.1. Evolutionary Search
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-learned-cost-model" class="md-nav__link">
+    5.2. Learned Cost Model
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-task-scheduler" class="md-nav__link">
+    6. Task Scheduler
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Task Scheduler">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-problem-formulation" class="md-nav__link">
+    6.1. Problem Formulation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-optimizing-with-gradient-descent" class="md-nav__link">
+    6.2. Optimizing with Gradient Descent
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-evaluation" class="md-nav__link">
+    7. Evaluation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-related-work" class="md-nav__link">
+    8. Related work
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-limitations-and-future-work" class="md-nav__link">
+    9.  Limitations and Future work
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="mlir.html" class="md-nav__link">
+        mlir
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="mlir-toy.html" class="md-nav__link">
+        mlir-toy
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="mlir-onnx.html" class="md-nav__link">
+        mlir-onnx
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="mlir-iree.html" class="md-nav__link">
+        mlir-iree
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="paper-torch.fx.html" class="md-nav__link">
+        paper-torch.fx
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="paper-nimble.html" class="md-nav__link">
+        paper-nimble
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="paper-disc.html" class="md-nav__link">
+        paper-disc
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="paper-cortex.html" class="md-nav__link">
+        paper-cortex
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="paper-freetensor.html" class="md-nav__link">
+        paper-freetensor
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../about.html" class="md-nav__link">
+        About
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#0-abstract" class="md-nav__link">
+    0. Abstract
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-conclusion" class="md-nav__link">
+    10. Conclusion
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-intro" class="md-nav__link">
+    1. Intro
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-background" class="md-nav__link">
+    2. Background
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-design-overview" class="md-nav__link">
+    3. Design Overview
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-program-sampling" class="md-nav__link">
+    4. Program Sampling
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Program Sampling">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-sketch-generation" class="md-nav__link">
+    4.1. Sketch Generation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-random-annotation" class="md-nav__link">
+    4.2. Random Annotation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-gpu-support" class="md-nav__link">
+    4.3. GPU Support
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-performance-fine-tuning" class="md-nav__link">
+    5. Performance Fine-tuning
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Performance Fine-tuning">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-evolutionary-search" class="md-nav__link">
+    5.1. Evolutionary Search
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-learned-cost-model" class="md-nav__link">
+    5.2. Learned Cost Model
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-task-scheduler" class="md-nav__link">
+    6. Task Scheduler
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Task Scheduler">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-problem-formulation" class="md-nav__link">
+    6.1. Problem Formulation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-optimizing-with-gradient-descent" class="md-nav__link">
+    6.2. Optimizing with Gradient Descent
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-evaluation" class="md-nav__link">
+    7. Evaluation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-related-work" class="md-nav__link">
+    8. Related work
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-limitations-and-future-work" class="md-nav__link">
+    9.  Limitations and Future work
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="ansor-generating-high-performance-tensor-programs-for-deep-learning">Ansor: Generating High-Performance Tensor Programs for Deep Learning</h1>
+<p>工作发在 2020 OSDI 上， 是对 2018 年 Learning to optimize tensor program 即 Auto-TVM 的改进， 主要是将 Auto-TVM 中的手动写调度模板、自动搜参数，改进为了自动生成调度模板，而无需再手写，在搜索空间中随机采样，用进化搜索（遗传算法） 加上成本模型 找到性能比较好的程序。</p>
+<p>局限在于动态形状，以及自动张量化（无法很好地利用张量化指令）， 后续工作有 TensorIR 等</p>
+<blockquote>
+<p>参考:</p>
+<ul>
+<li><a href="https://zhuanlan.zhihu.com/p/360041136">深度学习编译系列之 ANSOR 技术分享</a></li>
+</ul>
+</blockquote>
+<h2 id="0-abstract">0. Abstract</h2>
+<p>目前，DL 系统依靠特定平台的内核库或各种搜索策略来获得高性能张量程序。 这些方法要么需要大量的工程工作来开发特定平台的优化代码，要么<strong>由于有限的搜索空间和无效的探索策略而无法找到高性能程序</strong>。</p>
+<p>我们介绍了 Ansor，这是一种用于 DL 应用程序的张量程序生成框架。 与现有的搜索策略相比，Ansor 通过从<strong>搜索空间的分层表示(hierarchical representation)</strong>中对程序进行采样，探索了更多的优化组合。 然后，Ansor 通过<strong>进化搜索(evolutionary search)和 a learned cost model</strong> 对采样程序进行微调，以确定最佳程序。 Ansor 可以找到现有最先进方法搜索范围之外的高性能程序。 此外，Ansor 利用任务调度程序同时优化深度神经网络中的多个子图。 我们表明，相对于最先进的技术，Ansor 在 Intel CPU、ARM CPU 和 NVIDIA GPU 上的执行性能分别提高了 3.8 倍、2.6 倍和 1.7 倍</p>
+<h2 id="10-conclusion">10. Conclusion</h2>
+<p>我们提出了 Ansor，一种为深度神经网络生成高性能<strong>张量程序的自动搜索框架</strong>。 通过有效地探索大型搜索空间并确定性能瓶颈的优先级，Ansor 可以<strong>找到现有方法搜索空间之外的高性能程序</strong>。 Ansor 在各种神经网络和硬件平台上的性能优于现有手动库和基于搜索的框架高达 3.8 倍。Ansor 已集成到 Apache TVM 中。</p>
+<h2 id="1-intro">1. Intro</h2>
+<p>基于搜索的编译 [2、11、32、49、59] 来自动生成张量程序(即张量算子的低级实现)得到了很多研究。 对于一个或多个算子的（子）图，用户使用高级声明式语言 (<a href="#2-background">第2节</a>) 定义计算，然后编译器搜索针对不同硬件平台定制的程序。</p>
+<p>为了找到高性能的张量程序，基于搜索的方法有必要探索足够大的搜索空间以涵盖所有有用的张量程序优化。 然而，现有方法无法捕获许多有效的优化组合，<strong>因为它们依赖于预定义的手动编写模板(如 TVM [12], FlexTensor [59])</strong> 或通过评估不完整程序(如 Halide auto-scheduler [2])，这会阻止它们覆盖全面的搜索空间 (<a href="#2-background">第2节</a>)。 他们用来构建搜索空间的规则也是有限的。</p>
+<div class="admonition warning">
+<p class="admonition-title">疑问</p>
+<p>手动编写模板指的是 AutoTVM 中的方法，大概是 TE-Schedule ？</p>
+</div>
+<p>在本文中，<strong>我们探索了一种用于生成高性能张量程序的新型搜索策略</strong>。 它可以找到现有方法遗漏的高性能程序。</p>
+<p>实现这一目标面临多重挑战：</p>
+<ol>
+<li>首先，需要为给定的计算定义自动构建一个大的搜索空间来覆盖尽可能多的张量程序。</li>
+<li>其次，需要在比现有模板覆盖范围大几个数量级的大型搜索空间中不比较不完整程序的情况下进行高效搜索。</li>
+<li>最后，在优化具有许多子图的 DNN 时，应该识别并优先考虑对整体性能影响大的子图。</li>
+</ol>
+<p>为此，我们设计并实现了 Ansor，这是一种用于自动张量程序生成的框架。 Ansor <strong>利用分层表示</strong>来覆盖大型搜索空间。 这种表示解耦了高层结构和低层细节，实现了高层结构的灵活枚举和低层细节的高效采样。然后 Ansor 从搜索空间中采样完整的程序，并使用 <strong>evolutionary search 和 a learned cost model</strong> 对这些程序进行微调。 为了优化具有多个子图的 DNN 的性能，<strong>Ansor 动态地对更有可能提高端到端性能的 DNN 的子图进行优先级排序</strong>。</p>
+<p>我们根据 manual libraries 和最先进的  search-based frameworks ， 在标准 DL benchmark 和新兴的工作负载上评估 Ansor。 结果表明，Ansor 将 DNN 在 Intel CPU、 ARM CPU 和 NVIDIA GPU 上的执行性能分别提高了 3.8 倍、2.6 倍和 1.7 倍。 对于大多数计算定义，Ansor 找到的最佳程序位于现有 search-based 的方法的搜索空间之外。 结果还表明，与现有的 search-based 的方法相比，Ansor 的搜索效率更高，在更短的时间内生成性能更高的程序，尽管其搜索空间更大。 Ansor 可以与最先进框架的性能相媲美，搜索时间减少一个数量级。 此外，<strong>Ansor 只需要他们的数学定义而无需手动模板，从而可以自动扩展到新的算子</strong>。</p>
+<p>贡献： </p>
+<ul>
+<li>一种为计算图生成张量程序的大型分层搜索空间的机制。 </li>
+<li>一种具有学习成本模型的进化策略，用于微调张量程序的性能。 </li>
+<li>一种基于梯度下降的调度算法，在优化DNN 的端到端性能时优先考虑重要的子图。 </li>
+<li>Ansor 系统的实施和综合评估表明上述技术在各种 DNN 和硬件平台上优于最先进的系统。</li>
+</ul>
+<h2 id="2-background">2. Background</h2>
+<p>从高级定义自动生成高性能的张量程序是极其困难的。 根据目标平台的架构，编译器需要在一个非常大和复杂的空间中搜索，其中包含优化的组合选择（例如，tile 结构、tile 大小、矢量化、并行化）。 我们在本节中描述了两种最近有效的方法，并在第 8 节中描述了其他相关工作</p>
+<ol>
+<li>
+<p><strong><u>Template-guided search</u></strong></p>
+<p>在 Template-guided 搜索中，搜索空间由手动模板定义。 如 图2a 所示，编译器（例如 TVM）要求用户手动编写计算定义模板。 该模板使用一些可调参数 (例如，tile size 和 unrolling factor) 定义张量程序的结构。 然后，编译器针对特定输入形状配置和特定硬件目标搜索这些参数的最佳值。 这种方法在常见的深度学习算子上取得了良好的性能。 </p>
+<p>然而，开发模板需要大量的努力。 例如，TVM 的代码库中已经包含了这些模板的 15K 多行代码。 随着新算子和新硬件平台的出现，这个数字还在继续增长。 此外，构建高质量模板需要张量算子和硬件方面的专业知识 [32, 55, 59]。 尽管模板设计很复杂，但手动模板仅涵盖有限的程序结构，手动枚举所有 算子 的所有优化选择是令人望而却步的。 </p>
+<p>这种方法<strong>通常需要为每个 算子 定义一个模板</strong>。 FlexTensor [59] 提出了一个覆盖多个算子的通用模板，但它的模板仍然是为单个算子粒度设计的，没有包括涉及多个算子的优化（例如，算子融合）。 优化具有多个算子的计算图的搜索空间应该包含不同的方式来组合算子。 基于模板的方法无法实现这一点，因为它无法分解固定模板并在搜索过程中重新组合它们。</p>
+</li>
+<li>
+<p><strong><u>Sequential construction based search</u></strong></p>
+<div class="admonition warning">
+<p class="admonition-title">疑问</p>
+<p>后续可以看一下这个是什么东西， beam search?</p>
+</div>
+<p>这种方法通过将程序构造分解为固定的决策序列来定义搜索空间。 然后，编译器使用一种算法，例如 beam search [34] 来搜索好的决策（例如，Halide auto-scheduler [2]）。 在这种方法中，编译器通过<strong>顺序展开计算图中的所有节点来构建张量程序</strong>。 对于每个节点，编译器都会就如何将其转换为低级张量程序做出一些决定（即决定计算位置、存储位置、分块大小等）。 当所有节点展开后，一个完整的张量程序就构建完成了。 <strong>该方法对每个节点使用一组通用的展开规则，因此它可以自动搜索而不需要手动模板</strong>。 由于每个决策的可能选择数量很大，为了使顺序过程可行， 编译器估计候选程序的性能并将其与 学习成本模型 进行比较，以选择前 k 个候选程序。 在搜索过程中，候选程序是不完整的，因为仅展开了部分计算图或仅做出了部分决策。 图 2b 显示了这个过程。然而，<strong>估计不完整程序的最终性能在几个方面是困难的</strong>：</p>
+<p>(1) <strong>在完整程序上训练的成本模型不能准确预测不完整程序的最终性能</strong>。 成本模型只能在完整的程序上进行训练，因为我们需要编译程序并测量它们的执行时间以获得训练标签。 直接使用这个模型来预测不完整程序的性能准确性会很差。 作为案例研究，我们使用来自搜索空间的 20,000 个随机完整程序来训练我们的成本模型 (<a href="#52-learned-cost-model">5.2节</a>)，并使用该模型来预测不完整程序的最终性能。 不完整的程序是通过仅应用完整程序的一小部分循环转换而获得的。 我们使用两个指标进行评估：pair-wise 的 accuracy 和 前 k 个程序的 recall@k score (k = 10)。 如 图 3 所示，两条曲线分别从 50% 和 0% 开始，这意味着零信息的随机猜测给出了 50% 的成对比较准确率和 0% 的 top-k recall。 这两条曲线随着程序的完成而迅速增加，这意味着成本模型对于完整程序的性能非常好，但无法准确预测不完整程序的最终性能。</p>
+<div class="admonition note">
+<p class="admonition-title">note</p>
+<p>其中 accuracy 是检索出相关文档数与检索出的文档总数的比率，衡量的是检索系统的查准率；</p>
+<p>recall 是指检索出的相关文档数和文档库中所有的相关文档数的比率，衡量的是检索系统的查全率。</p>
+</div>
+<p>(2) <strong>顺序决策的固定顺序限制了搜索空间的设计</strong>。 例如，某些优化需要向计算图中添加新节点（例如，添加缓存节点，使用 rfactor [46]）。 不同程序的决策数变得不同。 很难对齐不完整的程序以进行公平比较。</p>
+<p>(3) Sequential construction based search is not scalable。 扩大搜索空间需要增加更多的顺序构造步骤，然而，这会导致更严重的累积误差。</p>
+</li>
+<li>
+<p><strong><u>Ansor’s hierarchical approach</u></strong></p>
+<p>Ansor 由分层搜索空间支持，该空间将高级结构和低级细节分离。 Ansor <strong>自动构建计算图的搜索空间</strong>，无需手动开发模板。 然后 Ansor 从空间中采样完整的程序并对完整的程序进行微调，避免对不完整程序的估计不准确。 图 2 显示了 Ansor 的方法与现有方法之间的主要区别。</p>
+</li>
+</ol>
+<div class="autocb" style="text-align:center;"><img src="./tvm-ansor.assets\autocb_0.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
+
+<h2 id="3-design-overview">3. Design Overview</h2>
+<p>图 4 显示了 Ansor 的整体架构。 Ansor 使用 Relay [42] 的 算子融合算法将 DNN 从流行的模型格式转换为分区的小子图。 Ansor 然后为这些子图生成张量程序。 Ansor 包含三个主要组件：</p>
+<ol>
+<li>一个程序采样器，它构建一个大的搜索空间并从中采样不同的程序</li>
+<li>performance tuner</li>
+<li>a task scheduler 为优化 DNN 中的多个子图分配时间资源</li>
+</ol>
+<div class="autocb" style="text-align:center;"><img src="./tvm-ansor.assets\autocb_1.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
+
+<p><u>程序采样器</u>。 Ansor 必须解决的一个关键挑战是为给定的计算图生成一个大的搜索空间。 为了涵盖具有各种高级结构和低级细节的各种张量程序，Ansor 使用具有两个级别的搜索空间的分层表示：sketch 和 annotation（<a href="#4-program-sampling">第四章</a>）。 Ansor 将程序的高级结构定义为草图，并留下数十亿个低级选择（例如，tile size, parallel, unroll annotations）作为注释。 这种表示允许 Ansor 灵活地枚举高级结构并有效地采样低级细节。 Ansor 包括一个程序采样器，它<strong>从空间中随机采样程序</strong>以提供对搜索空间的全面覆盖。</p>
+<p><u>性能优化器</u>。 随机抽样程序的性能不一定好。 下一个挑战是微调。 Ansor 采用进化搜索和学习成本模型迭代地微调 (<a href="#5-performance-fine-tuning">第五章</a>)。 在每次迭代中，Ansor 使用重新采样的新程序以及先前迭代中的好程序作为初始种群来开始进化搜索。 进化搜索通过变异和交叉微调程序，执行乱序重写并解决顺序构建的局限性。 <strong>查询学习成本模型比实际测量快几个数量级</strong>，因此我们可以在几秒钟内评估数千个程序。</p>
+<p><u>任务调度器</u>。 使用程序采样和性能微调允许 Ansor 为计算图找到高性能张量程序。 直观地说，将整个 DNN 视为单个计算图并为其生成完整的张量程序可能会实现最佳性能。 然而，这样搜索空间会指数爆炸。 通常，编译器将 大型计算图 划分为几个小子图 [11、42]。 <strong>由于 DNN 的逐层构造性质，此分区对性能的影响可以忽略不计</strong>。 这就带来了 Ansor 的最后一个挑战：在为多个子图生成程序时如何分配时间资源。Ansor 中的任务调度器（<a href="#6-task-scheduler">第六章</a>）<strong>使用基于梯度下降的调度算法将资源分配给更有可能提高端到端 DNN 性能的子图</strong>。</p>
+<h2 id="4-program-sampling">4. Program Sampling</h2>
+<p>搜索空间决定了它可以找到的最佳程序。 现有方法中考虑的搜索空间受到以下因素的限制：</p>
+<ol>
+<li>手动枚举（例如 AutoTVM）。 通过模板手动枚举所有可能的选择是不切实际的，因此现有的手动模板只能启发式(heuristically) 地覆盖有限的搜索空间。</li>
+<li>积极的早期剪枝（例如 Halide auto-scheduler [2]）。 基于评估不完整程序的激进早期剪枝会阻止搜索算法探索空间中的某些区域。</li>
+</ol>
+<p>在本节中，我们介绍了通过解决上述限制来推动所考虑搜索空间边界的技术。 为了解决 <code>(1)</code>，我们通过递归地应用一组灵活的推导规则来自动扩展搜索空间。 为避免 <code>(2)</code>，我们在搜索空间中随机<strong>抽取完整程序</strong>。 由于随机抽样为每个点提供了平等的机会进行抽样，我们的搜索算法可以潜在地探索所考虑空间中的每个程序。 我们不依赖于随机抽样来找到最佳程序，因为每个抽样程序随后都会进行微调（<a href="#5-performance-fine-tuning">第5章</a>）。</p>
+<p>为了对可以覆盖大搜索空间的程序进行采样，我们定义了一个具有两个级别的分层搜索空间： sketch 和 annotation。 我们将程序的高级结构定义为草图，并留下数十亿个低级选择（例如，tile size、parallel、unroll annotations）作为注释。 在顶层，我们通过递归地应用一些推导规则来生成草图。 在底层，我们随机标注这些草图以获得完整的程序。 这种表示从数十亿个低级选择中总结了一些基本结构，从而可以灵活地枚举高级结构并有效地采样低级细节。</p>
+<h3 id="41-sketch-generation">4.1. Sketch Generation</h3>
+<p>如 图4 所示，程序采样器接受 分割后的子图 作为输入。 图5 中的第一列显示了两个输入示例。 输入具有三种等价形式：数学表达式、直接展开循环索引得到的相应朴素程序和相应的计算图(DAG)。</p>
+<div class="autocb" style="text-align:center;"><img src="./tvm-ansor.assets\autocb_2.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
+
+<p>为了为具有多个节点的 DAG 生成草图，我们按拓扑顺序访问所有节点并迭代构建结构。 对于计算密集型且具有大量数据重用机会的计算节点（例如，conv2d、mat-mul），我们<strong>为它们构建基本的 分块 和 融合 结构作为草图</strong>。 对于简单的逐元素节点（例如，ReLU、逐元素添加），我们可以安全地将它们内联。 请注意，新节点（例如，缓存节点、布局变换节点）也可能在草图生成期间被引入 DAG。</p>
+<p>我们提出了一种基于推导的枚举方法，通过递归地应用几个基本规则来生成所有可能的草图。 此过程将 DAG 作为输入并返回草图列表。 我们定义状态 <span class="arithmatex">\(\sigma = (S,i)\)</span>，其中 S 是 DAG 当前部分生成的草图，i 是当前工作节点的索引。 DAG 中的节点按照从输出到输入的拓扑顺序排序。 推导从最初 naive 程序和 DAG 中最后一个节点开始，即初始状态 <span class="arithmatex">\(σ = (naive~program, index~of ~the~last~node)\)</span>。 然后我们尝试递归地将所有推导规则应用于状态。 对于每个规则，如果当前状态满足应用条件，我们将规则应用到 <span class="arithmatex">\(\sigma = (S,i)\)</span> 并得到 <span class="arithmatex">\(\sigma' = (S',i')\)</span> 其中 <span class="arithmatex">\(i' \leq i\)</span>。 这样索引 i（工作节点）单调递减。 当 i = 0 时，状态成为终止状态。<strong>枚举期间，可以将多个规则应用于一个状态以生成多个后续状态</strong>。 一个规则也可以生成多个可能的后续状态。 所以我们维护一个队列来存储所有的中间状态。 当队列为空时，该过程结束。 最后状态中的所有 <span class="arithmatex">\(\sigma.S\)</span> 在草图生成结束时形成一个草图列表。 典型子图的草图数量少于 10 个。</p>
+<div class="autocb" style="text-align:center;"><img src="./tvm-ansor.assets\autocb_3.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
+
+<p><strong>Derivation rules</strong> 表 1 列出了我们用于 CPU 的推导规则。 我们首先提供所用谓词的定义，然后描述每个规则的功能。 <code>IsStrictInliable(S,i)</code> 表示 S 中的节点 i 是否是一个简单的元素算子，它总是可以内联（例如，元素添加，ReLU）。
+- <code>HasDataReuse(S,i)</code> 指示 S 中的节点 i 是否是计算密集型运算符并且是否具有丰富的运算符内数据重用机会（例如，mat-mul、conv2d）。
+- <code>HasFusibleConsumer(S,i)</code> 指示 <strong>S 中的节点 i 是否只有一个消费者 j 并且节点 j 可以融合到节点 i（例如， <code>matmul + bias_add</code>，<code>conv2d + relu</code>）</strong>。
+- <code>HasMoreReductionParallel(S,i)</code> 表示 S 中的节点 i 在空间维度上是否具有很少的并行性但在缩减维度上具有足够的并行性机会。 （例如，计算矩阵的 2 范数，matmul <span class="arithmatex">\(C_{2\times 2} = A_{2\times512} \cdot B_{512\times 2}\)</span>）。</p>
+<p>我们<strong>对计算定义执行静态分析以获得这些谓词的值</strong>。 通过解析数学表达式中的读/写模式自动完成分析。 接下来，我们介绍每个推导规则的功能。</p>
+<p>对于 规则 1 如果它不是严格可内联的，则只是简单地跳过一个节点。 对于规则 2 始终内联严格可内联的节点。 由于规则 1 和规则 2 的条件互斥，因此 i &gt; 1 的状态总是可以满足其中一个并继续推导。</p>
+<p>规则 3、4 和 5 处理具有数据重用的节点的多级平铺和融合。 规则 3 对数据可重用节点执行多级平铺。 对于 CPU，我们使用 <code>"SSRSRS"</code> tile structure， 其中 <code>S</code> 代表一个图块级别的空间循环，<code>R</code> 代表一个图块级别的缩减循环。 例如，在 <span class="arithmatex">\(\texttt{matmul} C(i, j) = \sum_k A[i,k] ×B[k, j]\)</span> 中，i 和 j 是空间循环，k 是缩减循环。 matmul 的<code>"SSRSRS"</code> tile 结构将原来的 3 级循环 <code>(i, j, k)</code> 扩展为 10 级循环 <code>(i0, j0, i1, j1, k0, i2, j2, k1, i3, j3)</code>。 虽然我们不排列循环顺序，但这种多级平铺也可以涵盖某些重新排序的情况。 例如，通过将其他循环的长度设置为 1，可以将上述 10 级循环专门用于简单的重新排序 (k0, j2,i3)。 <code>"SSRSRS"</code> 图块结构对于深度学习中的计算密集型密集运算符（例如，matmul、conv2d、conv3d）是通用的，因为它们都由空间循环和缩减循环组成。</p>
+<p>规则 4 执行多级平铺并融合可融消费者。 例如，我们将元素节点（例如 ReLU、bias add）融合到分块节点（例如 conv2d、mat-mul）中。 <strong>如果当前数据可重用节点没有可融消费者，则规则 5 添加一个缓存节点</strong>。 </p>
+<p>💡 例如，DAG 中的最终输出节点没有任何消费者，因此它默认直接将结果写入主内存，由于内存访问的高延迟，这是低效的。 通过添加一个缓存节点，我们将一个新的可融消费者引入到 DAG 中，然后可以应用规则 4 将这个新添加的缓存节点融合到最终的输出节点中。 融合缓存节点后，现在最终的输出节点将其结果写入缓存块，缓存块将在块中的所有数据计算完毕后立即写入主存。</p>
+<p>规则 6 可以使用 <code>rfactor</code> [46] 将归约循环分解为空间循环以带来更多并行性。</p>
+<p>图 5 显示了生成的草图的三个示例。 <strong>草图与 TVM 中的手动模板不同，因为手动模板指定了高级结构和低级细节，而草图仅定义了高级结构</strong>。 对于示例输入 1，DAG 中四个节点的排序顺序为 <code>(A, B, C, D)</code>。 为了导出 DAG 的草图，我们从输出节点 <code>D(i = 4)</code> 开始，并将规则逐一应用于节点。 具体来说，生成的草图 1 的推导是：</p>
+<p><strong>Customization</strong> 虽然所提出的规则足够实用，可以涵盖大多数算子的结构，但总有例外。 例如，一些特殊的算法（例如，Winograd 卷积 [30]）和加速器内在函数（例如，TensorCore [37]）需要特殊的 tile 结构才能有效。 虽然模板引导搜索方法（在 TVM 中）可以为每个新案例制作一个新模板，但它需要大量的设计工作。 另一方面，Ansor 中基于推导的草图生成足够灵活，可以为新兴算法和硬件生成所需的结构，因为<strong>我们允许用户注册新的推导规则并将它们与现有规则无缝集成</strong>。</p>
+<h3 id="42-random-annotation">4.2. Random Annotation</h3>
+<p>上一小节生成的草图是不完整的程序，因为它们只有 tile 结构，没有特定的 tile 尺寸 和 循环注释，例如并行、展开和矢量化。 在本小节中，我们对草图进行注释，使它们成为用于微调和评估的完整程序。</p>
+<p>给定生成的草图列表，我们随机选择一个草图，随机填充 tile size， 并行化一些外循环，矢量化一些内循环，并展开一些内循环。 我们还随机更改程序中某些节点的计算位置，以对图块结构进行微调。 本小节中的所有 <code>"随机"</code> 均表示对所有有效值的均匀分布。 <strong>如果一些特殊的算法需要自定义注释才能生效（例如，特殊的展开），我们允许用户在计算定义中给出简单的提示来调整注释策略</strong>。 最后，由于更改常量张量的布局可以在编译时完成并且不会带来运行时开销，<strong>我们根据多级分块结构重写常量张量的布局</strong>，使其尽可能缓存友好。 这种优化是有效的，因为卷积层或密集层的权重张量对于推理应用程序是常数。</p>
+<p>随机采样的示例如 图5 所示。采样程序的循环次数可能少于草图，因为长度为 1 的循环被简化了。</p>
+<h3 id="43-gpu-support">4.3. GPU Support</h3>
+<p>对于 GPU，我们将多级平铺结构从 <code>"SSRSRS"</code> 更改为 <code>"SSSRRSRS"</code> 以匹配 GPU 的架构。 前三个空间块中的循环分别绑定到 BlockIdx、虚拟线程（用于减少 bank 冲突）和 ThreadIdx。 我们添加了两条草图推导规则，一条用于通过插入缓存节点来利用共享内存（类似于规则 5），另一条用于减少跨线程（类似于规则 6）。</p>
+<h2 id="5-performance-fine-tuning">5. Performance Fine-tuning</h2>
+<p>program sampler 采样的 程序 具有良好的搜索空间覆盖率，但质量没有保证。 这是因为优化选择，例如图块结构和循环注释，都是随机采样的。 在本节中，我们介绍了 Performance Fine-tuning， 它通过进化搜索和学习成本模型微调采样程序的性能。</p>
+<p>tuning 被迭代地执行。 在每次迭代中，我们首先使用进化搜索根据学习成本模型找到一小批有前途的程序。 然后我们在硬件上测量这些程序以获得实际的执行时间成本。 最后，<strong>使用从测量中获得的分析数据重新训练成本模型，使其更加准确</strong>。</p>
+<p>进化搜索使用随机抽样的程序以及来自先前测量的高质量程序作为初始种群，并应用变异和交叉来生成下一代。 学习成本模型用于预测每个程序的适应性，在我们的例子中是一个程序的吞吐量。 我们运行固定代数的进化，并选择在搜索过程中找到的最佳程序。 我们利用学习成本模型，<strong>因为成本模型可以相对准确地估计程序的适用性，同时比实际测量快几个数量级</strong>。 它允许我们在几秒钟内比较搜索空间中数以万计的程序，并选择有前途的程序进行实际测量。</p>
+<h3 id="51-evolutionary-search">5.1. Evolutionary Search</h3>
+<p>进化搜索 [54] 是一种受生物进化启发的通用元启发式算法。 通过迭代地改变高质量程序，我们可以生成具有潜在更高质量的新程序。 进化从采样的初始代开始。 为了生成下一代，我们首先根据一定的概率从当前代中选择一些程序。 选择程序的概率与学习成本模型 (<a href="#52-learned-cost-model">5.2节</a>) 预测的 fitness 成正比，这意味着具有更高性能分数的程序被选中的概率更高。 对于选定的程序，我们随机应用其中一种进化操作来生成新程序。 基本上，对于我们在采样期间做出的决定（§4.2），我们设计相应的进化操作来重写和微调它们。</p>
+<p><strong>Tile size mutation</strong>。 此操作扫描程序并随机选择一个平铺循环。 对于这个分块循环，它将一个分块级别的分块大小除以一个随机因子，并将该因子乘以另一个级别。 由于此操作使分块大小的乘积等于原始循环长度，因此变异程序始终有效。</p>
+<div class="admonition warning">
+<p class="admonition-title">疑问</p>
+<p>对于不能完美切分的循环？</p>
+</div>
+<p><strong>Parallel mutation</strong>。 该操作扫描程序并随机选择一个已被注释为 parallel 的循环。 对于此循环，此操作通过融合其相邻循环级别或将其拆分为一个因子来更改并行粒度。</p>
+<p><strong>Pragma mutation</strong>。 程序中的某些优化由特定于编译器的编译指示指定。 该操作扫描程序并随机选择一个编译指示。 对于此 pragma，此操作随机将其变异为另一个有效值。 例如，我们的底层代码生成器通过提供 <code>auto_unroll_max_step=N</code> pragma 支持以自动展开的最大步数。 我们随机调整数字 N。</p>
+<p><strong>Computation location mutation</strong>。 此操作扫描程序并随机选择一个不是多层 tiling 的灵活节点（例如，卷积层中的填充节点）。 对于此节点，操作随机将其计算位置更改为另一个有效的附加点。</p>
+<p><strong>Node-based crossover</strong>。 交叉是通过组合两个或多个亲本的基因来产生新后代的操作。 Ansor 中程序的基因是它的重写步骤。 Ansor 生成的每个程序都是从其最初的朴素实现中重写的。 Ansor 在草图生成和随机注释期间为每个程序保留了完整的重写历史。 我们可以将重写步骤视为程序的基因，因为它们描述了这个程序是如何从最初的原始程序形成的。 在此基础上，我们可以通过组合两个现有程序的重写步骤来生成一个新程序。 但是，<strong>任意组合来自两个程序的重写步骤可能会破坏步骤中的依赖关系并创建无效程序</strong>。 因此，Ansor 中交叉操作的<strong>粒度是基于 DAG 中的节点</strong>，因为跨不同节点的重写步骤通常具有较小的依赖性。 Ansor 为每个节点随机选择一个父节点，并合并所选节点的重写步骤。 当节点之间存在依赖关系时，Ansor 会尝试使用简单的启发式方法来分析和调整步骤。 Ansor 进一步验证合并后的程序以保证功能的正确性。 验证简单，因为 Ansor 只使用了一小部分循环转换重写步骤，底层代码生成器可以通过依赖分析来检查正确性。</p>
+<p>进化搜索利用变异和交叉在几轮中重复生成一组新的候选者，并输出一小组得分最高的程序。 这些程序将在目标硬件上进行编译和测量，以获得真实的运行时间成本。 然后使用收集到的测量数据来更新成本模型。 通过这种方式，逐渐提高学习成本模型的准确性以匹配目标硬件。 因此，进化搜索逐渐为目标硬件平台生成更高质量的程序。</p>
+<p>与 TVM 和 FlexTensor 中只能在固定的类似网格的参数空间中工作的搜索算法不同，Ansor 中的进化操作是专门为 tensor 程序设计的。 它们可以应用于一般的张量程序，并且可以处理具有复杂依赖性的搜索空间。 与 Halide 自动调度程序中的展开规则不同，这些操作可以对程序进行乱序修改，从而解决顺序限制。</p>
+<h3 id="52-learned-cost-model">5.2. Learned Cost Model</h3>
+<p>成本模型对于在搜索过程中快速估计程序的性能是必要的。 我们采用类似于相关工作 [2, 12] 的学习成本模型 with newly designed
+program features。 基于学习成本模型的系统具有很好的可移植性，因为可以通过输入不同的训练数据将单个模型设计重复用于不同的硬件后端。</p>
+<p>由于我们的目标程序主要是 data parallel tensor programs， 它们由多个交错的循环嵌套组成，多个赋值语句作为最内层语句，我们训练成本模型来预测一个最内层非循环语句的分数 循环嵌套。 对于一个完整的程序，我们对每个最内层的非循环语句进行预测，并将预测相加作为分数。 我们通过在完整程序的上下文中提取特征来为最内层的非循环语句构建特征向量。 提取的特征包括算术特征和内存访问特征。 提取特征的详细列表在附录 B 中。</p>
+<p>我们使用加权平方误差作为损失函数。 因为我们主要关心从搜索空间中识别性能良好的程序，所以我们更重视运行速度更快的程序。 具体来说，模型 f 在吞吐量为 y 的程序 P 上的损失函数为 <span class="arithmatex">\(loss(f,P,y) = w_p(\sum_{s\in S(P)} f(s) − y)^2 = y(\sum_{s \in S(P)} f (s) − y)^2\)</span> 其中 <span class="arithmatex">\(S(P)\)</span> 是 P 中最内层非循环语句的集合。<strong>我们直接使用吞吐量 y 作为权重</strong>。 我们训练梯度提升决策树 <a href="gradient boosting decision tree">9</a> 作为基础模型 f 。 为来自所有 DAG 的所有张量程序训练单个模型，我们将来自同一 DAG 的所有程序的吞吐量标准化为在 [0,1] 范围内。 在优化 DNN 时，测量程序的数量通常少于 30,000。 在如此小的数据集上训练梯度提升决策树非常快，所以我们每次都训练一个新模型而不是进行增量更新。</p>
+<h2 id="6-task-scheduler">6. Task Scheduler</h2>
+<p>DNN 可以划分为许多独立的子图（例如，<code>conv2d + relu</code>）。 对于某些子图，花时间调整它们不会显著提高端到端 DNN 性能。 这是由于两个原因：(1) 子图不是性能瓶颈；(2) 调优仅对子图的性能带来很小的改进。</p>
+<p>为了避免在调整不重要的子图上浪费时间，Ansor 动态地将不同数量的时间资源分配给不同的子图。 以 <code>ResNet-50</code> 为例，图划分后有 29 个唯一子图。 大多数这些子图是具有不同形状配置（输入大小、内核大小、步幅等）的卷积层。 我们需要为不同的卷积层生成不同的程序，因为最好的张量程序取决于这些形状配置。 实际上，用户的所有应用程序可能都有多个 DNN。 这会导致更多的子图以及更多减少总调整时间的机会，因为我们可以在子图之间共享和重用知识。 一个子图也可以在一个 DNN 中或跨不同的 DNN 出现多次。</p>
+<p>我们将任务定义为 <strong>为子图生成高性能程序而执行的过程</strong>。 这意味着优化单个 DNN 需要完成数十个任务（例如，<code>ResNet-50</code> 的 29 个任务）。 Ansor 的任务调度器以迭代的方式为任务分配时间资源。 在<strong>每次迭代中，Ansor 选择一个任务，为子图生成一批有前途的程序，并在硬件上测量程序。 我们将这样的迭代定义为一个时间资源单位</strong>。 当我们将一个单位的时间资源分配给一个任务时，该任务就获得了生成和测量新程序的机会，这也意味着找到更好程序的机会。 接下来我们介绍调度问题的公式和我们的解决方案。</p>
+<h3 id="61-problem-formulation">6.1. Problem Formulation</h3>
+<p>在调整一个或一组 DNN 时，用户可以有各种类型的目标，例如，减少 DNN 的延迟，满足一组 DNN 的延迟要求，或者在调整不再提高 DNN 性能时最小化调整时间。 因此，我们为用户提供了一组目标函数来表达他们的目标。 用户也可以提供自己的目标函数。</p>
+<p>假设总共有 n 个任务。 设 <span class="arithmatex">\(t \in \mathbf{Z}_n\)</span> 为分配向量，其中 <span class="arithmatex">\(t_i\)</span> 是花费在任务 i 上的时间单位数。 设任务 i 实现的最小子图延迟是分配向量的函数 <span class="arithmatex">\(g_i(t)\)</span> 。 DNN 的端到端成本成为子图 <span class="arithmatex">\(f(g_1(t),g_2(t), \cdots, g_3(t))\)</span> 延迟的函数。 我们的目标是最小化端到端成本：</p>
+<div class="arithmatex">\[
+\texttt{minimize}f(g_1(t),g_2(t), \cdots, g_3(t))
+\]</div>
+<p>为了使端到端时延最小，我们定义 <span class="arithmatex">\(f(g_1(t),g_2(t), \cdots, g_3(t))=\sum_{i=1}^n w_i\times g_i\)</span>， 其中<span class="arithmatex">\(w_i\)</span> 是该 task 在 整个图中出现的次数。</p>
+<div class="autocb" style="text-align:center;"><img src="./tvm-ansor.assets\autocb_4.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
+
+<p>表 2 显示了多个用于调整 DNNs 的示例目标函数。 设 <span class="arithmatex">\(m\)</span> 是 DNN 的数量，<span class="arithmatex">\(S(j)\)</span> 是属于 DNN <span class="arithmatex">\(j\)</span> 的任务集。</p>
+<ul>
+<li><span class="arithmatex">\(f_1\)</span> 将每个 DNN 的延迟相加，这意味着优化按顺序运行一次所有 DNN 的成本。</li>
+<li>在 <span class="arithmatex">\(f_2\)</span> 中，我们将 <span class="arithmatex">\(L_j\)</span> 定义为 DNN <span class="arithmatex">\(j\)</span> 的延迟要求，这意味着如果延迟已经满足要求，我们不想在 DNN 上花费时间。</li>
+<li>在 <span class="arithmatex">\(f_3\)</span> 中，我们将 <span class="arithmatex">\(B_j\)</span> 定义为 DNN <span class="arithmatex">\(j\)</span> 的参考延迟。 因此，我们的目标是针对给定的参考延迟最大化加速的几何平均值。</li>
+<li>最后在 <span class="arithmatex">\(f_4\)</span> 中，我们定义了一个函数 <span class="arithmatex">\(ES(g_i,t)\)</span>，它通过查看任务 <span class="arithmatex">\(i\)</span> 的延迟历史来返回一个提前停止值。 可以达到 per-task early stopping 的效果。</li>
+</ul>
+<h3 id="62-optimizing-with-gradient-descent">6.2. Optimizing with Gradient Descent</h3>
+<p>我们提出了一种基于梯度下降的调度算法来优化目标函数。 给定当前分配 t，其思想是去近似目标函数 <span class="arithmatex">\(\frac{\partial f}{\partial t_i}\)</span> 从而选择任务 i 使得 <span class="arithmatex">\(i = \rm{argmax}_i | \frac{\partial f}{\partial t_i} |\)</span>。 We approximate the gradient by making an optimistic guess and considering the similarity between tasks.</p>
+<div class="autocb" style="text-align:center;"><img src="./tvm-ansor.assets\autocb_5.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
+
+<p>为了运行该算法，Ansor 从 <span class="arithmatex">\(t = 0\)</span> 开始，并通过一轮循环预热以获得初始分配向量 <span class="arithmatex">\(t = (1,1,\cdots,1)\)</span>。 预热后，在每次迭代中，我们计算每个任务的梯度并选择 <span class="arithmatex">\(\rm{argmax}_i | \frac{\partial f}{\partial t_i} |\)</span>。 然后我们将资源单元分配给任务 <span class="arithmatex">\(i\)</span> 并更新分配向量 <span class="arithmatex">\(t_i = t_i + 1\)</span>。优化过程一直持续到我们用完时间预算。 为了鼓励探索，我们采用了 <span class="arithmatex">\(\varepsilon\)</span>-greedy 策略 [47]，它保留了 <span class="arithmatex">\(\varepsilon\)</span> 的概率来随机选择任务。</p>
+<p>以优化单个 DNN 的端到端延迟为例，Ansor 优先考虑具有高初始延迟的子图，因为我们的乐观猜测表明我们可以快速降低其延迟。 之后，如果 Ansor 对其进行多次迭代而没有观察到其延迟减少，则 Ansor 因为 <span class="arithmatex">\(|\frac{\partial f}{\partial t_i}|\)</span> 的降低离开子图。</p>
+<h2 id="7-evaluation">7. Evaluation</h2>
+<p>通常，Ansor 需要几个小时才能在单台机器上为 DNN 生成完全优化的程序。 这对于推理应用程序来说是可以接受的，因为它是部署前的一次性工作。 此外，Ansor 的整个架构可以很容易地并行化。</p>
+<div class="admonition note">
+<p class="admonition-title">note</p>
+<p>慢</p>
+</div>
+<h2 id="8-related-work">8. Related work</h2>
+<ul>
+<li>
+<p><strong><u>基于调度语言的自动张量程序生成</u></strong>。 </p>
+<p>Halide [41] 引入了一种可以描述循环优化原语的调度语言。 该语言适用于手动优化和自动搜索。 Halide 具有基于不同技术的三个版本的自动调度程序 [2、31、36]。 最新的带有 beam search 和 learned cost model 的模型在其中表现最好，我们的评估也使用了它。 </p>
+<p>TVM [11] 使用类似的调度语言并包括<strong>模板引导搜索框架 AutoTVM</strong> [12]。 FlexTensor [59] 提出了可以针对一组算子的通用模板，但它的模板是为单个算子设计的。 很难将这些模板用于涉及多个算子的优化（例如，算子融合）。 </p>
+<p>并行工作 ProTuner [19] 使用蒙特卡洛树搜索来解决 Halide 自动调度器中的不准确估计问题。 ProTuner 主要针对图像处理工作负载，而 Ansor 针对深度学习工作负载并引入了新的搜索空间和其他优化。 </p>
+</li>
+<li>
+<p><strong><u>多面体编译模型</u></strong>。 </p>
+<p>多面体编译模型 [8,52,53] 将程序优化表述为整数线性规划 (ILP) 问题。 它使用仿射循环变换优化程序，使相关语句之间的数据重用距离最小化。 Tiramisu [5] 和 Tensor Comprehensions [49] 是两个同样针对深度学习领域的多面体编译器。 Tiramisu 提供了类似Halide语言的调度语言，需要手动调度。 Tensor Comprehensions 可以自动搜索 GPU 代码，但它还不能用于计算受限的问题 [11]。 它不能在 conv2d 和 matmul [11,48] 等算子上胜过 TVM。 这是因为缺乏某些优化 [50] 和多面体公式中不准确的隐性成本模型。</p>
+</li>
+<li>
+<p><strong><u>深度学习的图级优化</u></strong>。 </p>
+<p>图级优化将计算图中的算子作为一个基本单元，不改变算子内部实现。 常见优化包括 布局优化[32]、算子融合[11、38、60]、常量折叠[42]、自动批处理[33]、自动生成图替换[29]等。 图级优化通常是算子级优化的补充。 图级优化也可以受益于算子的高性能实现。 比如通用算子融合就依赖于Ansor的代码生成能力。 我们将 Ansor 的 <strong>联合优化和更多图级优化作为未来的工作</strong>。</p>
+</li>
+<li>
+<p><strong><u>基于搜索的编译和自动调整</u></strong>。 </p>
+<p>基于搜索的编译和自动调整已经在深度学习以外的领域展示了它们的有效性。 Stock [44] 是一个基于随机搜索的超级优化器。 Stock 搜索无循环硬件指令序列，而 Ansor 生成带有循环嵌套的张量程序。 OpenTuner [4] 是一个基于 multi-armed bandit approaches 的程序自动调整的通用框架。 </p>
+<p>OpenTuner 依赖用户指定的搜索空间，而 Ansor 自动构建搜索空间。 传统的高性能库，如 ATLAS [56] 和 FFTW [16] 也使用自动调整。 最近的作品 NeuroVectorizer [18] 和 AutoPhase [20, 26] 使用深度强化学习来自动向量化程序并优化编译器阶段顺序</p>
+</li>
+</ul>
+<h2 id="9-limitations-and-future-work">9.  Limitations and Future work</h2>
+<ol>
+<li>Ansor 的局限性之一是 <strong>无法优化具有  dynamic shapes 的 graph</strong> [45]。 Ansor 要求计算图中的形状是静态的并且事先已知，以便进行分析、构建搜索空间和执行测量。 如何为符号或动态形状生成程序是一个有趣的未来方向。</li>
+<li>另一个限制是 Ansor <strong>仅支持密集(dense)算子</strong>。 为了支持稀疏神经网络 [17] 和图形神经网络 [25] 中常用的稀疏算子（例如 SpMM），我们希望 Ansor 的很大一部分仍然可以重用，但我们需要重新设计搜索空间。</li>
+<li>最后，Ansor 仅在高层执行程序优化，但依赖于其他代码生成器（例如 LLVM 和 NVCC）来进行平台相关的优化（例如指令选择）。 Ansor <strong>没有利用 Intel VNNI、NVIDIA Tensor Core 和 ARM Dot 等针对混合精度和低精度算子的特殊指令</strong>，目前现成的代码生成器无法很好地处理这些指令。</li>
+</ol>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.sections", "navigation.indexes"], "search": "../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.fac441b0.min.js"></script>
+      
+        <script src="../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,1988 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="paper-cortex.html">
+      
+      
+        <link rel="next" href="../about.html">
+      
+      <link rel="icon" href="../images/favicon.ico">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.11">
+    
+    
+      
+        <title>paper-freetensor - Cat538's Blog</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.85bb2934.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.a6bdf11c.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#freetensor-a-free-form-dsl-with-holistic-optimizations-for-irregular-tensor-programs" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="Cat538&#39;s Blog" class="md-header__button md-logo" aria-label="Cat538's Blog" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Cat538's Blog
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              paper-freetensor
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+            
+              <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+              </label>
+            
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+            
+              <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+              </label>
+            
+          
+        </form>
+      
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="Cat538&#39;s Blog" class="md-nav__button md-logo" aria-label="Cat538's Blog" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Cat538's Blog
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        Prologue
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plan.html" class="md-nav__link">
+        Exercise
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          Cpp
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Cpp
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/toolchain.html" class="md-nav__link">
+        toolchain
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/move.html" class="md-nav__link">
+        move
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/align.html" class="md-nav__link">
+        align
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/ranges.html" class="md-nav__link">
+        ranges
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/benchmark.html" class="md-nav__link">
+        benchmark
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/profiler.html" class="md-nav__link">
+        profiler
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/IO-multiplexing.html" class="md-nav__link">
+        IO-multiplexing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/epoll.html" class="md-nav__link">
+        epoll
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/signal.html" class="md-nav__link">
+        signal
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp/fork-safe.html" class="md-nav__link">
+        fork-safe
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          Rust
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Rust
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-toolchain.html" class="md-nav__link">
+        rust-toolchain
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-study.html" class="md-nav__link">
+        rust-study
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-attributes.html" class="md-nav__link">
+        rust-attributes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-modules.html" class="md-nav__link">
+        rust-modules
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-macro.html" class="md-nav__link">
+        rust-macro
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-network.html" class="md-nav__link">
+        rust-network
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-option.html" class="md-nav__link">
+        rust-optin
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rust/rust-str.html" class="md-nav__link">
+        rust-str
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          Tools
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Tools
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/cmake.html" class="md-nav__link">
+        cmake
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/docker.html" class="md-nav__link">
+        docker
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/git.html" class="md-nav__link">
+        git
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/powershell.html" class="md-nav__link">
+        powershell
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/regex.html" class="md-nav__link">
+        regex
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/mkdocs.html" class="md-nav__link">
+        mkdocs
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+          Courses
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          Courses
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/%E5%AF%86%E7%A0%81%E5%88%86%E6%9E%90%E5%AD%A6%E5%A4%8D%E4%B9%A0.html" class="md-nav__link">
+        密码分析学
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/%E5%AF%86%E7%A0%81%E5%AD%A6%E5%BC%95%E8%AE%BA%E5%A4%8D%E4%B9%A0.html" class="md-nav__link">
+        密码学引论
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/algorithm.html" class="md-nav__link">
+        算法设计与分析
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../courses/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86.html" class="md-nav__link">
+        编译原理
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+          Crypto
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          Crypto
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crypto/ecdsa-pk-recovery.html" class="md-nav__link">
+        ecdsa-pk-recovery
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crypto/algo-rsa.html" class="md-nav__link">
+        algo-rsa
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crypto/algo-fft%26ntt.html" class="md-nav__link">
+        algo-fft&ntt
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../crypto/algo-reduction.html" class="md-nav__link">
+        algo-reduction
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
+      
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+          Mlc
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_8">
+          <span class="md-nav__icon md-icon"></span>
+          Mlc
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="dlc-survey.html" class="md-nav__link">
+        dlc-survey
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tvm-install.html" class="md-nav__link">
+        tvm-install
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tvm-ffi.html" class="md-nav__link">
+        tvm-ffi
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tvm-type.html" class="md-nav__link">
+        tvm-type
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tvm-tensorIR.html" class="md-nav__link">
+        tvm-tensorIR
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tvm-lowering.html" class="md-nav__link">
+        tvm-lowering
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tvm-autotvm.html" class="md-nav__link">
+        tvm-autotvm
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tvm-ansor.html" class="md-nav__link">
+        tvm-ansor
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="mlir.html" class="md-nav__link">
+        mlir
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="mlir-toy.html" class="md-nav__link">
+        mlir-toy
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="mlir-onnx.html" class="md-nav__link">
+        mlir-onnx
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="mlir-iree.html" class="md-nav__link">
+        mlir-iree
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="paper-torch.fx.html" class="md-nav__link">
+        paper-torch.fx
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="paper-nimble.html" class="md-nav__link">
+        paper-nimble
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="paper-disc.html" class="md-nav__link">
+        paper-disc
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="paper-cortex.html" class="md-nav__link">
+        paper-cortex
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          paper-freetensor
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="paper-freetensor.html" class="md-nav__link md-nav__link--active">
+        paper-freetensor
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#0-abstract" class="md-nav__link">
+    0. Abstract
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-conclusion" class="md-nav__link">
+    8. Conclusion
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-intro" class="md-nav__link">
+    1. Intro
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-background-and-motivation" class="md-nav__link">
+    2. Background and Motivation
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Background and Motivation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-background" class="md-nav__link">
+    2.1. Background
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-motivating-example" class="md-nav__link">
+    2.2. Motivating Example
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-challenge-of-freetensor" class="md-nav__link">
+    2.3. Challenge of FreeTensor
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-free-form-dsl" class="md-nav__link">
+    3. Free-Form DSL
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Free-Form DSL">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-tensors-as-first-class-citizens" class="md-nav__link">
+    3.1. Tensors as First-Class Citizens
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-granularity-oblivious-tensor-operations" class="md-nav__link">
+    3.2. Granularity-Oblivious Tensor Operations
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-dimension-free-programming" class="md-nav__link">
+    3.3. Dimension-Free Programming
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-generating-high-performance-code" class="md-nav__link">
+    4. Generating High Performance Code
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Generating High Performance Code">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-partial-evaluation-for-dimension-free-programming" class="md-nav__link">
+    4.1. Partial Evaluation for Dimension-Free Programming
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-dependence-aware-transformation" class="md-nav__link">
+    4.2. Dependence-Aware Transformation
+  </a>
+  
+    <nav class="md-nav" aria-label="4.2. Dependence-Aware Transformation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#421" class="md-nav__link">
+    4.2.1. 循环变换
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#422" class="md-nav__link">
+    4.2.2. 并行化转换
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#423" class="md-nav__link">
+    4.2.3. 内存转换
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-code-generation" class="md-nav__link">
+    4.3. Code Generation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-automatic-differentiation" class="md-nav__link">
+    5. Automatic Differentiation
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Automatic Differentiation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-fine-grained-automatic-differentiation" class="md-nav__link">
+    5.1. Fine-Grained Automatic Differentiation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-selective-intermediate-tensor-materialization" class="md-nav__link">
+    5.2. Selective Intermediate Tensor Materialization
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-evaluation" class="md-nav__link">
+    6. Evaluation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-related-works" class="md-nav__link">
+    7. Related Works
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../about.html" class="md-nav__link">
+        About
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#0-abstract" class="md-nav__link">
+    0. Abstract
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-conclusion" class="md-nav__link">
+    8. Conclusion
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-intro" class="md-nav__link">
+    1. Intro
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-background-and-motivation" class="md-nav__link">
+    2. Background and Motivation
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Background and Motivation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-background" class="md-nav__link">
+    2.1. Background
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-motivating-example" class="md-nav__link">
+    2.2. Motivating Example
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-challenge-of-freetensor" class="md-nav__link">
+    2.3. Challenge of FreeTensor
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-free-form-dsl" class="md-nav__link">
+    3. Free-Form DSL
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Free-Form DSL">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-tensors-as-first-class-citizens" class="md-nav__link">
+    3.1. Tensors as First-Class Citizens
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-granularity-oblivious-tensor-operations" class="md-nav__link">
+    3.2. Granularity-Oblivious Tensor Operations
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-dimension-free-programming" class="md-nav__link">
+    3.3. Dimension-Free Programming
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-generating-high-performance-code" class="md-nav__link">
+    4. Generating High Performance Code
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Generating High Performance Code">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-partial-evaluation-for-dimension-free-programming" class="md-nav__link">
+    4.1. Partial Evaluation for Dimension-Free Programming
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-dependence-aware-transformation" class="md-nav__link">
+    4.2. Dependence-Aware Transformation
+  </a>
+  
+    <nav class="md-nav" aria-label="4.2. Dependence-Aware Transformation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#421" class="md-nav__link">
+    4.2.1. 循环变换
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#422" class="md-nav__link">
+    4.2.2. 并行化转换
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#423" class="md-nav__link">
+    4.2.3. 内存转换
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-code-generation" class="md-nav__link">
+    4.3. Code Generation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-automatic-differentiation" class="md-nav__link">
+    5. Automatic Differentiation
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Automatic Differentiation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-fine-grained-automatic-differentiation" class="md-nav__link">
+    5.1. Fine-Grained Automatic Differentiation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-selective-intermediate-tensor-materialization" class="md-nav__link">
+    5.2. Selective Intermediate Tensor Materialization
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-evaluation" class="md-nav__link">
+    6. Evaluation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-related-works" class="md-nav__link">
+    7. Related Works
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="freetensor-a-free-form-dsl-with-holistic-optimizations-for-irregular-tensor-programs">FreeTensor: A Free-Form DSL with Holistic Optimizations for Irregular Tensor Programs</h1>
+<h2 id="0-abstract">0. Abstract</h2>
+<p>张量程序在许多领域都有重要用途。 PyTorch、TensorFlow 和 JAX 等现有框架采用基于 算子 的方式来简化编程、提高性能并执行自动微分。 然而，随着张量程序的快速发展，基于算子的编程由于引入了大量的冗余计算或内存访问而对不规则模式 (<strong>irregular patterns</strong>) 显示出显着的局限性。</p>
+<p>我们提出了 FreeTensor，一种 free-form 的 DSL， 它通过<strong>引入细粒度控制流</strong>来支持冗余避免编程。 通过部分评估、依赖感知转换和细粒度自动微分等优化，FreeTensor 能够在 CPU 和 GPU 上生成高性能张量程序。 实验表明，对于典型的不规则张量程序，在没有微分的情况下，现有张量编程框架的加速高达 5.10 倍（平均 2.08 倍），微分后高达 127.74 倍（平均 36.26 倍）。</p>
+<div class="admonition warning">
+<p class="admonition-title">疑问</p>
+<p>什么是不规则模式 irregular patterns ？</p>
+</div>
+<h2 id="8-conclusion">8. Conclusion</h2>
+<p>我们提出了 FreeTensor，一种用于不规则张量程序的free-form DSL。 FreeTensor <strong>通过启用细粒度控制流</strong>来支持粒度无关的 tensor 运算，并集成了一系列优化，包括部分求值、依赖感知转换 和 自动代码生成，以生成适用于不同架构的高性能代码。 FreeTensor 还支持细粒度自动微分以生成高效的梯度程序。 实验表明，在没有微分的情况下，现有张量编程框架的加速高达 5.10×（平均 2.08×），微分后高达 127.74×（平均 36.26×）。</p>
+<h2 id="1-intro">1. Intro</h2>
+<p>张量程序广泛应用于不同领域，包括深度学习、计算机图形学、科学计算等。 优化张量程序至关重要，因为张量程序通常在需要大规模并行处理的数千个元素上运行才能实现高性能。 然而，这种跨各种架构的优化不仅需要大量的人力，还需要算法和架构方面的专业知识。</p>
+<p>大多数现有的张量编程框架，都将典型的张量计算封装到 算子 中，例如矩阵乘 和 卷积。 在这些框架中，算子经过手工高度优化以实现高性能，并通过 cuDNN、cuBLAS 或 Intel MKL 等库提供给用户。</p>
+<p>这种基于算子的框架可以覆盖某些硬件上的常见 tensor program， 但仍有重大的性能挑战尚未解决。 由于大多数优化都是在算子内部完成的，因此传统上，用户需要将一个算子应用于 tensor 中的所有元素，并将多个算子链接起来才能实现一个程序。 然而，随着模型的规模越来越大，<strong>最近的模型倾向于在张量的一部分上进行计算以节省计算量</strong>。 为了使用基于算子的框架来表达此类模型，张量需要来回转换，引入大量的计算和访寸开销。</p>
+<p>我们以 Longformer 模型 [8] 为例，如图 1(a) 所示。 与传统注意力使用所有 token 计算相关性不同，Longformer 计算距离不大于阈值的成对附近 token 的相关性，因此它能够处理更长的序列。 附近 token 的范围可以看作是一个滑动窗口。 典型的基于算子的框架的一种常见实现是首先沿滑动窗口填充和复制特征矩阵 Q，如图 1(b) 所示，相应的代码如图 1(c) 所示。 由于张量 Q 被复制滑动窗口大小折叠，因此引入了显着的内存冗余。</p>
+<p>这种类型的张量程序在新兴的深度学习模型中越来越普遍。 为简单起见，我们称它们为<strong>不规则张量程序</strong>。 与常见的张量程序相比，此类程序通常具有以下特点：
+1. <u>细粒度操作。 需要、使用和重用的数据不在一个整体张量级别，而是由上下文决定的。</u>
+2. <u>多种操作的组合。 这些张量程序通常需要组合多个张量操作来实现相应的功能。</u></p>
+<p>尽管用户可以在基于算子的框架中使用自定义算子，但目前的框架仅提供有限的表达力来支持不规则张量程序。 例如，JAX 和 PyTorch 中的 <code>vmap</code> 支持迭代张量并将操作应用于它的每个部分，但迭代应该是无依赖的。 TVM [12] 完全建立在自定义 算子 之上，<strong>但每个 算子 都仅限于完美嵌套的循环，外侧是无依赖循环，内侧是 reduce 循环</strong>。 由于这些限制，用户仍然不得不引入冗余的算子。</p>
+<div class="admonition warning">
+<p class="admonition-title">疑问</p>
+<p>TVM [12] 完全建立在自定义 算子 之上，但每个 算子 都仅限于完美嵌套的循环，外侧是无依赖循环，内侧是 reduce 循环?</p>
+<p>这里是什么意思？</p>
+</div>
+<p>在实践中，当难以用基于算子的框架来表达张量程序时，用户仍然可以用通用的编程语言（如 Python 和 C++）表达计算。 主要原因是此类语言中的细粒度控制流可以轻松消除冗余。 在这项工作中，<strong>我们称这样的程序为自由形式的张量程序</strong>。 然而，如果不仔细优化，这样的程序性能会不好。 必须为每个硬件后端手动完成特定于体系结构的优化，例如缓存或 scratchpad memory（SPM）的并行化和显式利用。 此外，典型张量应用中所需的自动微分 automatic differentiation (AD) 加剧了这个问题。 原程序和它的梯度应该分开实现。 Julia [9] 等通用编程语言提供了一种与张量交互和计算梯度的简单方法。 然而，对它们进行优化仍然是一项艰巨的任务。</p>
+<p>为了应对这一挑战，我们提出 FreeTensor，这是一种用于张量程序的避免冗余的 DSL。 与现有工作不同，我们引入细粒度张量操作以减少冗余计算和内存访问，同时将张量保持为一等公民以保持编程简单性。 <strong>为了分析细粒度控制流引入的复杂依赖， FreeTensor 编译器利用多面体技术进行自动分析</strong>，因此我们应用了一系列优化，包括并行化、循环转换和内存层次转换来生成 高性能代码。 此外，由于微分在张量程序中至关重要，因此 FreeTensor 支持细粒度自动微分，并通过优化来通过存储或重新计算中间张量之间的平衡来减少内存冗余。</p>
+<p><strong>贡献</strong>：</p>
+<ul>
+<li>提出一种名为 FreeTensor 的 Free-form 的 DSL，它通过提供<strong>粒度无关(granularity-oblivious)</strong>的张量操作来支持避免冗余的张量编程。</li>
+<li>在 FreeTensor 中提供编译优化以生成高效的张量程序，包括对具有递归的 dimension-free 程序的 部分求值、对细粒度控制流的依赖感知转换 以及 针对不同体系结构的自动代码生成。</li>
+<li>支持细粒度自动微分 combined with efficient selective intermediate tensor materialization。</li>
+<li>评估表明，与现有的张量编程框架相比，FreeTensor 在无微分的情况下实现了高达 5.10 倍的加速比（平均 2.08 倍），对于典型的不规则张量程序在有微分的情况下实现了高达 127.74 倍的加速比（平均 36.26 倍） .</li>
+</ul>
+<p>本文的其余部分安排如下。 第 2 节用一个详细的例子描述了这个问题。 第 3 节和第 4 节描述了我们在 FreeTensor 中的 DSL 和代码生成💡。 第 5 节解决了 AD 中的性能问题。 第 6 节评估 FreeTensor 的性能。 第 7 节讨论了一些相关工作。 第 8 节总结了本文。</p>
+<h2 id="2-background-and-motivation">2. Background and Motivation</h2>
+<h3 id="21-background">2.1. Background</h3>
+<p>现有的张量编程框架，包括 TensorFlow [3]、PyTorch [29]，将张量程序表示为对高度优化的库的调用，包括 cuDNN [15]、cuBLAS [16] 和 Intel MKL [26]。 由于张量程序的快速发展需要许多新的算子，因此提出了像 TVM [12] 这样的<strong>代码生成框架</strong>来减少人工工作。</p>
+<p>然而，这些框架缺乏对新兴的不规则张量程序的有效支持，这些程序具有对完整张量进行部分操作或复杂控制依赖的特点。 为了迎合当前的框架，这些程序中引入了冗余计算和内存访问。 尽管像 Julia [9] 这样的通用编程语言可以部分消除这些冗余，但由于缺乏领域知识，它们仍然无法生成高性能代码。</p>
+<h3 id="22-motivating-example">2.2. Motivating Example</h3>
+<p>我们以图 2 中的 SubdivNet [19] 为例来说明现有框架的局限性以及 FreeTensor 的工作原理。 SubdivNet 的主要组成部分是 mesh 上的多重卷积。 类似于传统卷积结合每个像素及其相邻像素的特征，SubdivNet 中的网格卷积结合每个 face 及其相邻 faces 的特征。 为了克服 faces 之间的顺序不变性，SubdivNet 引入了循环差分计算，如图 2(a) 的红框所示。 对于每个中心面 <span class="arithmatex">\(e_i\)</span>， 通过邻接数组找到其三个邻面<span class="arithmatex">\(e_j\)</span>、 <span class="arithmatex">\(e_{j+1}\)</span> 和 <span class="arithmatex">\(e_{j+2}\)</span> 的特征向量， 循环计算它们的差。</p>
+<p>在这种情况下，特征向量 <span class="arithmatex">\(e_j\)</span>、 <span class="arithmatex">\(e_{j+1}\)</span> 和 <span class="arithmatex">\(e_{j+2}\)</span> 被获取并针对中央 face 使用，<strong>但如果没有额外的索引访问，则永远不会被其他中央 face 重用</strong>。 理想情况下，它们应该单独创建和使用，而不是在每次计算之前都从中央面周围收集。</p>
+<div class="autocb" style="text-align:center;"><img src="./paper-freetensor.assets\autocb_0.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
+
+<p>然而，基于 算子 的框架中的典型实现需要共同操作这些数据，如图 2(b) 所示。 具体来说，如图2(c)所示，该程序的Pytorch实现包括以下步骤：</p>
+<div class="autocb" style="text-align:center;"><img src="./paper-freetensor.assets\autocb_1.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
+
+<ul>
+<li>第 1 步：依次调用 <code>flatten</code>、 <code>index_select</code> 和 <code>reshape</code>，构造一个3-D 张量 <code>(adj_feat)</code> 来存储相邻面的特征。 结果张量 <code>adj_feat[i, j, k]</code> 中的每个元素存储了第 i 个 face 的 第 j 个 邻居 feature 的第 k 个因子。</li>
+<li>第 2 步：对 <code>adj_feat</code> 张量进行切片，对其重新排序，然后连接，现在面 <span class="arithmatex">\(e_{j+1}\)</span> 与原始面 <span class="arithmatex">\(e_j\)</span> 具有相同的索引。</li>
+<li>第 3 步：做一个减法并计算它们的绝对值，最后求和。</li>
+</ul>
+<p>尽管每个算子都受益于供应商提供的库中高度优化的本机代码，但每个中间值都应存储为全尺寸张量，如图 2(b) 所示。 这引入了显著的内存访问冗余：张量 <code>adj_feat</code> 的大小为 <code>n_faces * 3 * n_feat</code>，这比输入和输出张量大得多，并且会产生巨大的内存访问开销。 此外，还包括冗余算子 <code>flatten</code>、 <code>index_select</code>、<code>reshape</code> 和 <code>cat</code> ，它们仅用于重新排列现有数据，但不执行有意义的计算。</p>
+<p>即使 TVM 支持高度自定义的算子，张量上的间接索引仍然阻止它在不组合传统算子的情况下表示程序，如图 2(b) 所示。 像 Julia 这样的通用编程语言能够在细粒度控制流中表示这种情况。 但是，它需要大量的手动优化和并行化。</p>
+<h3 id="23-challenge-of-freetensor">2.3. Challenge of FreeTensor</h3>
+<p>为了解决上述问题，我们<strong>采用细粒度的控制流避免冗余内存访问</strong>，如图 3(b) 所示。 具体来说，我们迭代每个 face i 及其邻居 j，并直接从输入张量 e 中索引第 j 和 (j+1) 个面。 之后进行细粒度的张量运算计算差值，结果直接累加到一个张量 y。 这里，<span class="arithmatex">\(e_j\)</span>、<span class="arithmatex">\(e_{j+1}\)</span> 和 <span class="arithmatex">\(e_{j+2}\)</span> 是单独的张量，如图 3(a) 所示，其中每个张量操作都是细粒度的并单独执行。</p>
+<div class="autocb" style="text-align:center;"><img src="./paper-freetensor.assets\autocb_2.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
+
+<p>FreeTensor 采用这种细粒度的方法来操作每个张量。 与基于 算子 的实现相比，FreeTensor 中的程序以按需方式访问张量元素，没有多余的操作来预先重新排列它们。 然而，FreeTensor 带来的复杂控制流给高效代码生成带来了重大挑战。 我们在这里总结了主要挑战。</p>
+<ul>
+<li>
+<p><strong>存在依赖性的优化</strong>。 FreeTensor 引入的细粒度控制流使得高效代码生成变得更加困难。 我们希望 FreeTensor 无需太多手动操作即可自动生成高性能代码。 然而，<u>复杂的控制和数据依赖阻碍了转换</u>。</p>
+</li>
+<li>
+<p><strong>复杂控制流的高效自动微分</strong>。 具有复杂控制流的程序的自动微分 (AD) 会进一步引入大量冗余，这抵消了自由格式语言提供的好处。 如何设计高性能的AD机制更具挑战性。</p>
+</li>
+</ul>
+<h2 id="3-free-form-dsl">3. Free-Form DSL</h2>
+<p>本节介绍我们如何为不规则张量程序设计 Free-Form DSL。 作为张量程序的 DSL，张量被视为简化编程的一等公民。 为了支持对部分张量的操作以消除冗余计算和内存访问，FreeTensor 通过引入细粒度控制流和部分张量索引来支持任何粒度的张量操作。 此外，为了生成高性能代码，FreeTensor 为用户提供了额外的元信息和编程指导，以辅助底层编译。 本节的其余部分将详细说明上述设计。</p>
+<h3 id="31-tensors-as-first-class-citizens">3.1. Tensors as First-Class Citizens</h3>
+<p><strong>张量定义</strong>。 FreeTensor 将张量视为一等公民以减轻编程难度。 更具体地说，张量（各种元素类型）是 FreeTensor 中的主要数据类型。 我们称维度为 <span class="arithmatex">\(N\)</span> 的张量为 <span class="arithmatex">\(N-D\)</span> 张量，标量被视为 0-D 张量。 张量存储在紧凑的内存布局中，一旦创建张量形状就不可改变。 <strong>为了保证张量之间没有重叠，张量按值进行复制</strong>。 张量元素可以是任何基本标量数据类型，包括 整数、单/双/半浮点数等，涵盖了典型张量程序的需求。</p>
+<p><strong>张量索引</strong>。 图 4 显示了 FreeTensor 如何定义和索引张量。 张量可以定义在不同的设备上，包括 CPU、GPU 等。FreeTensor 提供了用户友好的 NumPy [18] 风格的索引规则，能够索引张量中的任何子区域。 <strong>这种索引规则允许用户对 部分张量 进行索引，从而灵活地支持对 部分张量 的操作</strong>，以避免不必要的计算和内存访问。</p>
+<div class="autocb" style="text-align:center;"><img src="./paper-freetensor.assets\autocb_3.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
+
+<p>FreeTensor 的 DSL 中的所有操作，包括算术运算符（<code>+</code>、<code>-</code>、<code>*</code>、<code>/</code> 等）、内置函数（sum、abs 等）和函数调用，都直接在张量上执行。 然后将这些操作降低为高性能本机代码，这将在<a href="#4-generating-high-performance-code">第 4 节</a>中介绍。</p>
+<h3 id="32-granularity-oblivious-tensor-operations">3.2. Granularity-Oblivious Tensor Operations</h3>
+<p>由于不规则张量程序通常操作张量的一部分而不是整个张量以节省计算量，因此支持部分张量操作是必要的。 传统的基于算子的框架的用户被期望调用尽可能粗粒度的算子。 如第 2 节所述，使用此类张量算子实现不规则张量程序将带来大量计算和访存冗余。 为了解决这个问题，我们在 FreeTensor 中引入了 Granularity-Oblivious Tensor Operations，以提供编写避免冗余的张量程序的能力。</p>
+<p>为了实现 Granularity-Oblivious 的张量操作，我们<strong>在 DSL 中引入了以下语义：整数范围的 for 循环、分支 和 始终内联的函数调用</strong>。 我们将在第 4 节中详细解释为什么要引入这些关键特性。借助这些语义，FreeTensor 可以支持任何粒度的张量操作。 图 5 显示了如何使用 FreeTensor 实现图 1 中的 Longformer 示例。 在这种情况下，我们使用 for 循环 <code>j</code> 沿输入序列进行迭代，并使用循环 <code>k</code> 沿滑动窗口进行迭代。 K 的元素直接通过索引 <code>j+k</code> 访问，无需事先复制整个张量。</p>
+<div class="autocb" style="text-align:center;"><img src="./paper-freetensor.assets\autocb_4.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
+
+<p>FreeTensor 还提供了一个称为 <code>libop</code> 的张量算子库，支持 element-wise operations, reductions, matrix multiplications 等简单算子 和 softmax 等复杂算子。 我们在纯 DSL 代码中实现 <code>libop</code>，而不是直接映射到本机代码实现。 在编译时，对 libop 的函数调用将作为嵌套循环完全内联，然后与程序的其余部分一起优化。 例如，图 3(b) 中的 tensorwise zeros、abs、- 和 += 都是由 <code>libop</code> 提供的。</p>
+<div class="admonition note">
+<p class="admonition-title">note</p>
+<p>libop: 类似 TOPI 之于 TE？</p>
+</div>
+<h3 id="33-dimension-free-programming">3.3. Dimension-Free Programming</h3>
+<p>张量维数是张量计算的关键属性，张量程序的大多数操作都与围绕张量维数的变换密切相关。 我们在张量的元数据中记录与维度相关的属性，它也享有一流的支持。 可以分别使用 <code>.ndim</code>、<code>.shape</code>、<code>.dtype</code> 和 <code>.mtype</code> 属性访问 维度、形状、元素类型和设备放置。 <strong>特别是，张量形状保持其表达形式</strong>。 例如，将 <span class="arithmatex">\(N\times 2\)</span> 的二维张量 A 展平为一维张量 B 后，<strong>我们知道 B 的长度应该是 <span class="arithmatex">\(2N\)</span> ，而不是 Any</strong>。 我们可以安全地断言 <span class="arithmatex">\(2N\)</span> 是偶数并将 B 重塑回 <span class="arithmatex">\(N\times 2\)</span> 形状。</p>
+<p><strong>在 FreeTensor 中，我们用有限递归表达对任意维度的计算</strong>。 图6 给出了如何使用有限递归编写 Dimension-Free 张量程序的示例。 如 图6(a) 所示，如果在编写张量程序时无法确定张量的形状，用户将无法编写简单的嵌套循环程序，这会带来很大的编程复杂度。 在 FreeTensor 中，我们建议用户<u><strong>使用有限递归编写具有未确定维度的张量程序</strong></u>，如 图6(b) 所示。 这种递归将进一步扩展为在编译时使用 部分求值 的嵌套循环，这将在第 4.1 节中说明。</p>
+<div class="autocb" style="text-align:center;"><img src="./paper-freetensor.assets\autocb_5.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
+
+<h2 id="4-generating-high-performance-code">4. Generating High Performance Code</h2>
+<p>FreeTensor 允许用户编写无冗余计算或内存访问的张量程序。 DSL 编写的程序将被解析为 stack-scoped AST，作为 FreeTensor 的IR，以执行进一步的优化并生成高性能的 native code。 通过这种设计，每个张量仅在其定义节点的子树中存在，称为 <code>TensorDef</code> 节点。 stack-scoped 的限制为 IR 转换带来了显著的简化：</p>
+<ol>
+<li>能够在不破坏 allocation-freeing pair 的情况下转换 AST；</li>
+<li>通过将一个张量的生命周期限制在一个子树上，<strong>可以消除大部分依赖分析中的假依赖</strong>。</li>
+</ol>
+<div class="admonition warning">
+<p class="admonition-title">疑问</p>
+<p>这里所说的依赖分析中的假依赖是？</p>
+<p>可能需要具体了解一下编译优化过程中的依赖分析是怎么做的。</p>
+</div>
+<p>图7 显示了 <code>LongformerFwd</code> 函数的 AST，其代码在 图5 中。我们内联所有函数调用以执行跨函数的整体优化。 图8 显示了 图5 中示例的结果程序。之后，我们对 AST 进行了多次优化。</p>
+<div class="autocb" style="text-align:center;"><img src="./paper-freetensor.assets\autocb_6.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
+
+<h3 id="41-partial-evaluation-for-dimension-free-programming">4.1. Partial Evaluation for Dimension-Free Programming</h3>
+<p>如 <a href="#33-dimension-free-programming">3.3 节</a>所述，用户可以编写具有有限递归的函数。 FreeTensor 通过根据张量的元数据对程序 部分求值 来支持这种特性。 通过使用元数据为张量提供一流的支持，程序中所有张量的维数在编译时都是已知的，这使得对用递归实现的一般维数程序应用 部分求值 成为可能。</p>
+<p>我们以 图6(b) 中的代码为例来说明评估过程，如 图9 所示。图9(a) 是原始程序，带有递归函数调用 add。 假设 A 是一个 3-D 张量，那么我们的编译器知道 <code>if</code> 条件总是假的，所以 <code>if</code> 分支中的所有语句都会被丢弃，而 <code>else</code> 分支中的语句将始终被执行。 然后评估最后一行的函数调用 add，生成如 图9(b) 所示的优化程序。 然后编译器重复图 9(b) 中的这种 部分求值 过程。 请注意，<code>A[i]</code> 是一个二维张量。 最后，应用 部分求值 后的最终程序如图 9(c) 所示，其中递归函数调用转换为嵌套循环。</p>
+<div class="autocb" style="text-align:center;"><img src="./paper-freetensor.assets\autocb_7.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
+
+<h3 id="42-dependence-aware-transformation">4.2. Dependence-Aware Transformation</h3>
+<p>内联后，我们需要对 AST 执行一系列转换，以从 FreeTensor IR 生成高效代码。 我们为各种优化应用了丰富的转换集合，包括循环转换、并行化、内存层次结构、内存布局等，如表 1 所示。这些转换类似于 Halide [31] 和 TVM 的调度优化 [12]，但细粒度的控制流程对如何正确应用这些转换带来了重大挑战。 例如，<strong>TVM 仅支持对完美嵌套循环的转换</strong>，这意味着转换时不需要考虑复杂的依赖关系。 </p>
+<div class="admonition note">
+<p class="admonition-title">note</p>
+<p>完美嵌套循环指 循环体仅在最内层循环</p>
+</div>
+<p>然而，在应用细粒度控制流之后，引入了复杂的依赖。 仍然以 图8 为例，在第4、13、16行融合循环可以带来更好的局部性。 融合第 4 行和第 13 行的循环是可能的，但融合第 13 行和第 16 行的循环是不正确的，因为后者依赖前者产生的 <code>dot_max</code> 。 融合程序如 图10 所示，其中将偏移量 "+w" 应用于迭代器 k，以使索引保持一致。</p>
+<p>由于依赖关系决定了转换是否正确，因此 FreeTensor 在应用转换之前执行依赖性分析。 <strong>与基于算子的框架不同，我们需要以 instance-of-statement-wise 精度而不是statement-wise 精度来分析程序</strong>，其中 instance-of-statement 是指特定循环迭代中的语句。 这意味着<strong>传统的数据流图级分析对于 FreeTensor 来说是不够的</strong>。</p>
+<p>关于如何以 instance-of-statement 的精度分析依赖关系以及如何在给定依赖关系的情况下指导程序转换，已经有很多研究。 [28] 和 [4] 中总结了早期研究。 后来引入了多面体分析的数学理论系统地分析相关性，并设计了多个多面体分析求解器来实现分析的自动化。 给定定义为 Presburger 公式的内存访问，可以通过求解它们的方程和不等式来导出依赖关系 [40]。 多面体分析理论和求解器的著作包括 Omega [30]、PolyLib [23]、PPL [6] 和 isl [39]。</p>
+<p>在 FreeTensor 中，我们使用 isl 进行依赖分析，并在我们的 IR 中实现 [28] 和 [4] 中讨论的依赖感知程序转换的想法。 在本节的其余部分，我们将说明 FreeTensor 如何采用这些技术来执行<strong>依赖感知转换，包括循环转换、并行化转换和内存转换</strong>。</p>
+<h4 id="421">4.2.1. 循环变换</h4>
+<div class="autocb" style="text-align:center;"><img src="./paper-freetensor.assets\autocb_8.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
+
+<p>以 图11 中的程序为例。 (2) 和 (1) 之间存在先写后读 (RAW) 依赖关系，(3) 和 (1) 之间存在 RAW 依赖关系。 在转换循环时，我们需要保持两者的依赖性。
+在多面体分析中，每个内存访问 (1)、(2) 或 (3) 都定义为自迭代空间<span class="arithmatex">\(\mathbb{Z}^{(N−2)\times (M−2)}\)</span> 到数组索引空间<span class="arithmatex">\(Z^{N\times M}\)</span> 的映射，描述哪个在迭代中访问数组哪个索引：</p>
+<p><span class="arithmatex">\(M_{(1)} = \{(i,j)\rightarrow (i+1,j): 1\leq i &lt; N-1, 1\leq j &lt; M-1\}\)</span>
+<span class="arithmatex">\(M_{(2)} = \{(i,j)\rightarrow (i-1,j+1): 1\leq i &lt; N-1, 1\leq j &lt; M-1\}\)</span>
+<span class="arithmatex">\(M_{(3)} = \{(i,j)\rightarrow (i-1,j-1): 1\leq i &lt; N-1, 1\leq j &lt; M-1\}\)</span></p>
+<p>通过使用 <code>isl</code> 组合这些映射，我们推断(2) 和 (1) 之间的原始依赖关系为：</p>
+<div class="arithmatex">\[
+\begin{align*}
+M_{(2)\rightarrow (1)}
+&amp;=\{\mathbf{p}\rightarrow \mathbf{q}: \exists \mathbf{r}: (\mathbf{p}\rightarrow \mathbf{r})\in M_{(1)} \wedge (\mathbf{q}\rightarrow \mathbf{r}\in M_{(2)}\wedge \mathbf{p}&gt;_{lex} \mathbf{q}) \}\\
+&amp;=\{(i,j)\rightarrow (i-2,j+1): 1\leq i &lt; N-1, 1\leq j &lt; M-1\}
+\end{align*}
+\]</div>
+<p>其中 &gt;𝑙𝑒𝑥 表示字典序更大，∧ 表示逻辑与。</p>
+<p>从 <span class="arithmatex">\(M_{(2)\rightarrow (1)}\)</span> ，我们知道 (1) 在 i 中应该比 (2) 晚 2 次迭代，在 j 中应该早 1 次迭代。 我们在转换循环时保留此限制。 例如，我们不能对这两个循环重新排序，否则该语句将访问一个尚未计算的元素。 (3) 和 (1) 之间依赖关系的限制是相似的。</p>
+<p>为了更具体地解释依赖性如何限制循环转换，我们以 图12 中的示例为例，讨论是否可以在嵌套循环上应用重新排序转换。</p>
+<div class="autocb" style="text-align:center;"><img src="./paper-freetensor.assets\autocb_9.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
+
+<ul>
+<li>对图 12(a) 中的程序应用重新排序是正确的，因为沿着每个循环的反向方向没有依赖性。</li>
+<li>对图 12(b) 中的程序应用重新排序是不正确的，因为存在依赖关系 <span class="arithmatex">\((𝑖, 𝑀 − 1) → (𝑖 + 1, 0)\)</span></li>
+<li>对图 12(c) 中的程序应用重新排序是正确的，因为加法交换律允许我们以任何顺序将 <code>b[i,j]</code> 还原为 a。 FreeTensor 引入了一个 <code>ReduceTo</code> 节点来处理任何类似 <code>a=a+b</code> 的语句，<code>ReduceTo</code> 节点之间的任何 <code>WAW</code> 依赖都可以忽略。</li>
+<li>对图 12(d) 中的程序应用重新排序是正确的，因为具有 WAW 相关性的 t 是错误的相关性。 FreeTensor 的栈范围 AST 可以很容易地过滤掉错误的依赖。 在这种情况下，张量 t 存在 WAW 相关性 (𝑖1, 𝑗1, 𝑘1) → (𝑖2, 𝑗2, 𝑘2)。 由于 t 的生命周期在循环 j 内，FreeTensor 对 t 的依赖执行投影 {(𝑖, 𝑗, 𝑘) → (𝑘) : 𝑖, 𝑗, 𝑘 ∈ Z}，导致依赖 (𝑘1) → (𝑘2) . 因此，FreeTensor 可以对循环 i 和 j 应用重新排序变换。</li>
+</ul>
+<h4 id="422">4.2.2. 并行化转换</h4>
+<p>并行化转换对于高性能代码生成至关重要。 并行化转换的挑战不仅来自细粒度控制流引入的复杂依赖性，还来自不同硬件架构上的各种并行模型。 我们以图 13 中的示例来说明 FreeTensor 如何应用并行化转换。</p>
+<div class="autocb" style="text-align:center;"><img src="./paper-freetensor.assets\autocb_10.png" style="zoom: 50%;box-shadow: rgba(0, 0, 0, 0.5) 10px 10px 10px; border-radius: 10px;" /></div>
+
+<ul>
+<li>图 13(a) 显示了一个没有依赖性的可并行化程序。</li>
+<li>图 13(b) 显示了一个具有跨线程依赖性的不可并行化示例。</li>
+<li>在图13(c)中，是否可以应用并行化转换与具体的并行模型和内存层次有关。 例如，如果 b 是线程本地的，则循环 i 无法并行化，因为 b 仅在其中一个线程上可见； 但是如果 b 存储在共享内存中，则可以并行化此循环，因为 b 在所有线程上都是可见的。</li>
+<li>图 13(d) 显示了一个 reduce 以及相同的索引，可以使用并行 reduce 算法。</li>
+<li>图 13(e) 显示了随机访问 reduce ，它可以使用原子指令并行化。</li>
+</ul>
+<h4 id="423">4.2.3. 内存转换</h4>
+<p>需要应用两种类型的内存转换：<strong>内存布局优化</strong>和<strong>内存层次结构优化</strong>。 内存布局转换通过重新排序张量中的元素来帮助改善数据访问中的空间局部性。 例如，我们可以将 (𝑁 × 𝑀) 形张量转置为 (𝑀 × 𝑁 ) 形，这样 𝑁 维就可以连续迭代。</p>
+<p>不同于 <strong>TVM 中通过改变 算子 的组合来执行内存布局优化</strong>的设计，我们将这些优化实现为细粒度的 AST 转换，这提供了更多与其他转换一起执行整体优化的机会。 内存层次结构转换有助于在处理器上使用高速缓存和暂存器内存。</p>
+<div class="admonition warning">
+<p class="admonition-title">疑问</p>
+<p>这里需要去了解 TVM 中 的内存布局优化具体怎么做的，找一个例子？</p>
+</div>
+<p><code>cache</code> 和 <code>cache_reduce</code> transformations 将新张量引入 AST，我们必须推断它们的大小。 对于 图14(b) 中的程序，问题是如何推断新引入的张量 <code>a.cache</code> 的形状为 M 并且 c[j] 映射到 a[i+j]。 为了解决这个问题，我们分析了张量的每个索引的下界和上界，在这个程序中是i+j。 0、i、i+j都是i+j的下界，n+m-2、i+m-1、i+j都是它的上界。 我们遵守所有这些界限。 由于我们在外循环和内循环之间进行 cache ， 其中迭代器 i 已定义但 j 未定义，因此我们寻找最紧的边界，即 <code>[i, i+m-1]</code>，或 <code>[i, i+m)</code>. 因此，我们知道我们正在将 <code>a[i:i+m]</code> 缓存到 m 形张量 <code>a.cache</code> 中。</p>
+<h3 id="43-code-generation">4.3. Code Generation</h3>
+<p>我们提供的所有转换都暴露给用户。 我们提供了一个 API 来查询程序中的语句以应用转换。 我们还认识到，使用这些转换优化程序可能需要一些专业知识，并且大多数用户可能期望自动策略来应用这些转换。 FreeTensor 实现了<strong>基于规则的自动转换</strong>策略的原型来应对此类挑战。 我们目前实施 6 种 pass 以尝试应用转换。 这些 pass 由考虑特定架构的启发式方法驱动，并逐一调用。 多亏了 4.2 节中的依赖分析，我们可以积极地尝试转换而不用担心它们的正确性。  passes 包括：</p>
+<ol>
+<li><code>auto_fuse</code> ：尝试使用融合附近的循环以增加局部性。 可能需要启用 swap 等转换来启用 fuse。</li>
+<li><code>auto_vectorize</code> ：找到一些连续访问数据的循环，使用循环转换将它们重新排序为最内层循环，然后向量化或并行化该循环。</li>
+<li><code>auto_parallelize</code> ：用 merge 转换合并一些外层循环，然后用 parallelize 转换绑定到线程上。 对于像 GPU 这样具有多级并行性的后端，我们在绑定它们之前使用 split 拆分循环。</li>
+<li><code>auto_mem_type</code> ：尝试将张量放置在尽可能靠近处理器的位置。 寄存器优于 scratch-pad memory，后者又优于 main memory。</li>
+<li><code>auto_use_lib</code> ：尝试 调用外部库。 可能需要启用 fission 等转换来启用 该 pass。</li>
+<li><code>auto_unroll</code> ：展开非常短的循环，为后端编译器释放优化机会。</li>
+</ol>
+<p>对于任何用户程序，这些过程会自动调用，但用户可以自由覆盖它们并手动应用其他转换。 除了这些基本策略之外，我们正在研究类似于 Ansor [44] 的机器学习引导解决方案，这将是我们未来的工作。</p>
+<p>我们在转换后对 AST 进行进一步优化，包括简化数学表达式、合并或删除冗余内存访问以及删除冗余分支。 我们还执行一些特定于后端的后处理，包括插入线程同步语句、生成并行缩减语句以及计算暂存器中张量的偏移量。</p>
+<p>之后，我们从 AST 生成 OpenMP 或 CUDA 代码，并调用专用后端编译器（如 gcc 或 nvcc）进行进一步的低级优化和本机代码生成。 <strong>一个DSL函数最终被编译为共享库，可以从Python中动态加载运行</strong>。</p>
+<h2 id="5-automatic-differentiation">5. Automatic Differentiation</h2>
+<div class="admonition note">
+<p class="admonition-title">note</p>
+<p>暂时跳过这一节</p>
+</div>
+<h3 id="51-fine-grained-automatic-differentiation">5.1. Fine-Grained Automatic Differentiation</h3>
+<p>张量应用需要自动微分 (AD)。 AD 帮助用户从原始程序生成梯度程序，其中梯度程序用于计算每个输入相对于程序输出的梯度。 梯度程序由正向传播和反向传播组成。 正向传递计算输出，同时在执行期间保留一些中间张量。 向后传递计算梯度并重用前向传递保留的中间张量。</p>
+<p>受 Enzyme [27] 和 Zygote [20] 的启发，我们设计了一种通用 AD，能够区分 FreeTensor 引入的细粒度控制流。 图 15(b) 给出了从图 15(a) 中的原始程序生成的反向传播示例。 我们记住，微分程序仍然可以通过 FreeTensor 进行优化。 因此，我们将 AD 设计为 AST 的 pass 。 生成的程序也是一个 AST，享有与原始程序相同的优化机会。</p>
+<p>阻碍优化微分程序的问题之一在于中间张量。 在 AD 的过程中，一些中间张量应该在前向传递中具体化，然后在反向传递中取回。</p>
+<p>在某些文献中，此过程也称为检查点或将 tensor 保存到 tape 中。 但是，一个中间张量在程序中可能会被多次写入，因此必须将其具体化为多个版本。 例如，图 15(a) 中的标量 t（被视为 0-D 张量）将在其第 i 个分配后在版本 i 中被具体化。 一些现有的作品如 Tangent [36] 和 Zygote [20] 在运行时维护一个版本号，这阻碍了进一步的并行化。 相反，我们分析了 FreeTensor 中的符号版本号，类似于 Enzyme [27]。 具体来说，利用多面体分析，我们寻找对 t 的 WAR 依赖，其中每个 WAR 依赖对应一个版本。 因此，版本号在编译时作为符号表达式已知，这有助于进一步并行化。</p>
+<h3 id="52-selective-intermediate-tensor-materialization">5.2. Selective Intermediate Tensor Materialization</h3>
+<p>在图 15 中， <code>t</code> 存储在原始程序中，直到与 <code>t.tape</code> 一起重复使用。 在上面的例子中， <code>t</code> 是一个标量，可能存储在缓存甚至寄存器中。 然而，随着每次迭代 i 更新 t，前向传递将具体化其所有版本以供将来使用。 因此，t 的具体化张量，即 <code>t.tape</code>，具有较大的形状 n，这在内存占用和内存使用方面都会产生很大的开销。</p>
+<p>相反，在这种情况下，计算 t 只需要对 a[i] 和 b[i] 进行一次加法和两次访问，其中 a[i] 和 b[i] 被很好地缓存，因为它在计算 a 时共享。 grad[i] 和 b.grad[i]。 受先前提出的用于减少基于算子的框架的内存使用的重新计算方法的启发 [13]，我们提出了一种用于中间张量物化的选择性策略。</p>
+<p>我们方法的核心思想是我们将确定中间张量是在编译时具体化还是重新计算。 我们平衡物化和重新计算之间的开销，并选择合适的策略。 对于图15所示的程序，我们对其非密集计算采用重计算策略。 生成的程序如图 15(c) 所示。 将张量具体化的开销取决于张量有多少个版本。 图 15 中的 t 更新了 n 次，因此它必须在 n 个版本中具体化，由于我们的符号版本号分析，版本号在编译时是已知的。</p>
+<h2 id="6-evaluation">6. Evaluation</h2>
+<p>...</p>
+<h2 id="7-related-works">7. Related Works</h2>
+<p><u><strong>基于算子的框架</strong></u>。 有多个基于算子的框架，包括 Chainer [34]、PyTorch [29]、MXNet [11]、TensorFlow [3]、JAX [17] 和 TVM [12]。 Chainer 和 PyTorch 作为高性能张量算子库运行，可以从 Python 命令式调用。 MXNet 和 TensorFlow 将程序转换为数据流图，其中每个节点代表对库中张量算子的调用。 可以在执行前对图进行优化。 JAX 通过引入 JIT 来优化复杂或动态程序，从而改进优化。 TVM 通过引入 计算-调度 编程模型支持高度定制的算子，用户首先指定计算的数学定义，然后使用显式或机器学习引导的转换对其进行优化 [14]。</p>
+<p>XLA [1]、TensorRT [2]、TASO [21]、Rammer [24] 和 PET [42] 通过 re-combining 张量算子来优化张量程序。 与这些工作相比，我们一开始就尽量不引入太多的算子。</p>
+<p><u><strong>基于多面体分析的编译器</strong></u>。 多个编译器采用基于多面体分析的优化。 Pluto [10]、PPCG [41] 和 CHiLL [32] 正在优化 C 语言通用程序的编译器。 PPCG 设计一个分析成本模型并通过求解一个分析模型来执行优化，而 CHiLL 则在多面体分析的指导下实现用户指定的转换。</p>
+<p>Tensor Comprehensions [37] 和 Tiramisu [5] 将多面体分析引入到张量程序中。 他们通过使用多面体分析优化现有的算子来改进基于算子的框架。 我们采用多面体分析来指导我们对用户定义的不规则张量程序进行 AST 转换。</p>
+<p><u><strong>通用编程语言中面向张量的设计</strong></u>。 通用编程语言也有一些改进，以更好地支持张量。 Julia [9] 提供了对张量的有效支持，其中对张量操作的连续调用可以自动与宏融合。 Triton [33] 改进了 CUDA 并提供了一个平铺编程模型，用于在 GPU 上实现张量运算。</p>
+<p><u><strong>自动微分</strong></u>。 有几种方法可以实现自动微分 [7, 35]。 大多数基于算子的框架实现的 AD 都是基于图的，其中一个节点代表对张量运算库的调用，一条边代表一个张量 [25, 29]。 AD 过程将所有节点替换为其梯度对应物，并使用链式法则反转图的顺序。</p>
+<p>Tangent [36]、Myia [35]、Enzyme [27] 和 Zygote [20] 通过直接变换 IR 为一般张量程序实现 AD。 我们在 FreeTensor 中采用了这种技术，并进一步解决了它的性能问题。</p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.sections", "navigation.indexes"], "search": "../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.fac441b0.min.js"></script>
+      
+        <script src="../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
