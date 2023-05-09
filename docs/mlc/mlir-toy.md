@@ -10,7 +10,7 @@
 这个教程用的是kaleidoscope 的变形， 一个例子如下：
 
 ```py
-# RUN: toyc-ch1 %s -emit=ast 2>&1 | FileCheck %s
+# RUN: toyc-ch1 %s -emit=ast 2>&1 | FileCheck %**s**
 
 # User defined function that 操作 **任意** 形状的参数（类比 function template）
 def multiply_transpose(a, b) {

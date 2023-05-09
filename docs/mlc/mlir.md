@@ -404,3 +404,10 @@ MLIR 和LLVM 类似，但是和 **LLVM 致力于标量优化和异构编译**不
 
 XLA、GLOW、TVM 等系统更多的在机器学习的场景被提及，这些系统也强调异构的编译目标，但是这些系统从基于图的抽象到加速器的矢量抽象更为具体。所有的这些都可以将MLIR 作为基础设施，使用公共功能的同时，采用自己的代码生成策略。相似地，**Halide 和TVM 的循环嵌套元编程技术，earlier look nest metaprogramming，PolyMega 的全自动流(flow)，Tensor Comprehension，Stripe, Diesel，Tiramisu 和其底层的多面体编译技术可以作为基于MLIR 的编译框架的不同路径共存**。序列化和互操作格式如 ONNX 提供一套公共的算子(OP)集合，不同框架将自己的模型映射到这一套集合上以解决机器学习前端的多样性。ONNX 可以作为 MLIR 的方言(dialect)， 其他算子(OP)可以lower 到该方言(dialect)，或者从该方言(dialect)生成
 
+---
+
+安装 MLIR 时踩坑：
+
+1. 编译 MLIR 中的 examples/standalone 会报找不到 FileCheck 的错误， 解决方法是需要在 build llvm（参见[cpp/toochain](../cpp/toolchain.md)）时加上 `-DLLVM_INSTALL_UTILS=ON`
+
+
